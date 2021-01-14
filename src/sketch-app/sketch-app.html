@@ -151,6 +151,11 @@
           active="{{_isDrawing(tool)}}"
           toggles
           on-tap="_draw"></paper-icon-button>
+      <paper-icon-button
+          id="lineMode"
+          icon="timeline"
+          toggles
+          on-tap="_toggleLineMode"></paper-icon-button>
       <paper-menu-button
           vertical-align="bottom"
           vertical-offset="60">
@@ -408,6 +413,22 @@
 
       _move: function() {
         this.$.sketch.desiredTool = 'move';
+      },
+
+      _savedSpacing: 0.5,
+      _savedSmoothing: 1,
+      _toggleLineMode: function() {
+        if(this.$.lineMode.active) {
+          _savedSpacing = this.$.sketch.spacing;
+          _savedSmoothing = this.$.sketch.smoothing;
+
+          this.$.sketch.spacing = 9999;
+          this.$.sketch.smoothing = 1;
+        }
+        else {
+          this.$.sketch.spacing = _savedSpacing;
+          this.$.sketch.smoothing = _savedSmoothing;
+        }
       },
 
       _reset: function() {
