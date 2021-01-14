@@ -107,6 +107,17 @@
           type: Boolean,
           notify: true,
           computed: '_canEdit(dataCanRedo, disabled)'
+        },
+        spacing: {
+          type: Number,
+          notify: true,
+          value: 0.5
+        },
+        smoothing: {
+          type: Number,
+          notify: true,
+          value: 1,
+          observer: '_setStrength'
         }
       },
 
@@ -287,11 +298,28 @@
 
       _drawStart(x, y) {
         this.$.data.drawStart();
-        this._draw(x, y, x, y);
+        this._draw(x, y, x, y, true);
       },
 
-      _draw(x, y, px, py) {
-        if(x != px || y != py) {
+      _draw(x, y, px, py, ignoreSpacing) {
+        px = this._prevX;
+        py = this._prevY;
+
+        if(!ignoreSpacing && Math.hypot(px - x, py - y) < this.spacing) {
+          return;
+        }
+
+        this._addSmoothPoint(x, y);
+        this._prevX = x;
+        this._prevY = y;
+
+        {
+          let p = this._smoothPoint();
+
+          x = Math.round(p[0]);
+          y = Math.round(p[1]);
+        }
+        {
           this.$.data.draw(x, y);
           var lastLine = this.$.data.lines[this.$.data.lines.length - 1];
           this._drawLine(lastLine.slice(lastLine.length - 4, lastLine.length));
@@ -299,7 +327,20 @@
       },
 
       _drawEnd(x, y) {
-        this._draw(x, y, x, y);
+        this._draw(x, y, x, y, true);
+
+        if (this._hasSmoothPoint()) {
+          this._removeSmoothPoint();
+        }
+
+        while (this._hasSmoothPoint()) {
+          let p = this._smoothPoint();
+
+          this._drawLine(p[0], p[1]);
+
+          this._removeSmoothPoint();
+        }
+
         this.$.data.drawEnd();
       },
 
@@ -394,6 +435,81 @@
 
       _tool(desiredTool, activeTool) {
         return activeTool ? activeTool : desiredTool;
+      },
+
+      _smooth: [null],
+      _available: 0,
+      _position: 0,
+
+      _reset() {
+        this._available = 0;
+        this._position = 0;
+      },
+
+      _setStrength(strength) {
+        if(strength < 1) {
+          strength = 1;
+        }
+
+        let length = this._smooth.length;
+
+        if(length > strength) {
+          this._smooth = this._smooth.slice(-strength);
+        }
+
+        for(let index = length; index < strength; ++index) {
+          this._smooth[index] = null;
+        }
+
+        this._reset();
+      },
+
+      _addSmoothPoint(x, y) {
+        if(this._available == 0) {
+          for(let index = 0; index < this._smooth.length; ++index) {
+            this._smooth[index] = [x, y];
+          }
+        } else {
+          if(--this._position < 0) {
+            this._position = this._smooth.length - 1;
+          }
+
+          this._smooth[this._position] = [x, y];
+        }
+
+        if(this._available < this._smooth.length) {
+          ++this._available;
+        }
+      },
+
+      _removeSmoothPoint() {
+        this._smooth[(this._position + --this._available) % this._smooth.length] = this._smoothPointAt(0);
+      },
+
+      _smoothPointAt(i) {
+        return this._smooth[(this._position + i) % this._smooth.length];
+      },
+
+      _smoothPoint() {
+        let p0 = this._smoothPointAt(0);
+
+        let x = p0[0];
+        let y = p0[1];
+        let c = this._smooth.length;
+
+        for(let index = 1; index < c; ++index) {
+          let pi = this._smooth[index];
+          x += pi[0];
+          y += pi[1];
+        }
+
+        x /= c;
+        y /= c;
+        return [x, y];
+      },
+
+      _hasSmoothPoint() {
+        return this._available > 0 && this._smoothPointAt(0) != null;
       }
     });
   })();

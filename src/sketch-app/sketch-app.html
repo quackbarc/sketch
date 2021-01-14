@@ -98,6 +98,8 @@
               tool="{{tool}}"
               can-undo="{{canUndo}}"
               can-redo="{{canRedo}}"
+              spacing="{{spacing}}"
+              smoothing="{{smoothing}}"
               disabled="{{sketchDisabled}}"></sketch-canvas>
       </fit-ratio-container>
       <paper-fab
@@ -157,6 +159,19 @@
               title="{{localize('settings')}}"
               icon="settings"></paper-icon-button>
           <div class="dropdown-content settings">
+              <paper-input
+                  label="Smoothing"
+                  type="number"
+                  value="{{smoothing}}"
+                  min="1"
+                  always-float-label></paper-input>
+              <paper-input
+                  label="Spacing"
+                  type="number"
+                  value="{{spacing}}"
+                  step="0.5"
+                  min="0"
+                  always-float-label></paper-input>
           </div>
       </paper-menu-button>
 
@@ -210,7 +225,7 @@
         on-keys-pressed="_move"></iron-a11y-keys>
     <iron-a11y-keys
         target="[[target]]"
-        keys="p"
+        keys="p b"
         on-keys-pressed="_draw"></iron-a11y-keys>
     <iron-a11y-keys
         target="[[target]]"
@@ -322,6 +337,8 @@
         }
 
         var settings = {
+          spacing: this.$.sketch.spacing,
+          smoothing: this.$.sketch.smoothing
         };
 
         localStorage.setItem('settings', JSON.stringify(settings));
@@ -331,6 +348,8 @@
         var settings = JSON.parse(localStorage.getItem('settings'));
 
         if(settings) {
+          this.$.sketch.spacing = settings.spacing;
+          this.$.sketch.smoothing = settings.smoothing;
         }
 
         var save = JSON.parse(localStorage.getItem('save' + tabID));
