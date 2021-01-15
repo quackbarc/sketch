@@ -217,6 +217,41 @@
         }
       },
 
+      flip: function(xCoordFlip, yCoordFlip) {
+        var oldLines = this.lines.slice();
+        for(var i = 0; i < this.lines.length; i += 1) {
+          var line = this.lines[i];
+          for(var j = 0; j < line.length; j += 2) {
+            line[j] = Math.abs(line[j] - 800 * xCoordFlip);
+            line[j+1] = Math.abs(line[j+1] - 600 * yCoordFlip);
+          }
+        }
+
+        var action = [{
+          start: 0,
+          added: this.lines.slice(),
+          removed: oldLines
+        }];
+
+        this.pushHistory(action);
+      },
+
+      reverse: function() {
+        var oldLines = this.lines;
+        for(var i = 0; i < this.lines.length; i += 1) {
+            this.lines[i].reverse();
+        }
+        this.lines.reverse();
+
+        var action = [{
+          start: 0,
+          added: this.lines.slice(),
+          removed: oldLines
+        }];
+
+        this.pushHistory(action);
+      },
+
       // Private functions
 
       _onUndo: function(event) {

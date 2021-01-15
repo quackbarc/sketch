@@ -164,6 +164,14 @@
               title="{{localize('settings')}}"
               icon="settings"></paper-icon-button>
           <div class="dropdown-content settings">
+              <div style="text-align: center;">
+                <paper-icon-button
+                    icon="swap-horiz"
+                    on-tap="_flipX"></paper-icon-button>
+                <paper-icon-button
+                    icon="swap-vert"
+                    on-tap="_flipY"></paper-icon-button>
+              </div>
               <paper-input
                   label="Smoothing"
                   type="number"
@@ -429,6 +437,16 @@
           this.$.sketch.spacing = _savedSpacing;
           this.$.sketch.smoothing = _savedSmoothing;
         }
+      },
+
+      _flipX: function() {
+        this.$.sketch.$.data.flip(true, false);
+        this.$.sketch._render();
+      },
+
+      _flipY: function() {
+        this.$.sketch.$.data.flip(false, true);
+        this.$.sketch._render();
       },
 
       _reset: function() {
