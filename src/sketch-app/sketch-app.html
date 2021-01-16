@@ -98,7 +98,6 @@
               tool="{{tool}}"
               can-undo="{{canUndo}}"
               can-redo="{{canRedo}}"
-              time-resolution="{{timeResolution}}"
               disabled="{{sketchDisabled}}"></sketch-canvas>
       </fit-ratio-container>
       <paper-fab
@@ -158,12 +157,6 @@
               title="{{localize('settings')}}"
               icon="settings"></paper-icon-button>
           <div class="dropdown-content settings">
-              <div>Sample Rate (ms)</div>
-              <paper-slider
-                  value="{{timeResolution}}"
-                  max="50"
-                  min="0"
-                  editable></paper-slider>
           </div>
       </paper-menu-button>
 
@@ -329,7 +322,6 @@
         }
 
         var settings = {
-          timeResolution: this.$.sketch.timeResolution
         };
 
         localStorage.setItem('settings', JSON.stringify(settings));
@@ -339,7 +331,6 @@
         var settings = JSON.parse(localStorage.getItem('settings'));
 
         if(settings) {
-          this.$.sketch.timeResolution = settings.timeResolution;
         }
 
         var save = JSON.parse(localStorage.getItem('save' + tabID));

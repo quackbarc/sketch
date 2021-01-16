@@ -107,11 +107,6 @@
           type: Boolean,
           notify: true,
           computed: '_canEdit(dataCanRedo, disabled)'
-        },
-        timeResolution: {
-          type: Number,
-          notify: true,
-          value: 0
         }
       },
 
@@ -226,9 +221,6 @@
           this._activeTool = (event.buttons == 32 || event.buttons == 2) ? 'eraser' : null;
           if(this._wasPressed) {
             if(wasInBounds) {
-              if(this.timeResolution != 0 && Math.floor(event.timeStamp / this.timeResolution) - Math.floor(this._lastEventTimeStamp / this.timeResolution) == 0) {
-                return;
-              }
               this._action().middle(x, y, this._lastX, this._lastY);
             }
             else {
