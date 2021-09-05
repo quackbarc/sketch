@@ -138,13 +138,21 @@
       },
 
       drawEnd: function() {
-        var action = [{
-          start: this.lines.length - 1,
-          added: [this.lines[this.lines.length - 1]],
-          removed: []
-        }];
+        let start = this.lines.length - 1
+        let addedLine = this.lines[start]
 
-        this.pushHistory(action);
+        if(addedLine.length > 0) {
+          var action = [{
+            start: start,
+            added: [addedLine],
+            removed: []
+          }];
+          this.pushHistory(action);
+        }
+        else {
+          // empty lines/single-clicks won't appear on the history
+          this.lines.pop(start)
+        }
       },
 
       eraseStart: function() {
