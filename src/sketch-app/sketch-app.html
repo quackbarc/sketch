@@ -104,7 +104,7 @@
       <paper-fab
           title="{{localize('swap')}}"
           icon="send"
-          disabled="{{_swapDisabled(sketchDisabled, loading)}}"
+          disabled="{{_swapButtonDisabled(sketchDisabled, loading, ink)}}"
           on-tap="_swap"></paper-fab>
     </div>
 
@@ -293,6 +293,12 @@
       },
 
       // Private methods
+
+      _swapButtonDisabled: function(sketchDisabled, loading, ink) {
+        return sketchDisabled || loading || ink <= 0;
+        /* ink might be affected by the negative ink bug but i'm not
+           sure if that's still around after the eraser fix */
+      },
 
       _swapDisabled: function(sketchDisabled, loading) {
         return sketchDisabled || loading;
