@@ -70,11 +70,11 @@
 
       .settings {
         font-family: 'Roboto', 'Noto', sans-serif;
-        font-size: 20px;
+        font-size: 16px;
         color: #000;
         padding: 8px;
         position: relative;
-        width: 256px;
+        width: 384px;
       }
 
       .settings div {
@@ -85,9 +85,33 @@
         padding: 0;
       }
 
-      paper-slider {
-        width: 100%;
+      paper-toolbar span {
+        user-select: none;  /* prevents selection when pressing down with a pen */
+        font-size: 20px;
       }
+
+      .settings > div {
+          max-width: 400px;
+      }
+      .settings .settings-item {
+          display: flex;
+          margin: 0px;
+          padding: 0px 10px;
+      }
+      .settings .settings-item > div {
+          display: flex;
+          flex: 1;
+          align-items: center;
+      }
+      .settings .settings-item > paper-slider {
+          flex-grow: 1;
+          width: auto;
+      }
+      .settings .settings-item > paper-toggle-button {
+          justify-content: flex-end;
+          flex-grow: 1;
+      }
+
     </style>
 
     <div class="content">
