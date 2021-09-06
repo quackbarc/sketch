@@ -201,7 +201,7 @@
       </paper-menu-button>
 
       <div class="title">
-        <span>{{localize('ink', 'amount', ink)}}</span>
+        <span>{{localize('ink', 'amount', flooredInk)}}</span>
         <div class="stats">
           <span>{{localize('sketches', 'num', sketches)}}</span>
           <span>{{localize('artists', 'num', artists)}}</span>
@@ -322,6 +322,12 @@
         rememberTab: {
           type: Boolean,
           computed: "_rememberTab(sketchDisabled, ink)"
+        },
+
+        flooredInk: {
+          type: Number,
+          readOnly: true,
+          computed: "_flooredInk(ink)"
         }
       },
 
@@ -499,6 +505,12 @@
 
       _isMoving: function(tool) {
         return tool === 'move';
+      },
+
+      // display stuff
+
+      _flooredInk: function(ink) {
+        return Math.floor(ink*100) / 100;
       }
     });
   </script>
