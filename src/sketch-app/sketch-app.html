@@ -101,11 +101,13 @@
       }
       .settings .settings-item > div {
           display: flex;
-          flex: 1;
           align-items: center;
       }
-      .settings .settings-item > paper-slider {
-          flex-grow: 1;
+      .settings .settings-item.slider > div {
+          flex: 2;
+      }
+      .settings .settings-item.slider > paper-slider {
+          flex: 3;
           width: auto;
       }
       .settings .settings-item > paper-toggle-button {
@@ -183,7 +185,7 @@
               title="{{localize('settings')}}"
               icon="settings"></paper-icon-button>
           <div class="dropdown-content settings">
-              <div class="settings-item">
+              <div class="settings-item slider">
                   <div>Sample Rate (ms)</div>
                   <paper-slider
                       value="{{timeResolution}}"
