@@ -86,10 +86,6 @@
         padding: 0;
       }
 
-      paper-slider {
-        width: 100%;
-      }
-
       paper-toolbar span {
         user-select: none;  /* prevents selection when pressing down with a pen */
         font-size: 20px;
@@ -109,7 +105,12 @@
           align-items: center;
       }
       .settings .settings-item > paper-slider {
-          flex: 1.5;
+          flex-grow: 1;
+          width: auto;
+      }
+      .settings .settings-item > paper-toggle-button {
+          justify-content: flex-end;
+          flex-grow: 1;
       }
 
     </style>
