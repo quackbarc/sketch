@@ -3,6 +3,7 @@
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/iron-a11y-keys/iron-a11y-keys.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/paper-toggle-button/paper-toggle-button.html">
 <link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
 <link rel="import" href="../../bower_components/paper-progress/paper-progress.html">
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
@@ -188,6 +189,12 @@
                       max="50"
                       min="0"
                       editable></paper-slider>
+              </div>
+              <div class="settings-item">
+                  <div>Etch-a-Sketch mode</div>
+                  <paper-toggle-button
+                      noink
+                      on-tap="_toggleEtch"></paper-toggle-button>
               </div>
           </div>
       </paper-menu-button>
@@ -460,6 +467,10 @@
 
       _save: function() {
         this.$.api.save(this.$.sketch.canvasData);
+      },
+
+      _toggleEtch: function() {
+        this.$.sketch.etchMode = !this.$.sketch.etchMode;
       },
 
       _copy: function() {
