@@ -525,6 +525,7 @@
 
       _copy: function() {
         navigator.clipboard.writeText(this.$.sketch.data);
+        this._alert('copied to clipboard')
       },
 
       _paste: function() {
@@ -582,7 +583,7 @@
       },
 
       _sleep: function(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms))
+        return new Promise(resolve => setTimeout(resolve, ms));
       }
     });
   </script>
