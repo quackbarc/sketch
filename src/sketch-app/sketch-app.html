@@ -498,6 +498,7 @@
       _copy: function() {
         if(!this.sketchDisabled) {
           navigator.clipboard.writeText(this.$.sketch.data);
+          this._alert('Copied to clipboard')
         }
       },
 
@@ -556,7 +557,7 @@
       },
 
       _sleep: function(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms))
+        return new Promise(resolve => setTimeout(resolve, ms));
       }
     });
   </script>
