@@ -36,12 +36,10 @@
       .title span {
         margin: 0px 8px;
         line-height: normal;
-        float: left;
       }
 
       .title .stats {
         display: inline-block;
-        float: right;
       }
 
       paper-fab {
@@ -110,6 +108,19 @@
       .settings .settings-item > paper-toggle-button {
           justify-content: flex-end;
           flex-grow: 1;
+      }
+
+      /* for hidestats */
+
+      .title {
+          display: flex;
+      }
+      .title .stats {
+          margin-left: auto;
+      }
+      .title .stats span {
+          /* really dumb workaround */
+          margin-left: 3px;
       }
 
     </style>
@@ -300,6 +311,7 @@
         setInterval(this._saveData.bind(this), 10000);
 
         this._restoreData();
+        window.addEventListener("resize", this._hideStats.bind(this))
         window.addEventListener('beforeunload', this._saveData.bind(this));
 
         // Prevent Chrome from capturing CTRL+S
@@ -539,6 +551,15 @@
 
       _flooredInk: function(ink) {
         return Math.floor(ink*100) / 100;
+      },
+
+      _hideStats: function() {
+        var title = document.querySelector('.title');
+        var stats = title.querySelector('.stats');
+        var span = title.querySelector('span'); // first span
+        var maxWidth = span.offsetWidth + stats.offsetWidth + 18 // margins + 2
+
+        stats.style.visibility = title.offsetWidth <= maxWidth ? 'hidden' : ''
       }
     });
   </script>
