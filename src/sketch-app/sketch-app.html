@@ -225,6 +225,7 @@
 
       <div class="title">
         <span>{{localize('ink', 'amount', flooredInk)}}</span>
+        <span id="alert"></span>
         <div class="stats">
           <span>{{localize('sketches', 'num', sketches)}}</span>
           <span>{{localize('artists', 'num', artists)}}</span>
@@ -557,9 +558,31 @@
         var title = document.querySelector('.title');
         var stats = title.querySelector('.stats');
         var span = title.querySelector('span'); // first span
-        var maxWidth = span.offsetWidth + stats.offsetWidth + 18 // margins + 2
+        var alertSpan = title.querySelector('span#alert');
+
+        var maxWidth = span.offsetWidth + alertSpan.offsetWidth + stats.offsetWidth + 26 // margins + 2
 
         stats.style.visibility = title.offsetWidth <= maxWidth ? 'hidden' : ''
+      },
+
+      _alert: async function(message) {
+        var title = document.querySelector('.title');
+        var span = document.querySelector('.title span');
+        var alertSpan = document.querySelector('#alert')
+
+        alertSpan.innerHTML = message
+        span.hidden = true
+        this._hideStats()
+
+        await this._sleep(3000)
+
+        alertSpan.innerHTML = ''
+        span.hidden = false
+        this._hideStats()
+      },
+
+      _sleep: function(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms))
       }
     });
   </script>
