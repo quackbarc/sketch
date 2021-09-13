@@ -288,16 +288,17 @@
 
       _undoAction: function(action) {
         var oldLength = this.lines.length;
+        var actionR = action.slice(0).reverse();
 
-        for(var i in action.slice(0).reverse()) {
-          Array.prototype.splice.apply(this.lines, [action[i].start, action[i].added.length].concat(action[i].removed));
+        for(var i in actionR) {
+          Array.prototype.splice.apply(this.lines, [actionR[i].start, actionR[i].added.length].concat(actionR[i].removed));
 
-          for(var j in action[i].added) {
-            this._setLength(this.length - action[i].added[j].length * 2 - 1);
+          for(var j in actionR[i].added) {
+            this._setLength(this.length - actionR[i].added[j].length * 2 - 1);
           }
 
-          for(var j in action[i].removed) {
-            this._setLength(this.length + action[i].removed[j].length * 2 + 1);
+          for(var j in actionR[i].removed) {
+            this._setLength(this.length + actionR[i].removed[j].length * 2 + 1);
           }
         }
 
