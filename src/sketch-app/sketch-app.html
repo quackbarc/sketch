@@ -155,7 +155,7 @@
       <paper-icon-button
           title="{{localize('reset')}}"
           icon="delete"
-          disabled="{{_resetDisabled(sketchDisabled, loading, canUndo)}}"
+          disabled="{{_resetDisabled(sketchDisabled, loading, canUndo, ink)}}"
           on-tap="_reset"></paper-icon-button>
       <paper-icon-button
           title="{{localize('undo')}}"
@@ -358,8 +358,8 @@
         return sketchDisabled || loading;
       },
 
-      _resetDisabled: function(sketchDisabled, loading, enabled) {
-        return loading || (sketchDisabled ? false : !enabled);
+      _resetDisabled: function(sketchDisabled, loading, enabled, ink) {
+        return loading || ink <= 0 || (sketchDisabled ? false : !enabled);
       },
 
       _undoDisabled: function(sketchDisabled, loading, enabled, undoDisabled) {
@@ -498,16 +498,27 @@
       _copy: function() {
         if(!this.sketchDisabled) {
           navigator.clipboard.writeText(this.$.sketch.data);
-          this._alert('Copied to clipboard')
+          this._alert('copied to clipboard')
         }
       },
 
       _paste: function() {
         navigator.clipboard.readText()
           .then(text => {
-            this.$.sketch.stop();
-            this.$.sketch.data = text;
-            this.sketchDisabled = false;
+            if(!text) {
+              this._alert('no text in clipboard')
+            };
+
+            var pattern = /^[\s0-9a-z]+$/;
+            var is_valid_data = pattern.test(text);
+            if(is_valid_data) {
+              this.$.sketch.stop();
+              this.$.sketch.data = text;
+              this.sketchDisabled = false;
+            }
+            else {
+              this._alert('invalid clipboard input')
+            };
           });
       },
 
@@ -530,6 +541,8 @@
       },
 
       _hideStats: function() {
+        // note to self: this won't work in init.
+
         var title = document.querySelector('.title');
         var stats = title.querySelector('.stats');
         var span = title.querySelector('span'); // first span
