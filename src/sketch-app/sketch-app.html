@@ -142,7 +142,7 @@
       <paper-fab
           title="{{localize('swap')}}"
           icon="send"
-          disabled="{{_swapButtonDisabled(sketchDisabled, loading, ink)}}"
+          disabled="{{_swapDisabled(sketchDisabled, loading, ink)}}"
           on-tap="_swap"></paper-fab>
     </div>
 
@@ -170,21 +170,21 @@
       <paper-icon-button
           title="{{localize('eraser')}}"
           icon="mdi:eraser-variant"
-          disabled="{{_swapDisabled(sketchDisabled, loading)}}"
+          disabled="{{_toolDisabled(sketchDisabled, loading)}}"
           active="{{_isErasing(tool)}}"
           toggles
           on-tap="_erase"></paper-icon-button>
       <paper-icon-button
           title="{{localize('move')}}"
           icon="mdi:cursor-move"
-          disabled="{{_swapDisabled(sketchDisabled, loading)}}"
+          disabled="{{_toolDisabled(sketchDisabled, loading)}}"
           active="{{_isMoving(tool)}}"
           toggles
           on-tap="_move"></paper-icon-button>
       <paper-icon-button
           title="{{localize('pen')}}"
           icon="create"
-          disabled="{{_swapDisabled(sketchDisabled, loading)}}"
+          disabled="{{_toolDisabled(sketchDisabled, loading)}}"
           active="{{_isDrawing(tool)}}"
           toggles
           on-tap="_draw"></paper-icon-button>
@@ -348,13 +348,13 @@
 
       // Private methods
 
-      _swapButtonDisabled: function(sketchDisabled, loading, ink) {
+      _swapDisabled: function(sketchDisabled, loading, ink) {
         return sketchDisabled || loading || ink <= 0;
         /* ink might be affected by the negative ink bug but i'm not
            sure if that's still around after the eraser fix */
       },
 
-      _swapDisabled: function(sketchDisabled, loading) {
+      _toolDisabled: function(sketchDisabled, loading) {
         return sketchDisabled || loading;
       },
 
