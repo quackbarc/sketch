@@ -406,8 +406,9 @@
         var settings = JSON.parse(localStorage.getItem('settings'));
 
         if(settings) {
-          this.$.sketch.timeResolution = settings.timeResolution;
-          this.$.sketch.animationSpeed = settings.animationSpeed;
+          // fallback to defaults for individual settings not stored in the local storage
+          this.$.sketch.timeResolution = settings.timeResolution || this.$.sketch.timeResolution;
+          this.$.sketch.animationSpeed = settings.animationSpeed || this.$.sketch.animationSpeed;
         }
 
         var save = JSON.parse(localStorage.getItem('save' + tabID));
