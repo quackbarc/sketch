@@ -89,9 +89,6 @@
         font-size: 20px;
       }
 
-      .settings > div {
-          max-width: 400px;
-      }
       .settings .settings-item {
           display: flex;
           margin: 0px;
@@ -137,6 +134,7 @@
               can-undo="{{canUndo}}"
               can-redo="{{canRedo}}"
               time-resolution="{{timeResolution}}"
+              animation-speed="{{animationSpeed}}"
               disabled="{{sketchDisabled}}"></sketch-canvas>
       </fit-ratio-container>
       <paper-fab
@@ -202,6 +200,14 @@
                       value="{{timeResolution}}"
                       max="50"
                       min="0"
+                      editable></paper-slider>
+              </div>
+              <div class="settings-item slider">
+                  <div>Animation speed</div>
+                  <paper-slider
+                      value="{{animationSpeed}}"
+                      max="60"
+                      min="5"
                       editable></paper-slider>
               </div>
               <div class="settings-item">
@@ -389,7 +395,8 @@
         }
 
         var settings = {
-          timeResolution: this.$.sketch.timeResolution
+          timeResolution: this.$.sketch.timeResolution,
+          animationSpeed: this.$.sketch.animationSpeed
         };
 
         localStorage.setItem('settings', JSON.stringify(settings));
@@ -400,6 +407,7 @@
 
         if(settings) {
           this.$.sketch.timeResolution = settings.timeResolution;
+          this.$.sketch.animationSpeed = settings.animationSpeed;
         }
 
         var save = JSON.parse(localStorage.getItem('save' + tabID));
