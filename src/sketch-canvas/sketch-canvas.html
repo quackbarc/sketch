@@ -223,6 +223,10 @@
         event.preventDefault();
 
         if(this.disabled) {
+          if(event.buttons > 0) {
+            this.stop()
+            this._render()
+          }
           return;
         }
 
