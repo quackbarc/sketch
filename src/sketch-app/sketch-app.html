@@ -413,7 +413,7 @@
         if(settings) {
           this.$.sketch.spacing = settings.spacing;
           this.$.sketch.smoothing = settings.smoothing;
-          this.$.sketch.animationSpeed = settings.animationSpeed;
+          this.$.sketch.animationSpeed = settings.animationSpeed || this.$.sketch.animationSpeed;
         }
 
         var save = JSON.parse(localStorage.getItem('save' + tabID));
