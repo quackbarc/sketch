@@ -88,9 +88,6 @@
         font-size: 20px;
       }
 
-      .settings > div {
-          max-width: 400px;
-      }
       .settings .settings-item {
           display: flex;
           margin: 0px;
@@ -135,6 +132,7 @@
               can-redo="{{canRedo}}"
               spacing="{{spacing}}"
               smoothing="{{smoothing}}"
+              animation-speed="{{animationSpeed}}"
               disabled="{{sketchDisabled}}"></sketch-canvas>
       </fit-ratio-container>
       <paper-fab
@@ -206,6 +204,14 @@
                 <paper-icon-button
                     icon="swap-vert"
                     on-tap="_flipY"></paper-icon-button>
+              </div>
+              <div class="settings-item slider">
+                <div>Animation speed</div>
+                <paper-slider
+                    value="{{animationSpeed}}"
+                    max="60"
+                    min="5"
+                    editable></paper-slider>
               </div>
               <paper-input
                   label="Smoothing"
@@ -394,7 +400,8 @@
 
         var settings = {
           spacing: this.$.sketch.spacing,
-          smoothing: this.$.sketch.smoothing
+          smoothing: this.$.sketch.smoothing,
+          animationSpeed: this.$.sketch.animationSpeed,
         };
 
         localStorage.setItem('settings', JSON.stringify(settings));
@@ -406,6 +413,7 @@
         if(settings) {
           this.$.sketch.spacing = settings.spacing;
           this.$.sketch.smoothing = settings.smoothing;
+          this.$.sketch.animationSpeed = settings.animationSpeed;
         }
 
         var save = JSON.parse(localStorage.getItem('save' + tabID));

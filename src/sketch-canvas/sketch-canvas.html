@@ -118,7 +118,13 @@
           notify: true,
           value: 1,
           observer: '_setStrength'
-        }
+        },
+        animationSpeed: {
+          // computed later as 10 ** (x/10 + 1)
+          type: Number,
+          notify: true,
+          value: 10
+        },
       },
 
       get data() {
@@ -395,8 +401,10 @@
 
       _animate(timestamp) {
         if(this._lastTimestamp) {
+          var _animationSpeed = Math.pow(10, (this.animationSpeed / 10) + 1);
+
           var timeDelta = timestamp - this._lastTimestamp;
-          var pointsToDraw = timeDelta / 1000 * 100;
+          var pointsToDraw = timeDelta / 1000 * _animationSpeed;
           var pointsDrawn = 0;
 
           while(pointsDrawn < pointsToDraw && this.playing) {
