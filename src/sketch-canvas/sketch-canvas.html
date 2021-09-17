@@ -249,7 +249,6 @@
             else {
               var intersection = this.$.data._intersections([[x, y], [this._lastX, this._lastY]], [[0, 0], [800, 600]]);
               this._action().start(...intersection[0]);
-              this._action().middle(...intersection[0], this._lastX, this._lastY);
               this._action().middle(x, y, ...intersection[0]);
             }
           }
@@ -314,15 +313,18 @@
       },
 
       _draw(x, y, px, py) {
-        if(x != px || y != py) {
-          this.$.data.draw(x, y);
-          var lastLine = this.$.data.lines[this.$.data.lines.length - 1];
-          this._drawLine(lastLine.slice(lastLine.length - 4, lastLine.length));
-        }
+        this.$.data.draw(x, y);
+        var lastLine = this.$.data.lines[this.$.data.lines.length - 1];
+        this._drawLine(lastLine.slice(lastLine.length - 4, lastLine.length));
       },
 
       _drawEnd(x, y) {
-        this._draw(x, y, x, y);
+        // transforms single dots into lines
+        var lastLine = this.$.data.lines[this.$.data.lines.length - 1];
+
+        if(lastLine.length == 2) {
+          this._draw(x, y, x, y);
+        }
         this.$.data.drawEnd();
       },
 
@@ -337,7 +339,6 @@
       },
 
       _eraseEnd(x, y) {
-        this._erase(x, y, x, y);
         this.$.data.eraseEnd();
       },
 
