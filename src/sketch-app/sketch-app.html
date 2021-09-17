@@ -294,6 +294,10 @@
         target="[[target]]"
         keys="ctrl+v"
         on-keys-pressed="_paste"></iron-a11y-keys>
+    <iron-a11y-keys
+        target="[[target]]"
+        keys="ctrl+alt+c"
+        on-keys-pressed="_copyImage"></iron-a11y-keys>
 
     <sketch-api
         id="api"
@@ -531,6 +535,11 @@
         this.$.api.save(this.$.sketch.canvasData);
       },
 
+      _copyImage: function() {
+        this.$.sketch.copyCanvas();
+        this._alert('copied image to clipboard')
+      },
+
       _copy: function() {
         navigator.clipboard.writeText(this.$.sketch.data);
         this._alert('copied to clipboard')
@@ -549,6 +558,7 @@
               this.$.sketch.stop();
               this.$.sketch.data = text;
               this.sketchDisabled = false;
+              this._alert('pasted from clipboard')
             }
             else {
               this._alert('invalid clipboard input')
