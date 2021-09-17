@@ -192,6 +192,14 @@
         return dataLength / this.$.data.MAX_LENGTH;
       },
 
+      copyCanvas: function() {
+        this.$.sketchCanvas.toBlob((blob) => {
+          navigator.clipboard.write([
+            new ClipboardItem({'image/png': blob})
+          ]);
+        })
+      },
+
       // Private methods
 
       _onIronResize: function(event) {
