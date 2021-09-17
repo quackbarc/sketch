@@ -247,7 +247,6 @@
             else {
               var intersection = this.$.data._intersections([[x, y], [this._lastX, this._lastY]], [[0, 0], [800, 600]]);
               this._action().start(...intersection[0]);
-              this._action().middle(...intersection[0], this._lastX, this._lastY);
               this._action().middle(x, y, ...intersection[0]);
             }
           }
@@ -365,7 +364,6 @@
       },
 
       _eraseEnd(x, y) {
-        this._erase(x, y, x, y);
         this.$.data.eraseEnd();
       },
 
