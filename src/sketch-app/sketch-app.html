@@ -443,8 +443,9 @@
       // Event handlers for buttons
 
       _swap: function() {
-        if(!this.sketchDisabled) {
-          this.$.api.swap(this.$.sketch.data);
+        var swapDisabled = this._swapDisabled(this.sketchDisabled, this.loading);
+        if(!swapDisabled) {
+          this.$.api.swap(this.$.sketch.$.data.alteredDots());
           this.sketchDisabled = true;
           this.undoDisabled = true;
         }
