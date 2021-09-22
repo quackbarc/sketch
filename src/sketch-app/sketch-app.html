@@ -110,7 +110,7 @@
           flex-grow: 1;
       }
 
-      /* for hidestats */
+      /* for hideStats */
 
       .title {
           display: flex;
@@ -133,6 +133,7 @@
               tool="{{tool}}"
               can-undo="{{canUndo}}"
               can-redo="{{canRedo}}"
+              etch-mode="{{etchMode}}"
               time-resolution="{{timeResolution}}"
               animation-speed="{{animationSpeed}}"
               disabled="{{sketchDisabled}}"></sketch-canvas>
@@ -140,6 +141,7 @@
       <paper-fab
           title="{{localize('swap')}}"
           icon="send"
+          hidden="{{hideSwap}}"
           disabled="{{_swapDisabled(sketchDisabled, loading, ink)}}"
           on-tap="_swap"></paper-fab>
     </div>
@@ -211,10 +213,24 @@
                       editable></paper-slider>
               </div>
               <div class="settings-item">
+                  <div>Hide swap button</div>
+                  <paper-toggle-button
+                      checked="{{hideSwap}}"
+                      noink></paper-toggle-button>
+              </div>
+              <div class="settings-item">
+                  <div>Automatically hide stats on resize</div>
+                  <paper-toggle-button
+                      checked="{{hideStats}}"
+                      on-tap="_hideStats"
+                      noink></paper-toggle-button>
+              </div>
+              <hr>
+              <div class="settings-item">
                   <div>Etch-a-Sketch mode (WIP)</div>
                   <paper-toggle-button
-                      noink
-                      on-tap="_toggleEtch"></paper-toggle-button>
+                      checked="{{etchMode}}"
+                      noink></paper-toggle-button>
               </div>
           </div>
       </paper-menu-button>
@@ -349,6 +365,15 @@
           computed: "_rememberTab(sketchDisabled, ink)"
         },
 
+        hideStats: {
+          type: Boolean,
+          value: true
+        },
+        hideSwap: {
+          type: Boolean,
+          value: false
+        },
+
         flooredInk: {
           type: Number,
           readOnly: true,
@@ -400,7 +425,8 @@
 
         var settings = {
           timeResolution: this.$.sketch.timeResolution,
-          animationSpeed: this.$.sketch.animationSpeed
+          animationSpeed: this.$.sketch.animationSpeed,
+          hideStats: this.hideStats,
         };
 
         localStorage.setItem('settings', JSON.stringify(settings));
@@ -413,6 +439,7 @@
           // fallback to defaults for individual settings not stored in the local storage
           this.$.sketch.timeResolution = settings.timeResolution || this.$.sketch.timeResolution;
           this.$.sketch.animationSpeed = settings.animationSpeed || this.$.sketch.animationSpeed;
+          this.hideStats = settings.hideStats || this.hideStats;
         }
 
         var save = JSON.parse(localStorage.getItem('save' + tabID));
@@ -504,10 +531,6 @@
         this.$.api.save(this.$.sketch.canvasData);
       },
 
-      _toggleEtch: function() {
-        this.$.sketch.etchMode = !this.$.sketch.etchMode;
-      },
-
       _copyImage: function() {
         this.$.sketch.copyCanvas();
         this._alert('copied image to clipboard')
@@ -569,7 +592,7 @@
 
         var maxWidth = span.offsetWidth + alertSpan.offsetWidth + stats.offsetWidth + 26 // margins + 2
 
-        stats.style.visibility = title.offsetWidth <= maxWidth ? 'hidden' : ''
+        stats.style.visibility = (this.hideStats ? (title.offsetWidth <= maxWidth ? 'hidden' : '') : '')
       },
 
       _alert: async function(message) {
