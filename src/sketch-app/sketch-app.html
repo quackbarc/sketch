@@ -70,6 +70,10 @@
         color: #3c0101;
       }
 
+      paper-menu-button {
+        padding: 0;
+      }
+
       .settings {
         font-family: 'Roboto', 'Noto', sans-serif;
         font-size: 16px;
@@ -84,23 +88,23 @@
         margin: 8px;
       }
 
-      paper-menu-button {
-        padding: 0;
-      }
-
-      paper-toolbar span {
-        user-select: none;  /* prevents selection when pressing down with a pen */
-        font-size: 20px;
+      .settings h2 {
+          text-transform: uppercase;
+          color: #aaa;
+          font-size: 14px;
+          letter-spacing: 2px;
+          padding: 6px 15px !important;
+          margin: 0px;
       }
 
       .settings .settings-item {
           display: flex;
           margin: 0px;
-          padding: 0px 10px;
+          padding: 2px 10px;
       }
       .settings .settings-item > div {
           display: flex;
-          flex: 1;
+          flex-grow: 1;
           align-items: center;
       }
       .settings .settings-item > paper-slider {
@@ -228,6 +232,9 @@
                     icon="swap-vert"
                     on-tap="_flipY"></paper-icon-button>
               </div>
+
+              <hr />
+              <h2>General</h2>
               <div class="settings-item slider">
                 <div>Animation speed</div>
                 <paper-slider
@@ -236,6 +243,9 @@
                     min="5"
                     editable></paper-slider>
               </div>
+
+              <hr />
+              <h2>Line</h2>
               <paper-input
                   label="Smoothing"
                   type="number"
