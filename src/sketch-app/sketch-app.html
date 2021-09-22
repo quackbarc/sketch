@@ -465,7 +465,7 @@
       // Event handlers for buttons
 
       _swap: function() {
-        if(!this.sketchDisabled) {
+        if(!this._swapDisabled) {
           this.$.api.swap(this.$.sketch.data);
           this.sketchDisabled = true;
           this.undoDisabled = true;
