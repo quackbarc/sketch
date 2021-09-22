@@ -1,18 +1,19 @@
 # \<sketch\>
 
-A simple polymer client for garyc.me/sketch
+A fork of dagwaging's Polymer client for garyc.me/sketch.
 
-## Install the Polymer-CLI
+## Serving the application
 
-First, make sure you have the [Polymer CLI](https://www.npmjs.com/package/polymer-cli) installed. Then run `polymer serve` to serve your application locally.
+First, make sure you have the [Polymer CLI](https://www.npmjs.com/package/polymer-cli) installed.
+Then run `polymer serve` to serve your application locally.
 
-## Viewing Your Application
+### Viewing Your Application
 
 ```
 $ polymer serve
 ```
 
-## Building Your Application
+### Building Your Application
 
 ```
 $ polymer build
@@ -29,10 +30,11 @@ from:
 $ polymer serve build/bundled
 ```
 
-## Running Tests
+### Running Tests
 
 ```
 $ polymer test
 ```
 
-Your application is already set up to be tested via [web-component-tester](https://github.com/Polymer/web-component-tester). Run `polymer test` to run your application's test suite locally.
+Your application is already set up to be tested via [web-component-tester](https://github.com/Polymer/web-component-tester).
+Run `polymer test` to run your application's test suite locally.
