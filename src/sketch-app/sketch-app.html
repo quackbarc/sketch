@@ -37,6 +37,7 @@
 
       .title span {
         margin: 0px 8px;
+        font-size: 20px;
         line-height: normal;
       }
 
@@ -68,6 +69,10 @@
         color: var(--light-theme-disabled-color);
       }
 
+      paper-menu-button {
+        padding: 0;
+      }
+
       .settings {
         font-family: 'Roboto', 'Noto', sans-serif;
         font-size: 16px;
@@ -81,21 +86,23 @@
         margin: 8px;
       }
 
-      paper-menu-button {
-        padding: 0;
-      }
-
-      paper-toolbar span {
-        font-size: 20px;
+      .settings h2 {
+          text-transform: uppercase;
+          color: #aaa;
+          font-size: 14px;
+          letter-spacing: 2px;
+          padding: 6px 15px !important;
+          margin: 0px;
       }
 
       .settings .settings-item {
           display: flex;
           margin: 0px;
-          padding: 0px 10px;
+          padding: 2px 10px;
       }
       .settings .settings-item > div {
           display: flex;
+          flex-grow: 1;
           align-items: center;
       }
       .settings .settings-item.slider > div {
@@ -107,7 +114,6 @@
       }
       .settings .settings-item > paper-toggle-button {
           justify-content: flex-end;
-          flex-grow: 1;
       }
 
       /* for hideStats */
@@ -196,6 +202,7 @@
               title="{{localize('settings')}}"
               icon="settings"></paper-icon-button>
           <div class="dropdown-content settings">
+              <h2>General</h2>
               <div class="settings-item slider">
                   <div>Sample Rate (ms)</div>
                   <paper-slider
@@ -226,6 +233,7 @@
                       noink></paper-toggle-button>
               </div>
               <hr>
+              <h2>Etch-a-Sketch</h2>
               <div class="settings-item">
                   <div>Etch-a-Sketch mode (WIP)</div>
                   <paper-toggle-button
