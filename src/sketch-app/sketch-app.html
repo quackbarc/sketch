@@ -137,7 +137,7 @@
           color: #aaa;
           font-size: 14px;
           letter-spacing: 2px;
-          padding: 6px 15px !important;
+          padding: 6px 15px;
           margin: 0px;
       }
 
@@ -535,7 +535,8 @@
       // Event handlers for buttons
 
       _swap: function() {
-        if(!this._swapDisabled) {
+        var swapDisabled = this._swapDisabled(this.sketchDisabled, this.loading, this.ink)
+        if(!swapDisabled) {
           this.$.api.swap(this.$.sketch.data);
           this.sketchDisabled = true;
           this.undoDisabled = true;
