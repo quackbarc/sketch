@@ -1,0 +1,89 @@
+
+<script>
+  window.Sketch = window.Sketch || {}
+  Sketch.EtchBehavior = {
+    properties: {
+      etchMode: {
+        type: Boolean,
+        notify: true,
+        value: false
+      },
+
+      lineStep: {
+        type: Number,
+        notify: true,
+        value: 5
+      },
+
+      cursor: {
+        type: Object,
+        value: {x: 400, y: 300}
+      }
+    },
+
+    // private properties
+
+    _deltaX: 0,
+    _deltaY: 0,
+
+    // public methods
+
+    etchEvent: function(event) {
+      // main parser of arrow events
+
+      event.preventDefault();
+      var key = event.key.substr(5).toLowerCase();
+
+      if(event.type == "keydown") {
+        if(this._deltaX == 0 && this._deltaY == 0) {
+          this._etchDrawStart();
+        }
+
+        switch(key) {
+          case 'left':  this._deltaX = -1; break;
+          case 'right': this._deltaX = 1;  break;
+          case 'up':    this._deltaY = -1; break;
+          case 'down':  this._deltaY = 1;
+        };
+        this._etchDraw(this._deltaX, this._deltaY)
+      }
+      else if(event.type == "keyup") {
+        switch(key) {
+          case 'left':  this._deltaX = 0; break;
+          case 'right': this._deltaX = 0; break;
+          case 'up':    this._deltaY = 0; break;
+          case 'down':  this._deltaY = 0;
+        };
+
+        if(this._deltaX == 0 && this._deltaY == 0) {
+          this._etchDrawEnd();
+        }
+      }
+    },
+
+    // private methods
+
+    _etchDrawStart: function() {
+      this._drawStart(this.cursor.x, this.cursor.y);
+      console.log(`etch: started drawing line`)
+    },
+
+    _etchDraw: function(dx, dy) {
+      var lastX = x = this.cursor.x;
+      var lastY = y = this.cursor.y;
+
+      x += this.lineStep * dx;
+      y += this.lineStep * dy;
+      this.cursor.x = (x < 0 ? 0 : (x > 800 ? 800 : x));
+      this.cursor.y = (y < 0 ? 0 : (y > 600 ? 600 : y));
+      this._draw(this.cursor.x, this.cursor.y, lastX, lastY);
+
+      console.log(`etch: draw @ [${this.cursor.x}, ${this.cursor.y}] [${lastX}, ${lastY}] to []`)
+    },
+
+    _etchDrawEnd: function() {
+      this._drawEnd(this.cursor.x, this.cursor.y);
+      console.log(`etch: stopped drawing line`)
+    }
+  }
+</script>

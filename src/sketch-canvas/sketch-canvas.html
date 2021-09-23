@@ -2,6 +2,7 @@
 <link rel="import" href="../../bower_components/paper-styles/shadow.html">
 <link rel="import" href="../../bower_components/iron-resizable-behavior/iron-resizable-behavior.html">
 <link rel="import" href="../sketch-data/sketch-data.html">
+<link rel="import" href="../sketch-etch/sketch-etch.html">
 
 <dom-module id="sketch-canvas">
   <template>
@@ -62,7 +63,8 @@
       },
 
       behaviors: [
-        Polymer.IronResizableBehavior
+        Polymer.IronResizableBehavior,
+        Sketch.EtchBehavior
       ],
 
       listeners: {
@@ -77,11 +79,6 @@
           notify: true,
           readOnly: true,
           computed: 'computeInk(dataLength)'
-        },
-        etchMode: {
-          type: Boolean,
-          notify: true,
-          value: false
         },
         playing: {
           type: Boolean,
@@ -113,12 +110,14 @@
           notify: true,
           computed: '_canEdit(dataCanRedo, disabled)'
         },
+
+        // settings
+
         timeResolution: {
           type: Number,
           notify: true,
           value: 0
         },
-
         animationSpeed: {
           // computed later as 10 ** (x/10 + 1)
           type: Number,

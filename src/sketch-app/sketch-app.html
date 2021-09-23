@@ -1,6 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/app-localize-behavior/app-localize-behavior.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/iron-a11y-keys-behavior/iron-a11y-keys-behavior.html">
 <link rel="import" href="../../bower_components/iron-a11y-keys/iron-a11y-keys.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/paper-toggle-button/paper-toggle-button.html">
@@ -16,6 +17,51 @@
 <link rel="import" href="../sketch-canvas/sketch-canvas.html">
 <link rel="import" href="../sketch-api/sketch-api.html">
 <link rel="import" href="../sketch-tabs/sketch-tabs.html">
+
+<dom-module id="arrow-events">
+  <script>
+    // custom key event module for keyup events for etch mode
+    // since iron-a11y-keys only fires keypress events
+
+    Polymer({
+      is: 'arrow-events',
+
+      behaviors: [
+        Polymer.IronA11yKeysBehavior
+      ],
+
+      properties: {
+        target: {
+          type: Object,
+          observer: '_targetChanged'
+        }
+      },
+
+      keyBindings: {
+        'up:keydown down:keydown left:keydown right:keydown': '_fire',
+        'up:keyup down:keyup left:keyup right:keyup': '_fire',
+      },
+
+      // stolen from iron-a11y-keys
+
+      attached: function() {
+        if (!this.target) {
+          this.target = this.parentNode;
+        }
+      },
+
+      _targetChanged: function(target) {
+        console.log(`last target`, this.keyEventTarget)
+        console.log(`new target`, target)
+        this.keyEventTarget = target;
+      },
+
+      _fire: function(event) {
+        this.fire('arrow-event', event.detail, {});
+      }
+    });
+  </script>
+</dom-module>
 
 <dom-module id="sketch-app">
   <template>
@@ -140,6 +186,7 @@
               can-undo="{{canUndo}}"
               can-redo="{{canRedo}}"
               etch-mode="{{etchMode}}"
+              line-step="{{lineStep}}"
               time-resolution="{{timeResolution}}"
               animation-speed="{{animationSpeed}}"
               disabled="{{sketchDisabled}}"></sketch-canvas>
@@ -235,10 +282,19 @@
               <hr>
               <h2>Etch-a-Sketch</h2>
               <div class="settings-item">
-                  <div>Etch-a-Sketch mode (WIP)</div>
+                  <div>Etch-a-Sketch mode</div>
                   <paper-toggle-button
                       checked="{{etchMode}}"
                       noink></paper-toggle-button>
+              </div>
+              <div class="settings-item slider">
+                  <div>Line step (px)</div>
+                  <paper-slider
+                      value="{{lineStep}}"
+                      max="20"
+                      min="1"
+                      disabled="{{!etchMode}}"
+                      editable></paper-slider>
               </div>
           </div>
       </paper-menu-button>
@@ -313,6 +369,10 @@
         keys="ctrl+alt+c"
         on-keys-pressed="_copyImage"></iron-a11y-keys>
 
+    <arrow-events
+        target="[[target]]"
+        on-arrow-event="_arrowEvent"></arrow-events>
+
     <sketch-api
         id="api"
         sketches="{{sketches}}"
@@ -335,8 +395,10 @@
       ready: function() {
         setInterval(this._saveData.bind(this), 10000);
 
+        // i would've added _hideStats() here too but text wouldn't have loaded yet
+        window.addEventListener("resize", this._hideStats.bind(this));
+
         this._restoreData();
-        window.addEventListener("resize", this._hideStats.bind(this))
         window.addEventListener('beforeunload', this._saveData.bind(this));
 
         // Prevent Chrome from capturing CTRL+S
@@ -349,7 +411,7 @@
           return true;
         });
       },
-  
+
       attached: function() {
         this.loadResources(this.resolveUrl('locales.json'));
       },
@@ -467,7 +529,7 @@
 
       _onGet: function(data) {
         this.$.sketch.data = data.detail;
-        this.$.sketch.play();
+        this.$.sketch.play(); // race condition?
       },
 
       // Event handlers for buttons
@@ -621,6 +683,12 @@
 
       _sleep: function(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
+      },
+
+      _arrowEvent: function(event) {
+        if(this.etchMode && !this.sketchDisabled) {
+          this.$.sketch.etchEvent(event.detail.keyboardEvent);
+        };
       }
     });
   </script>
