@@ -82,6 +82,7 @@
       .title span {
         margin: 0px 8px;
         font-size: 20px;
+        font-family: "Jost", "Roboto", "Noto", sans-serif;
         line-height: normal;
       }
 
@@ -109,8 +110,9 @@
         top: 0;
       }
 
-      paper-icon-button[toggles]:not([active]) {
-        color: var(--light-theme-disabled-color);
+      paper-icon-button[toggles]:not([active]),
+      paper-icon-button[disabled] {
+        color: #3c0101;
       }
 
       paper-menu-button {
