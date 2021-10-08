@@ -138,8 +138,8 @@
       },
 
       drawEnd: function() {
-        let start = this.lines.length - 1
-        let addedLine = this.lines[start]
+        let start = this.lines.length - 1;
+        let addedLine = this.lines[start];
 
         if(addedLine.length > 0) {
           var action = [{
@@ -151,7 +151,7 @@
         }
         else {
           // empty lines/single-clicks won't appear on the history
-          this.lines.pop(start)
+          this.lines.pop(start);
         }
       },
 
@@ -233,7 +233,7 @@
             line[j] = Math.abs(line[j] - 800 * xCoordFlip);
             line[j+1] = Math.abs(line[j+1] - 600 * yCoordFlip);
           }
-        }
+        };
 
         var action = [{
           start: 0,

@@ -195,9 +195,7 @@
 
       copyCanvas: function() {
         this.$.sketchCanvas.toBlob((blob) => {
-          navigator.clipboard.write([
-            new ClipboardItem({'image/png': blob})
-          ]);
+          navigator.clipboard.write([new ClipboardItem({'image/png': blob})]);
         })
       },
 
@@ -232,8 +230,8 @@
 
         if(this.disabled) {
           if(event.buttons > 0) {
-            this.stop()
-            this._render()
+            this.stop();
+            this._render();
           }
           return;
         }

@@ -542,31 +542,31 @@
 
       _copyImage: function() {
         this.$.sketch.copyCanvas();
-        this._alert('copied image to clipboard')
+        this._alert('copied image to clipboard');
       },
 
       _copy: function() {
         navigator.clipboard.writeText(this.$.sketch.data);
-        this._alert('copied to clipboard')
+        this._alert('copied to clipboard');
       },
 
       _paste: function() {
         navigator.clipboard.readText()
           .then(text => {
             if(!text) {
-              this._alert('no text in clipboard')
+              this._alert('no text in clipboard');
             };
 
             var pattern = /^[\s0-9a-z]+$/;
-            var is_valid_data = pattern.test(text);
-            if(is_valid_data) {
+            var isValidData = pattern.test(text);
+            if(isValidData) {
               this.$.sketch.stop();
               this.$.sketch.data = text;
               this.sketchDisabled = false;
-              this._alert('pasted from clipboard')
+              this._alert('pasted from clipboard');
             }
             else {
-              this._alert('invalid clipboard input')
+              this._alert('invalid clipboard input');
             };
           });
       },
@@ -603,17 +603,17 @@
       _alert: async function(message) {
         var title = document.querySelector('.title');
         var span = document.querySelector('.title span');
-        var alertSpan = document.querySelector('#alert')
+        var alertSpan = document.querySelector('#alert');
 
-        alertSpan.innerHTML = message
-        span.hidden = true
-        this._hideStats()
+        alertSpan.innerHTML = message;
+        span.hidden = true;
+        this._hideStats();
 
-        await this._sleep(3000)
+        await this._sleep(3000);
 
-        alertSpan.innerHTML = ''
-        span.hidden = false
-        this._hideStats()
+        alertSpan.innerHTML = '';
+        span.hidden = false;
+        this._hideStats();
       },
 
       _sleep: function(ms) {
