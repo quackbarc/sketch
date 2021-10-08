@@ -138,8 +138,8 @@
       },
 
       drawEnd: function() {
-        let start = this.lines.length - 1
-        let addedLine = this.lines[start]
+        let start = this.lines.length - 1;
+        let addedLine = this.lines[start];
 
         if(addedLine.length > 0) {
           var action = [{
@@ -151,7 +151,7 @@
         }
         else {
           // empty lines/single-clicks won't appear on the history
-          this.lines.pop(start)
+          this.lines.pop(start);
         }
       },
 
@@ -226,18 +226,18 @@
       },
 
       alterDots: function() {
-        var oldLines = this.lines.slice()
+        var oldLines = this.lines.slice();
         for(var i = 0; i < this.lines.length; i++) {
-          var line = this.lines[i]
+          var line = this.lines[i];
           if(line.length == 4 && line[0] == line[2] && line[1] == line[3]) {
-            var [x, y] = line.slice(0, 2)
-            this.lines[i] = [x, y, x + 3, y]
+            var [x, y] = line.slice(0, 2);
+            this.lines[i] = [x, y, x + 3, y];
           }
-        }
+        };
 
-        var data = this.data
-        this._setLines(oldLines)
-        return data
+        var data = this.data;
+        this._setLines(oldLines);
+        return data;
       },
 
       // Private functions
