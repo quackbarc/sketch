@@ -126,7 +126,7 @@
         color: #000;
         padding: 8px;
         position: relative;
-        width: 384px;
+        width: 390px;
         max-height: 300px;
       }
 
@@ -163,6 +163,14 @@
       .settings .settings-item > paper-toggle-button {
           justify-content: flex-end;
           padding-left: 20px;
+      }
+
+      .settings .settings-double {
+          margin: 0;
+          display: flex;
+      }
+      .settings .settings-double .settings-item:nth-Child(1) {
+          padding-right: 0px;
       }
 
       /* for hideStats */
@@ -265,21 +273,23 @@
               <!-- don't really know where to put this atm -->
               <h2>Screentoning</h2>
 
-              <div class="settings-item slider">
-                  <div>Spacing</div>
-                  <paper-slider
-                      value="{{toneSpacing}}"
-                      max="40"
-                      min="2"
-                      editable></paper-slider>
-              <div class="settings-item slider">
-                  <div>Radius</div>
-                  <paper-slider
-                      value="{{toneRadius}}"
-                      max="20"
-                      min="4"
-                      editable></paper-slider>
-              </div>
+              <div class="settings-double">
+                <div class="settings-item slider">
+                    <div>Spacing</div>
+                    <paper-slider
+                        value="{{toneSpacing}}"
+                        max="40"
+                        min="2"
+                        editable></paper-slider>
+                </div>
+                <div class="settings-item slider">
+                    <div>Radius</div>
+                    <paper-slider
+                        value="{{toneRadius}}"
+                        max="20"
+                        min="4"
+                        editable></paper-slider>
+                </div>
               </div>
 
               <hr>
