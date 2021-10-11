@@ -168,6 +168,8 @@
       },
 
       erase: function(x, y, px, py, radius) {
+        var erased = false;
+
         for(var i = 0; i < this.lines.length; i += 1) {
           var line = this.lines[i];
 
@@ -196,10 +198,13 @@
 
               this._doAction([action]);
               this._action.push(action);
+              erased = true
               break;
             }
           }
         }
+
+        return erased
       },
 
       eraseEnd: function() {
