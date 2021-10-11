@@ -10,6 +10,7 @@
 <link rel="import" href="../../bower_components/paper-slider/paper-slider.html">
 <link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/editor-icons.html">
 <link rel="import" href="../mdi/mdi.html">
 <link rel="import" href="../fit-ratio-container/fit-ratio-container.html">
 <link rel="import" href="../sketch-canvas/sketch-canvas.html">
@@ -75,7 +76,7 @@
         color: #000;
         padding: 8px;
         position: relative;
-        width: 384px;
+        width: 390px;
         max-height: 300px;
       }
 
@@ -110,8 +111,15 @@
           justify-content: flex-end;
           padding-left: 20px;
       }
+      .settings .settings-double {
+          margin: 0;
+          display: flex;
+      }
+      .settings .settings-double .settings-item:nth-Child(1) {
+          padding-right: 0px;
+      }
 
-      /* for hidestats */
+      /* for hideStats */
 
       .title {
           display: flex;
@@ -136,6 +144,8 @@
               can-redo="{{canRedo}}"
               spacing="{{spacing}}"
               smoothing="{{smoothing}}"
+              tone-radius="{{toneRadius}}"
+              tone-spacing="{{toneSpacing}}"
               animation-speed="{{animationSpeed}}"
               disabled="{{sketchDisabled}}"></sketch-canvas>
       </fit-ratio-container>
@@ -193,6 +203,14 @@
           icon="timeline"
           toggles
           on-tap="_toggleLineMode"></paper-icon-button>
+      <paper-icon-button
+          title="{{localize('screentone')}}"
+          icon="editor:border-clear"
+          disabled="{{_toolDisabled(sketchDisabled, loading)}}"
+          active="{{_isToning(tool)}}"
+          toggles
+          on-tap="_screentone"></paper-icon-button>
+
       <paper-menu-button
           vertical-align="bottom"
           vertical-offset="60">
@@ -230,6 +248,27 @@
                   step="0.5"
                   min="0"
                   always-float-label></paper-input>
+              <!-- don't really know where to put this atm -->
+              <h2>Screentoning</h2>
+
+              <div class="settings-double">
+                <div class="settings-item slider">
+                    <div>Spacing</div>
+                    <paper-slider
+                        value="{{toneSpacing}}"
+                        max="40"
+                        min="2"
+                        editable></paper-slider>
+                </div>
+                <div class="settings-item slider">
+                    <div>Radius</div>
+                    <paper-slider
+                        value="{{toneRadius}}"
+                        max="20"
+                        min="4"
+                        editable></paper-slider>
+                </div>
+              </div>
           </div>
       </paper-menu-button>
 
@@ -274,6 +313,10 @@
         target="[[target]]"
         keys="delete"
         on-keys-pressed="_reset"></iron-a11y-keys>
+    <iron-a11y-keys
+        target="[[target]]"
+        keys="s"
+        on-keys-pressed="_screentone"></iron-a11y-keys>
     <iron-a11y-keys
         target="[[target]]"
         keys="e"
@@ -373,6 +416,10 @@
       // Private methods
 
       _swapDisabled: function(sketchDisabled, loading) {
+        return sketchDisabled || loading;
+      },
+
+      _toolDisabled: function(sketchDisabled, loading) {
         return sketchDisabled || loading;
       },
 
@@ -509,6 +556,10 @@
         this.$.sketch._render();
       },
 
+      _screentone: function() {
+        this.$.sketch.desiredTool = 'screentone';
+      },
+
       _reset: function() {
         this.$.sketch.stop();
 
@@ -581,6 +632,10 @@
 
       _isMoving: function(tool) {
         return tool === 'move';
+      },
+
+      _isToning: function(tool) {
+        return tool === 'screentone';
       },
 
       // display stuff
