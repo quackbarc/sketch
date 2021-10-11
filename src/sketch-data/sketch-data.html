@@ -174,7 +174,7 @@
           var line = this.lines[i];
 
           for(var j = 0; j < line.length; j += 2) {
-            if(Math.pow(x - line[j], 2) + Math.pow(y - line[j + 1], 2) < Math.pow(radius, 2)) {
+            if(this._insideCircle(line[j], line[j+1], x, y, radius)) {
               var first = line.slice(0, j);
               var second = line.slice(j + 2);
 
@@ -264,7 +264,7 @@
         for (var i = circX - maxRadius; i <= circX + maxRadius; i += spacing) {
             for (var j = circY - maxRadius; j <= circY + maxRadius; j += spacing) {
                 if (this._within([i, j], rect)
-                    && this._insideCircle(x, y, radius, i, j)
+                    && this._insideCircle(x, y, i, j, radius)
                     && !this.tonePoints.includes(i + ":" + j)) {
                       var points = [i, j, i, j];
                       linePoints.push(points);
@@ -449,7 +449,7 @@
         return point[0] >= rect[0][0] && point[0] <= rect[1][0] && point[1] >= rect[0][1] && point[1] <= rect[1][1];
       },
 
-      _insideCircle: function(origin_x, origin_y, r, x, y) {
+      _insideCircle: function(origin_x, origin_y, x, y, r) {
         return ((x - origin_x) * (x - origin_x) + (y - origin_y) * (y - origin_y) <= r * r)
       },
     });
