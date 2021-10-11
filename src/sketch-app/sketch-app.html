@@ -531,9 +531,20 @@
       _paste: function() {
         navigator.clipboard.readText()
           .then(text => {
-            this.$.sketch.stop();
-            this.$.sketch.data = text;
-            this.sketchDisabled = false;
+            if(!text) {
+              this._alert('no text in clipboard')
+            };
+
+            var pattern = /^[\s0-9a-z]+$/;
+            var is_valid_data = pattern.test(text);
+            if(is_valid_data) {
+              this.$.sketch.stop();
+              this.$.sketch.data = text;
+              this.sketchDisabled = false;
+            }
+            else {
+              this._alert('invalid clipboard input')
+            };
           });
       },
 
