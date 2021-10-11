@@ -263,16 +263,17 @@
         var circY = y - (y % spacing);
         for (var i = circX - maxRadius; i <= circX + maxRadius; i += spacing) {
             for (var j = circY - maxRadius; j <= circY + maxRadius; j += spacing) {
-                if (!this.tonePoints.includes(i + ":" + j)
+                if (this._within([i, j], rect)
                     && this._insideCircle(x, y, radius, i, j)
-                    && this._within([i, j], rect)) {
+                    && !this.tonePoints.includes(i + ":" + j)) {
                       var points = [i, j, i, j];
                       linePoints.push(points);
-                      action.added.push(points);
                       action.addedPoints.push(i + ":" + j);
                 }
             }
         }
+
+        action.added.push(...linePoints);
 
         if(action.added.length > 0) {
           this._doAction([action]);
