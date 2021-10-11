@@ -324,6 +324,22 @@
         }
       },
 
+      alteredDots: function() {
+        var oldLines = this.lines.slice();
+        for(var i = 0; i < this.lines.length; i++) {
+          var line = this.lines[i];
+          if(line.length == 4 && line[0] == line[2] && line[1] == line[3]) {
+            var x = line[0];
+            var y = line[1];
+            this.lines[i] = [x, y, x + 3, y];
+          }
+        };
+
+        var data = this.data;
+        this._setLines(oldLines);
+        return data;
+      },
+
       // Private functions
 
       _onUndo: function(event) {
