@@ -138,6 +138,11 @@
           type: Number,
           notify: true,
           value: 8
+        },
+        eraserRadius: {
+          type: Number,
+          notify: true,
+          value: 3
         }
       },
 
@@ -385,7 +390,7 @@
       },
 
       _erase(x, y, px, py) {
-        var erased = this.$.data.erase(x, y, px, py, 3);
+        var erased = this.$.data.erase(x, y, px, py, this.eraserRadius);
         if(erased) {
           this._render();
         }
