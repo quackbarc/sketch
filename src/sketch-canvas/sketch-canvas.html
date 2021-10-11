@@ -385,8 +385,10 @@
       },
 
       _erase(x, y, px, py) {
-        this.$.data.erase(x, y, px, py, 3);
-        this._render();
+        var erased = this.$.data.erase(x, y, px, py, 3);
+        if(erased) {
+          this._render();
+        }
       },
 
       _eraseEnd(x, y) {
