@@ -200,6 +200,7 @@
               line-step="{{lineStep}}"
               tone-radius="{{toneRadius}}"
               tone-spacing="{{toneSpacing}}"
+              eraser-radius="{{eraserRadius}}"
               time-resolution="{{timeResolution}}"
               animation-speed="{{animationSpeed}}"
               disabled="{{sketchDisabled}}"></sketch-canvas>
@@ -290,6 +291,17 @@
                         min="4"
                         editable></paper-slider>
                 </div>
+              </div>
+
+              <hr>
+              <h2>Eraser</h2>
+              <div class="settings-item slider">
+                  <div>Radius</div>
+                  <paper-slider
+                      value="{{eraserRadius}}"
+                      max="50"
+                      min="1"
+                      editable></paper-slider>
               </div>
 
               <hr>
