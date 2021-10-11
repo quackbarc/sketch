@@ -24,6 +24,10 @@
           notify: true,
           readOnly: true
         },
+        tonePoints: {
+          type: Array,
+          value: []
+        },
         length: {
           type: Number,
           value: 0,
@@ -108,10 +112,14 @@
           this.lines[i] = line;
         }
 
+        var oldPoints = this.tonePoints.slice();
+        this.tonePoints = [];
+
         var action = [{
           start: 0,
           added: this.lines.slice(),
-          removed: oldLines
+          removed: oldLines,
+          removedPoints: oldPoints
         }];
 
         this.pushHistory(action);
@@ -182,6 +190,10 @@
                 action.added.push(second);
               }
 
+              if(this.tonePoints.includes(line[j] + ":" + line[j + 1])) {
+                action.removedPoints = [line[j] + ":" + line[j + 1]];
+              }
+
               this._doAction([action]);
               this._action.push(action);
               break;
@@ -225,12 +237,59 @@
         }
       },
 
+      toneStart: function() {
+        this._action = [];
+      },
+
+      tone: function(x, y, px, py, radius, spacing) {
+        const rect = [[0, 0], [800, 600]];
+        const maxRadius = 20;
+        var linePoints = [];
+
+        var action = {
+          start: this.lines.length,
+          added: [],
+          removed: [],
+          addedPoints: []
+        }
+
+        // credits to meru for the original algorithm
+        var circX = x - (x % spacing);
+        var circY = y - (y % spacing);
+        for (var i = circX - maxRadius; i <= circX + maxRadius; i += spacing) {
+            for (var j = circY - maxRadius; j <= circY + maxRadius; j += spacing) {
+                if (!this.tonePoints.includes(i + ":" + j)
+                    && this._insideCircle(x, y, radius, i, j)
+                    && this._within([i, j], rect)) {
+                      var points = [i, j, i, j];
+                      linePoints.push(points);
+                      action.added.push(points);
+                      action.addedPoints.push(i + ":" + j);
+                }
+            }
+        }
+
+        if(action.added.length > 0) {
+          this._doAction([action]);
+          this._action.push(action);
+        }
+
+        return linePoints;
+      },
+
+      toneEnd: function() {
+        if(this._action.length > 0) {
+          this.pushHistory(this._action);
+        }
+      },
+
       alterDots: function() {
         var oldLines = this.lines.slice();
         for(var i = 0; i < this.lines.length; i++) {
           var line = this.lines[i];
           if(line.length == 4 && line[0] == line[2] && line[1] == line[3]) {
-            var [x, y] = line.slice(0, 2);
+            var x = line[0];
+            var y = line[1];
             this.lines[i] = [x, y, x + 3, y];
           }
         };
@@ -263,6 +322,20 @@
           for(var j in action[i].removed) {
             this._setLength(this.length - action[i].removed[j].length * 2 - 1);
           }
+
+          if(action[i].addedPoints) {
+            for(var j in action[i].addedPoints) {
+              var point = action[i].addedPoints[j];
+              this.tonePoints.push(point);
+            }
+          }
+
+          if(action[i].removedPoints) {
+            for(var j in action[i].removedPoints) {
+              var point = action[i].removedPoints[j];
+              this.tonePoints.splice(this.tonePoints.indexOf(point), 1);
+            }
+          }
         }
 
         if(oldLength == 0 && this.lines.length > 0) {
@@ -287,6 +360,20 @@
 
           for(var j in actionR[i].removed) {
             this._setLength(this.length + actionR[i].removed[j].length * 2 + 1);
+          }
+
+          if(actionR[i].addedPoints) {
+            for(var j in actionR[i].addedPoints) {
+              var point = actionR[i].addedPoints[j];
+              this.tonePoints.splice(this.tonePoints.indexOf(point), 1);
+            }
+          }
+
+          if(actionR[i].removedPoints) {
+            for(var j in actionR[i].removedPoints) {
+              var point = actionR[i].removedPoints[j];
+              this.tonePoints.push(point);
+            }
           }
         }
 
@@ -354,7 +441,11 @@
 
       _within: function(point, rect) {
         return point[0] >= rect[0][0] && point[0] <= rect[1][0] && point[1] >= rect[0][1] && point[1] <= rect[1][1];
-      }
+      },
+
+      _insideCircle: function(origin_x, origin_y, r, x, y) {
+        return ((x - origin_x) * (x - origin_x) + (y - origin_y) * (y - origin_y) <= r * r)
+      },
     });
   </script>
 </dom-module>

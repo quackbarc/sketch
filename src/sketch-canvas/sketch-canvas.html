@@ -95,6 +95,10 @@
           readOnly: true,
           computed: '_tool(desiredTool, _activeTool)'
         },
+        screentoning: {
+          type: Boolean,
+          notify: true
+        },
         disabled: {
           type: Boolean,
           notify: true,
@@ -123,6 +127,16 @@
           type: Number,
           notify: true,
           value: 10
+        },
+        toneSpacing: {
+          type: Number,
+          notify: true,
+          value: 4
+        },
+        toneRadius: {
+          type: Number,
+          notify: true,
+          value: 8
         }
       },
 
@@ -304,6 +318,12 @@
               middle: this._move.bind(this),
               end: this._moveEnd.bind(this)
             }
+          case 'screentone':
+            return {
+              start: this._toneStart.bind(this),
+              middle: this._tone.bind(this),
+              end: this._toneEnd.bind(this)
+            }
         }
       },
 
@@ -359,6 +379,22 @@
 
       _moveEnd() {
         this.$.data.moveEnd();
+      },
+
+      _toneStart(x, y) {
+        this.$.data.toneStart();
+        this._tone(x, y, x, y);
+      },
+
+      _tone(x, y, px, py) {
+        var tonePoints = this.$.data.tone(x, y, px, py, this.toneRadius, this.toneSpacing);
+        for(var p in tonePoints) {
+          this._drawLine(tonePoints[p]);
+        }
+      },
+
+      _toneEnd(x, y) {
+        this.$.data.toneEnd();
       },
 
       _drawLine(points) {

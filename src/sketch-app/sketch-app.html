@@ -12,6 +12,7 @@
 <link rel="import" href="../../bower_components/paper-slider/paper-slider.html">
 <link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/editor-icons.html">
 <link rel="import" href="../mdi/mdi.html">
 <link rel="import" href="../fit-ratio-container/fit-ratio-container.html">
 <link rel="import" href="../sketch-canvas/sketch-canvas.html">
@@ -189,6 +190,8 @@
               can-redo="{{canRedo}}"
               etch-mode="{{etchMode}}"
               line-step="{{lineStep}}"
+              tone-radius="{{toneRadius}}"
+              tone-spacing="{{toneSpacing}}"
               time-resolution="{{timeResolution}}"
               animation-speed="{{animationSpeed}}"
               disabled="{{sketchDisabled}}"></sketch-canvas>
@@ -243,6 +246,14 @@
           active="{{_isDrawing(tool)}}"
           toggles
           on-tap="_draw"></paper-icon-button>
+      <paper-icon-button
+          title="{{localize('screentone')}}"
+          icon="editor:border-clear"
+          disabled="{{_toolDisabled(sketchDisabled, loading)}}"
+          active="{{_isToning(tool)}}"
+          toggles
+          on-tap="_screentone"></paper-icon-button>
+
       <paper-menu-button
           vertical-align="bottom"
           vertical-offset="60">
@@ -251,7 +262,29 @@
               title="{{localize('settings')}}"
               icon="settings"></paper-icon-button>
           <div class="dropdown-content settings">
+              <!-- don't really know where to put this atm -->
+              <h2>Screentoning</h2>
+
+              <div class="settings-item slider">
+                  <div>Spacing</div>
+                  <paper-slider
+                      value="{{toneSpacing}}"
+                      max="40"
+                      min="2"
+                      editable></paper-slider>
+              <div class="settings-item slider">
+                  <div>Radius</div>
+                  <paper-slider
+                      value="{{toneRadius}}"
+                      max="20"
+                      min="4"
+                      editable></paper-slider>
+              </div>
+              </div>
+
+              <hr>
               <h2>General</h2>
+
               <div class="settings-item slider">
                   <div>Sample Rate (ms)</div>
                   <paper-slider
@@ -588,6 +621,10 @@
         this.$.sketch.desiredTool = 'move';
       },
 
+      _screentone: function() {
+        this.$.sketch.desiredTool = 'screentone';
+      },
+
       _reset: function() {
         this.$.sketch.stop();
 
@@ -667,6 +704,10 @@
 
       _isMoving: function(tool) {
         return tool === 'move';
+      },
+
+      _isToning: function(tool) {
+        return tool === 'screentone';
       },
 
       // display stuff
