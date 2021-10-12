@@ -455,14 +455,16 @@
         Sketch.TabBehavior
       ],
 
+      listeners: {
+        'app-resources-loaded': '_hideStats'
+      },
+
       ready: function() {
         setInterval(this._saveData.bind(this), 10000);
 
-        // i would've added _hideStats() here too but text wouldn't have loaded yet
-        window.addEventListener("resize", this._hideStats.bind(this));
-
         this._restoreData();
         window.addEventListener('beforeunload', this._saveData.bind(this));
+        window.addEventListener("resize", this._hideStats.bind(this));
 
         // Prevent Chrome from capturing CTRL+S
         window.addEventListener('keydown', function(event) {
@@ -730,8 +732,6 @@
       },
 
       _hideStats: function() {
-        // note to self: this won't work in init.
-
         var title = document.querySelector('.title');
         var stats = title.querySelector('.stats');
         var span = title.querySelector('span'); // first span
