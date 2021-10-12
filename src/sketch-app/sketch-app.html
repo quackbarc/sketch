@@ -67,7 +67,7 @@
 
       paper-icon-button[toggles]:not([active]),
       paper-icon-button[disabled] {
-        color: #3c0101;
+        color: var(--light-theme-disabled-color);
       }
 
       paper-menu-button {
@@ -80,7 +80,7 @@
         color: #000;
         padding: 8px;
         position: relative;
-        width: 390px;
+        width: 420px;
         max-height: 300px;
       }
 
@@ -204,11 +204,6 @@
           toggles
           on-tap="_draw"></paper-icon-button>
       <paper-icon-button
-          id="lineMode"
-          icon="timeline"
-          toggles
-          on-tap="_toggleLineMode"></paper-icon-button>
-      <paper-icon-button
           title="{{localize('screentone')}}"
           icon="editor:border-clear"
           disabled="{{_toolDisabled(sketchDisabled, loading)}}"
@@ -217,6 +212,7 @@
           on-tap="_screentone"></paper-icon-button>
 
       <paper-menu-button
+          allowOutsideScroll="true"
           vertical-align="bottom"
           vertical-offset="60">
           <paper-icon-button
@@ -231,34 +227,36 @@
                 <paper-icon-button
                     icon="swap-vert"
                     on-tap="_flipY"></paper-icon-button>
-              </div>
-
-              <hr />
-              <h2>General</h2>
-              <div class="settings-item slider">
-                <div>Animation speed</div>
-                <paper-slider
-                    value="{{animationSpeed}}"
-                    max="60"
-                    min="5"
-                    editable></paper-slider>
+                <paper-icon-button
+                    id="lineMode"
+                    icon="timeline"
+                    toggles
+                    on-tap="_toggleLineMode"></paper-icon-button>
               </div>
 
               <hr />
               <h2>Line</h2>
-              <paper-input
-                  label="Smoothing"
-                  type="number"
-                  value="{{smoothing}}"
-                  min="1"
-                  always-float-label></paper-input>
-              <paper-input
-                  label="Spacing"
-                  type="number"
-                  value="{{spacing}}"
-                  step="0.5"
-                  min="0"
-                  always-float-label></paper-input>
+              <div class="settings-double">
+                <div class="settings-item slider">
+                    <div>Smoothing</div>
+                    <paper-slider
+                        value="{{smoothing}}"
+                        max="25"
+                        min="1"
+                        always-float-label
+                        editable></paper-slider>
+                </div>
+                <div class="settings-item slider">
+                    <div>Spacing</div>
+                    <paper-slider
+                        value="{{spacing}}"
+                        max="1000"
+                        min="0"
+                        step="0.5"
+                        always-float-label
+                        editable></paper-slider>
+                </div>
+              </div>
 
               <hr />
               <h2>Eraser</h2>
@@ -292,6 +290,17 @@
                         min="4"
                         editable></paper-slider>
                 </div>
+              </div>
+
+              <hr />
+              <h2>General</h2>
+              <div class="settings-item slider">
+                <div>Animation speed</div>
+                <paper-slider
+                    value="{{animationSpeed}}"
+                    max="60"
+                    min="5"
+                    editable></paper-slider>
               </div>
           </div>
       </paper-menu-button>
