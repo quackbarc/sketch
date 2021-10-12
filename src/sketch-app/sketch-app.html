@@ -398,12 +398,17 @@
         Sketch.TabBehavior
       ],
 
+      listeners: {
+        'app-resources-loaded': '_hideStats'
+      },
+
       ready: function() {
         setInterval(this._saveData.bind(this), 10000);
 
         this._restoreData();
         window.addEventListener("resize", this._hideStats.bind(this))
         window.addEventListener('beforeunload', this._saveData.bind(this));
+        window.addEventListener("resize", this._hideStats.bind(this));
 
         // Prevent Chrome from capturing CTRL+S
         window.addEventListener('keydown', function(event) {
