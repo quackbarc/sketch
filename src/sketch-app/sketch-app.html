@@ -696,7 +696,7 @@
             };
 
             var pattern = /^[\s0-9a-z]+$/;
-            var isValidData = pattern.test(text);
+            var isValidData = pattern.test(text) && text.split(' ').every((l) => !(l.length % 4));
             if(isValidData) {
               this.$.sketch.stop();
               this.$.sketch.data = text;
