@@ -113,7 +113,8 @@
       }
 
       paper-icon-button[toggles]:not([active]),
-      paper-icon-button[disabled] {
+      paper-icon-button[disabled],
+      paper-menu-button[disabled] {
         color: #3c0101;
       }
 
@@ -204,6 +205,7 @@
               eraser-radius="{{eraserRadius}}"
               time-resolution="{{timeResolution}}"
               animation-speed="{{animationSpeed}}"
+              on-tool-changed="_closeMenus"
               disabled="{{sketchDisabled}}"></sketch-canvas>
       </fit-ratio-container>
       <paper-fab
@@ -235,66 +237,20 @@
           icon="redo"
           disabled="{{_editDisabled(loading, canRedo)}}"
           on-tap="_redo"></paper-icon-button>
-      <paper-icon-button
-          title="{{localize('eraser')}}"
-          icon="mdi:eraser-variant"
-          disabled="{{_toolDisabled(sketchDisabled, loading)}}"
-          active="{{_isErasing(tool)}}"
-          toggles
-          on-tap="_erase"></paper-icon-button>
-      <paper-icon-button
-          title="{{localize('move')}}"
-          icon="mdi:cursor-move"
-          disabled="{{_toolDisabled(sketchDisabled, loading)}}"
-          active="{{_isMoving(tool)}}"
-          toggles
-          on-tap="_move"></paper-icon-button>
-      <paper-icon-button
-          title="{{localize('pen')}}"
-          icon="create"
-          disabled="{{_toolDisabled(sketchDisabled, loading)}}"
-          active="{{_isDrawing(tool)}}"
-          toggles
-          on-tap="_draw"></paper-icon-button>
-      <paper-icon-button
-          title="{{localize('screentone')}}"
-          icon="editor:border-clear"
-          disabled="{{_toolDisabled(sketchDisabled, loading)}}"
-          active="{{_isToning(tool)}}"
-          toggles
-          on-tap="_screentone"></paper-icon-button>
 
       <paper-menu-button
+          id="menuEraser"
+          disabled="{{_toolDisabled(sketchDisabled, loading)}}"
           vertical-align="bottom"
-          vertical-offset="60">
+          vertical-offset="60"
+          on-opened-changed="_erase">
           <paper-icon-button
               class="dropdown-trigger"
-              title="{{localize('settings')}}"
-              icon="settings"></paper-icon-button>
+              title="{{localize('eraser')}}"
+              icon="mdi:eraser-variant"
+              active="{{_isErasing(tool)}}"
+              toggles="{{!_isErasing(tool)}}"></paper-icon-button>
           <div class="dropdown-content settings">
-              <!-- don't really know where to put this atm -->
-              <h2>Screentoning</h2>
-
-              <div class="settings-double">
-                <div class="settings-item slider">
-                    <div>Spacing</div>
-                    <paper-slider
-                        value="{{toneSpacing}}"
-                        max="40"
-                        min="2"
-                        editable></paper-slider>
-                </div>
-                <div class="settings-item slider">
-                    <div>Radius</div>
-                    <paper-slider
-                        value="{{toneRadius}}"
-                        max="20"
-                        min="4"
-                        editable></paper-slider>
-                </div>
-              </div>
-
-              <hr>
               <h2>Eraser</h2>
               <div class="settings-item slider">
                   <div>Radius</div>
@@ -304,10 +260,69 @@
                       min="1"
                       editable></paper-slider>
               </div>
+          </div>
+      </paper-menu-button>
 
-              <hr>
+      <paper-icon-button
+          title="{{localize('move')}}"
+          icon="mdi:cursor-move"
+          disabled="{{_toolDisabled(sketchDisabled, loading)}}"
+          active="{{_isMoving(tool)}}"
+          toggles="{{!_isMoving(tool)}}"
+          on-tap="_move"></paper-icon-button>
+      <paper-icon-button
+          title="{{localize('pen')}}"
+          icon="create"
+          disabled="{{_toolDisabled(sketchDisabled, loading)}}"
+          active="{{_isDrawing(tool)}}"
+          toggles="{{!_isDrawing(tool)}}"
+          on-tap="_draw"></paper-icon-button>
+
+      <paper-menu-button
+          id="menuScreentone"
+          disabled="{{_toolDisabled(sketchDisabled, loading)}}"
+          vertical-align="bottom"
+          vertical-offset="60"
+          on-opened-changed="_screentone">
+        <paper-icon-button
+            class="dropdown-trigger"
+            title="{{localize('screentone')}}"
+            icon="editor:border-clear"
+            active="{{_isToning(tool)}}"
+            toggles="{{!_isToning(tool)}}"></paper-icon-button>
+          <div class="dropdown-content settings">
+              <h2>Screentoning</h2>
+              <div class="settings-double">
+                  <div class="settings-item slider">
+                      <div>Spacing</div>
+                      <paper-slider
+                          value="{{toneSpacing}}"
+                          max="40"
+                          min="2"
+                          editable></paper-slider>
+                  </div>
+                  <div class="settings-item slider">
+                      <div>Radius</div>
+                      <paper-slider
+                          value="{{toneRadius}}"
+                          max="20"
+                          min="4"
+                          editable></paper-slider>
+                  </div>
+              </div>
+          </div>
+      </paper-menu-button>
+
+      <paper-menu-button
+          vertical-align="bottom"
+          vertical-offset="60">
+          <paper-icon-button
+              class="dropdown-trigger"
+              title="{{localize('settings')}}"
+              icon="settings"></paper-icon-button>
+          <div class="dropdown-content settings">
+
               <h2>General</h2>
-
               <div class="settings-item slider">
                   <div>Sample Rate (ms)</div>
                   <paper-slider
@@ -340,7 +355,6 @@
 
               <hr>
               <h2>Etch-a-Sketch</h2>
-
               <div class="settings-item">
                   <div>Etch-a-Sketch mode</div>
                   <paper-toggle-button
@@ -625,8 +639,8 @@
         this.$.sketch.redo();
       },
 
-      _erase: function() {
-        this.$.sketch.desiredTool = 'eraser';
+      _erase: function(e) {
+        this._menuAction(e, this.$.menuEraser, 'eraser');
       },
 
       _draw: function() {
@@ -637,8 +651,8 @@
         this.$.sketch.desiredTool = 'move';
       },
 
-      _screentone: function() {
-        this.$.sketch.desiredTool = 'screentone';
+      _screentone: function(e) {
+        this._menuAction(e, this.$.menuScreentone, 'screentone');
       },
 
       _reset: function() {
@@ -724,6 +738,32 @@
 
       _isToning: function(tool) {
         return tool === 'screentone';
+      },
+
+      _menuAction: function(event, elem, tool) {
+        if(event.type == 'keys-pressed') {
+          if(this.$.sketch.desiredTool == tool) {
+            elem.toggle();
+          }
+        }
+        else {
+          // sometimes an opened-changed event fires on init
+          // so we wanna return to prevent unwanted tool changes
+          var opened = event.detail.value
+          if(!opened) {
+            return;
+          }
+
+          if(this.$.sketch.desiredTool != tool) {
+            elem.close();
+          }
+        }
+
+        this.$.sketch.desiredTool = tool;
+      },
+
+      _closeMenus: function() {
+        document.querySelectorAll('iron-dropdown').forEach((x) => x.close());
       },
 
       // display stuff
