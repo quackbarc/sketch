@@ -34,8 +34,8 @@
       is: 'sketch-api',
 
       ready: function() {
-        this.$.getStatsRequest.generateRequest();
-        setInterval(this.$.getStatsRequest.generateRequest.bind(this.$.getStatsRequest), GET_STATS_INTERVAL);
+        this._getStats();
+        setInterval(this._getStats.bind(this), GET_STATS_INTERVAL);
       },
 
       // Public properties
@@ -88,6 +88,12 @@
       },
 
       // Private functions
+
+      _getStats: function() {
+        if(document.visibilityState == 'visible') {
+          this.$.getStatsRequest.generateRequest();
+        }
+      },
 
       _onGet: function(event) {
         var data = event.detail.response;
