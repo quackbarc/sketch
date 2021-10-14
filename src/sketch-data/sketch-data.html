@@ -82,7 +82,7 @@
         else {
           var data = [];
 
-          for(var i in lines) {
+          for(var i = 0; i < lines.length; i++) {
             var line = new Array(lines[i].length);
 
             for(var j in lines[i]) {
@@ -102,7 +102,7 @@
         var lines = data.length > 0 ? data.split(" ") : [];
         this._setLines(new Array(lines.length));
 
-        for(var i in lines) {
+        for(var i = 0; i < lines.length; i++) {
           var line = new Array(lines[i].length / 2);
 
           for(var j = 0; j < lines[i].length; j += 2) {
@@ -170,7 +170,7 @@
       erase: function(x, y, px, py, radius) {
         var erased = false;
 
-        for(var i in this.lines) {
+        for(var i = 0; i < this.lines.length; i++) {
           var line = this.lines[i];
 
           for(var j = 0; j < line.length; j += 2) {
@@ -291,7 +291,7 @@
 
       alteredDots: function() {
         var oldLines = this.lines.slice();
-        for(var i in this.lines) {
+        for(var i = 0; i < this.lines.length; i++) {
           var line = this.lines[i];
           if(line.length == 4 && line[0] == line[2] && line[1] == line[3]) {
             var x = line[0];
