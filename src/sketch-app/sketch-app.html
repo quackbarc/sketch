@@ -629,6 +629,9 @@
       },
 
       _copyImage: function() {
+        if(!window.ClipboardItem) {
+          return this._alert('unable to copy image onto clipboard');
+        }
         this.$.sketch.copyCanvas();
         this._alert('copied image to clipboard');
       },
