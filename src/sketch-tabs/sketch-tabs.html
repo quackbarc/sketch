@@ -3,37 +3,34 @@
   Sketch.TabBehavior = {
     created: function() {
         this._trackTabOpen();
-        window.addEventListener('beforeunload', this._trackTabClose.bind(this));
+        window.addEventListener('pagehide', this._trackTabClose.bind(this));
     },
 
     properties: {
       rememberTab: {
         type: Boolean,
         value: false
+      },
+      tabID: {
+        type: Number,
+        value: null
       }
     },
 
     _trackTabOpen: function() {
-      if(!window.tabID) {
+      this.tabID = sessionStorage.getItem('tabID');
+
+      if(!this.tabID) {
         var tabs = JSON.parse(localStorage.getItem('tabs') || "{}");
-        window.tabID = -1;
 
-        for(var id in tabs) {
-          if(!tabs[id]) {
-            window.tabID = id;
-            break;
-          }
+        this.tabID = 0;
+        while(tabs[this.tabID]) {
+          this.tabID++;
         }
 
-        if(window.tabID == -1) {
-          window.tabID = 0;
-          while(tabs[window.tabID]) {
-            window.tabID++;
-          }
-        }
-
-        tabs[window.tabID] = true;
+        tabs[this.tabID] = true;
         localStorage.setItem('tabs', JSON.stringify(tabs));
+        sessionStorage.setItem('tabID', this.tabID);
       }
     },
 
@@ -41,12 +38,14 @@
       var tabs = JSON.parse(localStorage.getItem('tabs') || "{}");
 
       if(this.rememberTab) {
-        tabs[window.tabID] = false;
+        tabs[this.tabID] = false;
       }
       else {
-        delete tabs[window.tabID];
+        delete tabs[this.tabID];
       }
 
+      // new tabs would steal the tabID anyways so might as well purge it away on exit
+      sessionStorage.removeItem('tabID');
       localStorage.setItem('tabs', JSON.stringify(tabs));
     }
   };

@@ -478,7 +478,7 @@
         setInterval(this._saveData.bind(this), 10000);
 
         this._restoreData();
-        window.addEventListener('beforeunload', this._saveData.bind(this));
+        window.addEventListener('pagehide', this._saveData.bind(this));
         window.addEventListener("resize", this._hideStats.bind(this));
 
         // Prevent Chrome from capturing CTRL+S
@@ -567,10 +567,10 @@
             head: this.$.sketch.$.data.head
           };
 
-          localStorage.setItem('save' + tabID, JSON.stringify(save));
+          localStorage.setItem('save' + this.tabID, JSON.stringify(save));
         }
         else {
-          localStorage.removeItem('save' + tabID);
+          localStorage.removeItem('save' + this.tabID);
         }
 
         var settings = {
@@ -592,7 +592,7 @@
           this.hideStats = settings.hideStats || this.hideStats;
         }
 
-        var save = JSON.parse(localStorage.getItem('save' + tabID));
+        var save = JSON.parse(localStorage.getItem('save' + this.tabID));
 
         if(save) {
           this.$.sketch.data = save.data;
