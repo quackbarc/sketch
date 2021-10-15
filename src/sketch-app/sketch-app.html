@@ -494,6 +494,9 @@
         var settings = {
           spacing: this.$.sketch.spacing,
           smoothing: this.$.sketch.smoothing,
+          eraserRadius: this.$.sketch.eraserRadius,
+          toneRadius: this.$.sketch.toneRadius,
+          toneSpacing: this.$.sketch.toneSpacing,
           animationSpeed: this.$.sketch.animationSpeed,
         };
 
@@ -506,6 +509,9 @@
         if(settings) {
           this.$.sketch.spacing = settings.spacing;
           this.$.sketch.smoothing = settings.smoothing;
+          this.$.sketch.eraserRadius = settings.eraserRadius || this.$.sketch.eraserRadius;
+          this.$.sketch.toneRadius = settings.toneRadius || this.$.sketch.toneRadius;
+          this.$.sketch.toneSpacing = settings.toneSpacing || this.$.sketch.toneSpacing;
           this.$.sketch.animationSpeed = settings.animationSpeed || this.$.sketch.animationSpeed;
         }
 
