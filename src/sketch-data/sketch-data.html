@@ -324,6 +324,45 @@
         }
       },
 
+      /**
+       * Fills mask with tone
+       * @param {Array}  mask     Mask array
+       * @param {Number} spacing  Tone spacing
+       * @returns {Array}         Generated points
+       */
+      toneArea: function(mask, spacing) {
+        var linePoints = [];
+        var action = {
+          start: this.lines.length,
+          added: [],
+          removed: [],
+          addedPoints: []
+        };
+
+        // This expects 800x600, perhaps restrict it to mask bounds
+        for (var i = 0; i <= 800; i += spacing) {
+          for (var j = 0; j <= 600; j += spacing) {
+            var pixelPos = (j * 800 + i) * 4;
+            // marked pixels must be white
+            if (mask[pixelPos + 0] + mask[pixelPos + 1] + mask[pixelPos + 2] + mask[pixelPos + 3] == 1020
+                && !this.tonePoints.includes(i + ":" + j)) {
+              linePoints.push([i, j, i, j]);
+              action.addedPoints.push(i + ":" + j);
+            }
+          }
+        }
+
+        action.added.push(...linePoints);
+
+        if(action.added.length > 0) {
+          this._doAction([action]);
+          this._action = [action];
+          this.pushHistory(this._action);
+        }
+
+        return linePoints;
+      },
+
       alteredDots: function() {
         var oldLines = this.lines.slice();
         for(var i = 0; i < this.lines.length; i++) {

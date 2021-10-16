@@ -321,6 +321,12 @@
               middle: this._move.bind(this),
               end: this._moveEnd.bind(this)
             }
+          case 'fill':
+            return {
+              start: this._fill.bind(this),
+              middle: () => void 0,
+              end: () => void 0,
+            }
           case 'screentone':
             return {
               start: this._toneStart.bind(this),
@@ -411,6 +417,118 @@
 
       _moveEnd() {
         this.$.data.moveEnd();
+      },
+
+      /**
+       * Fills an area with tone, computed from raster data in canvas.
+       * @param {Number} x        x position in canvas
+       * @param {Number} y        y position in canvas
+       */
+      _fill(x, y) {
+        var data = this._canvas.getImageData(0, 0, 800, 600).data;
+        var mask = this._floodFill(data, x, y);
+        var tonePoints = this.$.data.toneArea(mask, this.toneSpacing);
+        for(var p in tonePoints) {
+          this._drawLine(tonePoints[p]);
+        }
+      },
+
+      /**
+       * Creates a mask from white pixels
+       * @param {Array}  data     Image data array
+       * @param {Number} startX   x position in canvas
+       * @param {Number} startY   y position in canvas
+       * @returns {Array}         Computed mask
+       */
+      _floodFill(data, startX, startY) {
+        var mask = new Array(data.length).fill(0),
+          newPos,
+          x,
+          y,
+          pixelPos,
+          reachLeft,
+          reachRight,
+          drawingBoundLeft = 0,
+          drawingBoundTop = 0,
+          drawingBoundRight = 800,
+          drawingBoundBottom = 600,
+          pixelStack = [[startX, startY]];
+
+        while (pixelStack.length) {
+
+          newPos = pixelStack.pop();
+          x = newPos[0];
+          y = newPos[1];
+
+          // Get current pixel position
+          pixelPos = (y * 800 + x) * 4;
+
+          // Go up as long as the color matches and are inside the canvas
+          while (y >= drawingBoundTop && this._isWhite(data, pixelPos)) {
+            y -= 1;
+            pixelPos -= drawingBoundRight * 4;
+          }
+
+          pixelPos += drawingBoundRight * 4;
+          y += 1;
+          reachLeft = false;
+          reachRight = false;
+
+          // Go down as long as the color matches and in inside the canvas
+          while (y <= drawingBoundBottom && this._isWhite(data, pixelPos)) {
+            y += 1;
+
+            // Dirty pixel, mark in mask.
+            {
+              data[pixelPos + 0] = 0;
+              data[pixelPos + 1] = 0;
+              data[pixelPos + 2] = 0;
+
+              mask[pixelPos + 0] = 255;
+              mask[pixelPos + 1] = 255
+              mask[pixelPos + 2] = 255
+              mask[pixelPos + 3] = 255
+            }
+
+            if (x > drawingBoundLeft) {
+              if (this._isWhite(data, pixelPos - 4)) {
+                if (!reachLeft) {
+                  // Add pixel to stack
+                  pixelStack.push([x - 1, y]);
+                  reachLeft = true;
+                }
+              } else if (reachLeft) {
+                reachLeft = false;
+              }
+            }
+
+            if (x < drawingBoundRight) {
+              if (this._isWhite(data, pixelPos + 4)) {
+                if (!reachRight) {
+                  // Add pixel to stack
+                  pixelStack.push([x + 1, y]);
+                  reachRight = true;
+                }
+              } else if (reachRight) {
+                reachRight = false;
+              }
+            }
+
+            pixelPos += drawingBoundRight * 4;
+          }
+        }
+
+        return mask;
+      },
+
+      /**
+       * Test if the n pixel is white in a data array, with some tolerance
+       * @param {Array}  data     Image data array
+       * @param {Number} pixelPos The N pixel in array
+       * @returns {Boolean}       Is n Pixel white?
+       */
+      _isWhite(data, pixelPos) {
+        return data[pixelPos] + data[pixelPos + 1] + data[pixelPos + 2] + data[pixelPos + 3] >= 1020 - 120;
       },
 
       _toneStart(x, y) {

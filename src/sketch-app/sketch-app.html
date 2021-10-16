@@ -203,6 +203,13 @@
           toggles
           on-tap="_draw"></paper-icon-button>
       <paper-icon-button
+          title="{{localize('fill')}}"
+          icon="editor:format-color-fill"
+          disabled="{{_swapDisabled(sketchDisabled, loading)}}"
+          active="{{_isFilling(tool)}}"
+          toggles
+          on-tap="_fill"></paper-icon-button>
+      <paper-icon-button
           title="{{localize('screentone')}}"
           icon="editor:border-clear"
           disabled="{{_toolDisabled(sketchDisabled, loading)}}"
@@ -345,6 +352,10 @@
         target="[[target]]"
         keys="delete"
         on-keys-pressed="_reset"></iron-a11y-keys>
+    <iron-a11y-keys
+        target="[[target]]"
+        keys="f"
+        on-keys-pressed="_fill"></iron-a11y-keys>
     <iron-a11y-keys
         target="[[target]]"
         keys="s"
@@ -601,6 +612,10 @@
         this.$.sketch._render();
       },
 
+      _fill: function() {
+        this.$.sketch.desiredTool = 'fill';
+      },
+
       _screentone: function() {
         this.$.sketch.desiredTool = 'screentone';
       },
@@ -680,6 +695,10 @@
 
       _isMoving: function(tool) {
         return tool === 'move';
+      },
+
+      _isFilling: function(tool) {
+        return tool === 'fill';
       },
 
       _isToning: function(tool) {
