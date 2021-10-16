@@ -426,22 +426,30 @@
        */
       _fill(x, y) {
         var data = this._canvas.getImageData(0, 0, 800, 600).data;
-        var mask = this._floodFill(data, x, y);
-        var tonePoints = this.$.data.toneArea(mask, this.toneSpacing);
-        for(var p in tonePoints) {
-          this._drawLine(tonePoints[p]);
+        var flood = this._floodFill(data, x, y);
+        var linePoints;
+        if (this.toneSpacing > 3) {
+          linePoints = this.$.data.toneArea(flood.bounds, flood.mask, this.toneSpacing);
+        } else {
+          linePoints = flood.lines;
+          this.$.data.drawLines(linePoints);
+        }
+        for(var p in linePoints) {
+          this._drawLine(linePoints[p]);
         }
       },
 
       /**
-       * Creates a mask from white pixels
+       * Computes a flood area from white pixels
        * @param {Array}  data     Image data array
        * @param {Number} startX   x position in canvas
        * @param {Number} startY   y position in canvas
-       * @returns {Array}         Computed mask
+       * @returns {Object}        Computed mask, bounds and lines.
        */
       _floodFill(data, startX, startY) {
         var mask = new Array(data.length).fill(0),
+          bounds = [startX, startY, startX, startY],
+          lines = [],
           newPos,
           x,
           y,
@@ -468,6 +476,9 @@
             y -= 1;
             pixelPos -= drawingBoundRight * 4;
           }
+
+          // New start
+          newPos = [x, y];
 
           pixelPos += drawingBoundRight * 4;
           y += 1;
@@ -516,9 +527,30 @@
 
             pixelPos += drawingBoundRight * 4;
           }
+
+          // Expand bounds if necessary
+          if (bounds[0] > newPos[0]) {
+            bounds[0] = newPos[0];
+          }
+          if (bounds[1] > newPos[1]) {
+            bounds[1] = newPos[1];
+          }
+          if (bounds[2] < x) {
+            bounds[2] = x;
+          }
+          if (bounds[3] < y) {
+            bounds[3] = y;
+          }
+
+          // Trace lines
+          lines.push([newPos[0], newPos[1], x, y]);
         }
 
-        return mask;
+        return {
+          "bounds": bounds,
+          "mask": mask,
+          "lines": lines
+        };
       },
 
       /**

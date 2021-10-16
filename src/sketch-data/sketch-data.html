@@ -328,12 +328,21 @@
 
       /**
        * Fills mask with tone
+       * @param {Array}  bounds   Bounds to limit operation to
        * @param {Array}  mask     Mask array
        * @param {Number} spacing  Tone spacing
        * @returns {Array}         Generated points
        */
-      toneArea: function(mask, spacing) {
-        var linePoints = [];
+      toneArea: function(bounds, mask, spacing) {
+        var linePoints = [],
+          i,
+          j,
+          pixelPos,
+          boundLeft = bounds[0],
+          boundTop = bounds[1],
+          boundRight = bounds[2],
+          boundBottom = bounds[3];
+
         var action = {
           start: this.lines.length,
           added: [],
@@ -341,10 +350,9 @@
           addedPoints: []
         };
 
-        // This expects 800x600, perhaps restrict it to mask bounds
-        for (var i = 0; i <= 800; i += spacing) {
-          for (var j = 0; j <= 600; j += spacing) {
-            var pixelPos = (j * 800 + i) * 4;
+        for (i = boundLeft; i <= boundRight; i += spacing) {
+          for (j = boundTop; j <= boundBottom; j += spacing) {
+            pixelPos = (j * 800 + i) * 4;
             // marked pixels must be white
             if (mask[pixelPos + 0] + mask[pixelPos + 1] + mask[pixelPos + 2] + mask[pixelPos + 3] == 1020
                 && !this.tonePoints.includes(i + ":" + j)) {
@@ -355,6 +363,28 @@
         }
 
         action.added.push(...linePoints);
+
+        if(action.added.length > 0) {
+          this._doAction([action]);
+          this._action = [action];
+          this.pushHistory(this._action);
+        }
+
+        return linePoints;
+      },
+
+      /**
+       * Draw lines
+       * @param {Array}  linePoints Array of lines: [x1, y1, x2, y2]
+       * @param {Number} skip       skip the n line from linePoints
+       */
+      drawLines: function(linePoints) {
+        var action = {
+          start: this.lines.length,
+          added: linePoints,
+          removed: [],
+          addedPoints: []
+        };
 
         if(action.added.length > 0) {
           this._doAction([action]);
