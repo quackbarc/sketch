@@ -352,9 +352,8 @@
 
         for (i = boundLeft; i <= boundRight; i += spacing) {
           for (j = boundTop; j <= boundBottom; j += spacing) {
-            pixelPos = (j * 800 + i) * 4;
-            // marked pixels must be white
-            if (mask[pixelPos + 0] + mask[pixelPos + 1] + mask[pixelPos + 2] + mask[pixelPos + 3] == 1020
+            pixelPos = (j * 800 + i);
+            if (mask[pixelPos]
                 && !this.tonePoints.includes(i + ":" + j)) {
               linePoints.push([i, j, i, j]);
               action.addedPoints.push(i + ":" + j);

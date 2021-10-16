@@ -447,7 +447,7 @@
        * @returns {Object}        Computed mask, bounds and lines.
        */
       _floodFill(data, startX, startY) {
-        var mask = new Array(data.length).fill(0),
+        var mask = new Array(data.length/4).fill(0),
           bounds = [startX, startY, startX, startY],
           lines = [],
           newPos,
@@ -472,7 +472,7 @@
           pixelPos = (y * 800 + x) * 4;
 
           // Go up as long as the color matches and are inside the canvas
-          while (y >= drawingBoundTop && this._isWhite(data, pixelPos)) {
+          while (y > drawingBoundTop && this._isNotBlack(data, pixelPos)) {
             y -= 1;
             pixelPos -= drawingBoundRight * 4;
           }
@@ -486,7 +486,7 @@
           reachRight = false;
 
           // Go down as long as the color matches and in inside the canvas
-          while (y <= drawingBoundBottom && this._isWhite(data, pixelPos)) {
+          while (y < drawingBoundBottom && this._isNotBlack(data, pixelPos)) {
             y += 1;
 
             // Dirty pixel, mark in mask.
@@ -495,14 +495,11 @@
               data[pixelPos + 1] = 0;
               data[pixelPos + 2] = 0;
 
-              mask[pixelPos + 0] = 255;
-              mask[pixelPos + 1] = 255
-              mask[pixelPos + 2] = 255
-              mask[pixelPos + 3] = 255
+              mask[pixelPos/4] = 1;
             }
 
             if (x > drawingBoundLeft) {
-              if (this._isWhite(data, pixelPos - 4)) {
+              if (this._isNotBlack(data, pixelPos - 4)) {
                 if (!reachLeft) {
                   // Add pixel to stack
                   pixelStack.push([x - 1, y]);
@@ -514,7 +511,7 @@
             }
 
             if (x < drawingBoundRight) {
-              if (this._isWhite(data, pixelPos + 4)) {
+              if (this._isNotBlack(data, pixelPos + 4)) {
                 if (!reachRight) {
                   // Add pixel to stack
                   pixelStack.push([x + 1, y]);
@@ -554,13 +551,13 @@
       },
 
       /**
-       * Test if the n pixel is white in a data array, with some tolerance
+       * Test if the n pixel is not black in a data array, no tolerance
        * @param {Array}  data     Image data array
        * @param {Number} pixelPos The N pixel in array
-       * @returns {Boolean}       Is n Pixel white?
+       * @returns {Boolean}       Is n Pixel any black?
        */
-      _isWhite(data, pixelPos) {
-        return data[pixelPos] + data[pixelPos + 1] + data[pixelPos + 2] + data[pixelPos + 3] >= 1020 - 120;
+      _isNotBlack(data, pixelPos) {
+        return data[pixelPos] + data[pixelPos + 1] + data[pixelPos + 2] != 0;
       },
 
       _toneStart(x, y) {
