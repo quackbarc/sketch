@@ -248,7 +248,6 @@
 
       tone: function(x, y, px, py, radius, spacing) {
         const rect = [[0, 0], [800, 600]];
-        const maxRadius = 20;
         var linePoints = [];
 
         var action = {
@@ -261,8 +260,8 @@
         // credits to noz for the original algorithm
         var circX = x - (x % spacing);
         var circY = y - (y % spacing);
-        for (var i = circX - maxRadius; i <= circX + maxRadius; i += spacing) {
-            for (var j = circY - maxRadius; j <= circY + maxRadius; j += spacing) {
+        for (var i = circX - radius; i <= circX + radius; i += spacing) {
+            for (var j = circY - radius; j <= circY + radius; j += spacing) {
                 if (this._within([i, j], rect)
                     && this._insideCircle(x, y, i, j, radius)
                     && !this.tonePoints.includes(i + ":" + j)) {
