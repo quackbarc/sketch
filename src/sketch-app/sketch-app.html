@@ -532,6 +532,10 @@
         }
       },
 
+      // Private properties
+
+      _sleepPromise: null,
+
       // Private methods
 
       _swapDisabled: function(sketchDisabled, loading, ink) {
@@ -797,11 +801,15 @@
         span.hidden = true;
         this._hideStats();
 
-        await this._sleep(3000);
+        let sleepPromise = this._sleep(3000);
+        this._sleepPromise = sleepPromise;
+        await sleepPromise;
 
-        alertSpan.innerHTML = '';
-        span.hidden = false;
-        this._hideStats();
+        if(this._sleepPromise === sleepPromise) {
+          alertSpan.innerHTML = '';
+          span.hidden = false;
+          this._hideStats();
+        }
       },
 
       _sleep: function(ms) {
