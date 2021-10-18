@@ -585,22 +585,21 @@
       },
 
       _restoreData: function() {
-        var settings = JSON.parse(localStorage.getItem('settings'));
+        // individual settings not in localStorage will fallback to their defaults
 
+        var settings = JSON.parse(localStorage.getItem('settings'));
         if(settings) {
-          // fallback to defaults for individual settings not stored in the local storage
-          this.$.sketch.timeResolution = settings.timeResolution || this.$.sketch.timeResolution;
-          this.$.sketch.animationSpeed = settings.animationSpeed || this.$.sketch.animationSpeed;
-          this.hideStats = settings.hideStats || this.hideStats;
+          this.$.sketch.timeResolution = settings.timeResolution ?? this.$.sketch.timeResolution;
+          this.$.sketch.animationSpeed = settings.animationSpeed ?? this.$.sketch.animationSpeed;
+          this.hideStats = settings.hideStats ?? this.hideStats;
         }
 
         var save = JSON.parse(localStorage.getItem('save' + this.tabID));
-
         if(save) {
-          this.$.sketch.data = save.data;
-          this.$.sketch.$.data.tonePoints = save.tonePoints || this.$.sketch.$.data.tonePoints;
-          this.$.sketch.$.data.history = save.history;
-          this.$.sketch.$.data.head = save.head;
+          this.$.sketch.data = save.data ?? this.$.sketch.data;
+          this.$.sketch.$.data.tonePoints = save.tonePoints ?? this.$.sketch.$.data.tonePoints;
+          this.$.sketch.$.data.history = save.history ?? this.$.sketch.data.history;
+          this.$.sketch.$.data.head = save.head ?? this.$.sketch.data.head;
         }
       },
 
