@@ -388,6 +388,14 @@
         target="[[target]]"
         keys="ctrl+alt+c"
         on-keys-pressed="_copyImage"></iron-a11y-keys>
+    <iron-a11y-keys
+        target="[[target]]"
+        keys="["
+        on-keys-pressed="_changeSize"></iron-a11y-keys>
+    <iron-a11y-keys
+        target="[[target]]"
+        keys="]"
+        on-keys-pressed="_changeSize"></iron-a11y-keys>
 
     <sketch-api
         id="api"
@@ -687,6 +695,30 @@
               this._alert('invalid clipboard input');
             };
           });
+      },
+
+      _changeSize: function(e) {
+        e.preventDefault();
+        var v = e.detail.key == '[' ? -1 : 1;
+        var tool = this.$.sketch.desiredTool;
+        var newValue, changedValue;
+
+        switch(tool) {
+          case 'eraser':
+            newValue = this.$.sketch.eraserRadius += v;
+            changedValue = this.$.sketch.eraserRadius;
+            break;
+          case 'screentone':
+            newValue = this.$.sketch.toneRadius += v;
+            changedValue = this.$.sketch.toneRadius;
+        }
+        // the sliders take care of the value limits, so we're taking advantage of
+        // that instead of hard-coding the limits again
+        newValue = changedValue != newValue ? changedValue : newValue;
+
+        if(newValue) {
+          this._alert(`${tool} size: ${newValue}`);
+        }
       },
 
       _isErasing: function(tool) {
