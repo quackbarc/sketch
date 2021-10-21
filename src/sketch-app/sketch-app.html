@@ -723,6 +723,7 @@
       _paste: function() {
         navigator.clipboard.readText()
           .then(text => {
+            text = text.trim();
             if(!text) {
               this._alert('no text in clipboard');
             };
