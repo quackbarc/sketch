@@ -42,6 +42,11 @@
         hidden: {
           type: Boolean,
           value: false
+        },
+        detectScreentone: {
+          type: Boolean,
+          notify: true,
+          value: true
         }
       },
 
@@ -98,9 +103,11 @@
 
       set data(data) {
         var oldLines = this.lines.slice();
-        this._setLength(data.length);
+        var oldPoints = this.tonePoints.slice();
         var lines = data.length > 0 ? data.split(" ") : [];
+        this._setLength(data.length);
         this._setLines(new Array(lines.length));
+        this.tonePoints = [];
 
         for(var i = 0; i < lines.length; i++) {
           var line = new Array(lines[i].length / 2);
@@ -109,16 +116,19 @@
             line[j / 2] = parseInt(lines[i].substr(j, 2), 36);
           }
 
+          if(this.detectScreentone &&
+            (line.length == 4 && line[0] == line[2] && line[1] == line[3])) {
+              this.tonePoints.push(`${line[0]}:${line[1]}`);
+          }
+
           this.lines[i] = line;
         }
-
-        var oldPoints = this.tonePoints.slice();
-        this.tonePoints = [];
 
         var action = [{
           start: 0,
           added: this.lines.slice(),
           removed: oldLines,
+          addedPoints: this.tonePoints.slice(),
           removedPoints: oldPoints
         }];
 

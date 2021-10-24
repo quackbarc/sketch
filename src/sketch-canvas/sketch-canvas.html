@@ -38,7 +38,8 @@
         id="data"
         length="{{dataLength}}"
         can-undo="{{dataCanUndo}}"
-        can-redo="{{dataCanRedo}}"></sketch-data>
+        can-redo="{{dataCanRedo}}"
+        detect-screentone="{{detectScreentone}}"></sketch-data>
   </template>
   <script>
   (function() {
@@ -139,6 +140,13 @@
           type: Number,
           notify: true,
           value: 3
+        },
+
+        // bubblers
+
+        detectScreentone: {
+          type: Boolean,
+          notify: true
         }
       },
 
