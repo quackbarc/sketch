@@ -717,6 +717,10 @@
       },
 
       _paste: function() {
+        if(!navigator.clipboard.readText) {
+          return this._alert('unable to read clipboard');
+        }
+
         navigator.clipboard.readText()
           .then(text => {
             text = text.trim();
