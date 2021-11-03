@@ -268,10 +268,14 @@
         }
 
         // credits to noz for the original algorithm
-        var circX = x - (x % spacing);
-        var circY = y - (y % spacing);
-        for (var i = circX - radius; i <= circX + radius; i += spacing) {
-            for (var j = circY - radius; j <= circY + radius; j += spacing) {
+
+        // anchoring the loop to start at the nearest possible tone point at the top-left
+        var sX = (x - radius) - ((x - radius) % spacing);
+        var sY = (y - radius) - ((y - radius) % spacing);
+        var eX = (x + radius);
+        var eY = (y + radius);
+        for (var i = sX; i <= eX; i += spacing) {
+            for (var j = sY; j <= eY; j += spacing) {
                 if (this._within([i, j], rect)
                     && this._insideCircle(x, y, i, j, radius)
                     && !this.tonePoints.includes(i + ":" + j)) {
