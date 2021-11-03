@@ -139,6 +139,8 @@
 
       _action: null,
 
+      _canvasData: null,
+
       // Public functions
 
       drawStart: function() {
@@ -221,6 +223,43 @@
         if(this._action.length > 0) {
           this.pushHistory(this._action);
         }
+      },
+
+      fill: function(x, y, canvas) {
+        this._canvasData = canvas.getContext('2d').getImageData(0,0, 800,600).data;
+        if(!this._canvasData[this._maskIndex(x, y) * 4]) {
+          return;
+        }
+
+        var action = {
+          start: this.lines.length,
+          added: [],
+          removed: []
+        }
+
+        // using typed array to save memory
+        let mask = new Uint8Array(800*600);
+        let queue = [[x, y]];
+        while(queue.length > 0) {
+          const [qx, qy] = queue.shift();
+          if(mask[this._maskIndex(qx, qy)]) {
+            continue;
+          }
+
+          for(var lx = qx; this._fillable(lx - 1, qy); lx--) {
+            mask[this._maskIndex(lx - 1, qy)] = 1;
+          }
+          for(var rx = qx; this._fillable(rx, qy); rx++) {
+            mask[this._maskIndex(rx, qy)] = 1;
+          }
+
+          action.added.push([lx - 1, qy, rx, qy]);
+          this._queueLine(lx, rx, qy + 1, queue);
+          this._queueLine(lx, rx, qy - 1, queue);
+        }
+
+        this._doAction([action]);
+        this.pushHistory([action]);
       },
 
       moveStart: function() {
@@ -465,6 +504,28 @@
       _insideCircle: function(origin_x, origin_y, x, y, r) {
         return ((x - origin_x) * (x - origin_x) + (y - origin_y) * (y - origin_y) <= r * r)
       },
+
+      _maskIndex: function(x, y) {
+        return y * 800 + x;
+      },
+
+      _fillable: function(x, y) {
+        // using a smaller rect since _within is inclusive
+        return this._within([x, y], [[1, 1], [799, 599]]) && this._canvasData[this._maskIndex(x, y) * 4];
+      },
+
+      _queueLine: function(lx, rx, y, stack) {
+        let added = false;
+        for(let x = lx + 1; x <= rx; x++) {
+          if(!this._fillable(x, y)) {
+            added = false;
+          }
+          else if(!added) {
+            stack.push([x, y]);
+            added = true;
+          }
+        }
+      }
     });
   </script>
 </dom-module>

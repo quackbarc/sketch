@@ -336,6 +336,12 @@
               middle: this._tone.bind(this),
               end: this._toneEnd.bind(this)
             }
+          case 'fill':
+            return {
+              start: (() => void 0),
+              middle: (() => void 0),
+              end: this._fill.bind(this)
+            }
         }
       },
 
@@ -380,6 +386,11 @@
 
       _eraseEnd(x, y) {
         this.$.data.eraseEnd();
+      },
+
+      _fill(x, y) {
+        this.$.data.fill(x, y, this.$.sketchCanvas);
+        this._render();
       },
 
       _moveStart() {
