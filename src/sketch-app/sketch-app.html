@@ -724,21 +724,17 @@
         navigator.clipboard.readText()
           .then(text => {
             text = text.trim();
-            if(!text) {
-              this._alert('no text in clipboard');
+
+            const pattern = /^[\s0-9a-zA-Z]+$/;
+            var isValidData = pattern.test(text);
+            if(!isValidData) {
+              return this._alert('invalid clipboard input');
             };
 
-            var pattern = /^[\s0-9a-z]+$/;
-            var isValidData = pattern.test(text) && text.split(' ').every((l) => !(l.length % 4));
-            if(isValidData) {
-              this.$.sketch.stop();
-              this.$.sketch.data = text;
-              this.sketchDisabled = false;
-              this._alert('pasted from clipboard');
-            }
-            else {
-              this._alert('invalid clipboard input');
-            };
+            this.$.sketch.stop();
+            this.$.sketch.data = text;
+            this.sketchDisabled = false;
+            this._alert('pasted from clipboard');
           });
       },
 

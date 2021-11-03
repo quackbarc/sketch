@@ -110,9 +110,9 @@
         this.tonePoints = [];
 
         for(var i = 0; i < lines.length; i++) {
-          var line = new Array(lines[i].length / 2);
+          var line = new Array(lines[i].length / 2 | 0);
 
-          for(var j = 0; j < lines[i].length; j += 2) {
+          for(var j = 0; j < line.length * 2; j += 2) {
             line[j / 2] = parseInt(lines[i].substr(j, 2), 36);
           }
 
