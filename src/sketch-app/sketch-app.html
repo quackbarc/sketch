@@ -736,7 +736,7 @@
           .then(text => {
             text = text.trim();
 
-            const pattern = /^[\s0-9a-zA-Z]+$/;
+            const pattern = /^[\s0-9a-zA-Z]*$/;
             var isValidData = pattern.test(text);
             if(!isValidData) {
               return this._alert('invalid clipboard input');
