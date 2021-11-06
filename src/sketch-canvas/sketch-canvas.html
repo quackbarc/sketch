@@ -39,6 +39,7 @@
         length="{{dataLength}}"
         can-undo="{{dataCanUndo}}"
         can-redo="{{dataCanRedo}}"
+        limited-ink="{{limitedInk}}"
         detect-screentone="{{detectScreentone}}"></sketch-data>
   </template>
   <script>
@@ -149,7 +150,11 @@
         detectScreentone: {
           type: Boolean,
           notify: true
-        }
+        },
+        limitedInk: {
+          type: Boolean,
+          notify: true
+        },
       },
 
       get data() {

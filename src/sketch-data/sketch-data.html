@@ -47,7 +47,12 @@
           type: Boolean,
           notify: true,
           value: true
-        }
+        },
+        limitedInk: {
+          type: Boolean,
+          notify: true,
+          value: true
+        },
       },
 
       get data() {
@@ -151,13 +156,19 @@
       },
 
       draw: function(x, y) {
+        if(this.length > this.MAX_LENGTH && this.limitedInk) {
+          return;
+        }
+
         this._line.push(x, y);
         this._setLength(this.length + 4);
         return this._line.slice(this._line.length - 4, this._line.length);
       },
 
       drawEnd: function() {
-        if(this._line.length > 0) {
+        // lines with only 1 point should be dealt with in sketch-canvas
+        // threshold is only such in case draw() rejects adding the extra point
+        if(this._line.length > 2) {
           var action = {
             start: this.lines.length,
             added: [this._line.slice()],
@@ -167,7 +178,7 @@
           this.pushHistory([action]);
         }
         else {
-          this._setLength(this.length - (this.lines.length == 0 ? 0 : 1));
+          this._setLength(this.length - (this._line.length * 2) - (this.lines.length == 0 ? 0 : 1));
         }
       },
 
@@ -222,6 +233,10 @@
       },
 
       fill: function(x, y, canvas) {
+        if(this.length >= this.MAX_LENGTH && this.limitedInk) {
+          return;
+        }
+
         this._canvasData = canvas.getContext('2d').getImageData(0,0, 800,600).data;
         if(!this._canvasData[this._maskIndex(x, y) * 4]) {
           return;
@@ -292,6 +307,10 @@
       },
 
       tone: function(x, y, px, py, radius, spacing) {
+        if(this.length >= this.MAX_LENGTH && this.limitedInk) {
+          return;
+        }
+
         const rect = [[0, 0], [800, 600]];
         var linePoints = [];
 
