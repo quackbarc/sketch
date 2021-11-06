@@ -263,8 +263,9 @@
           for(var rx = qx; this._fillable(rx, qy); rx++) {
             mask[this._maskIndex(rx, qy)] = 1;
           }
+          rx--;
 
-          action.added.push([lx - 1, qy, rx, qy]);
+          action.added.push([lx, qy, rx, qy]);
           this._queueLine(lx, rx, qy + 1, queue);
           this._queueLine(lx, rx, qy - 1, queue);
         }
@@ -525,8 +526,7 @@
       },
 
       _fillable: function(x, y) {
-        // using a smaller rect since _within is inclusive
-        return this._within([x, y], [[1, 1], [799, 599]]) && this._canvasData[this._maskIndex(x, y) * 4];
+        return this._within([x, y], [[0, 0], [800, 600]]) && this._canvasData[this._maskIndex(x, y) * 4];
       },
 
       _queueLine: function(lx, rx, y, stack) {
