@@ -597,6 +597,15 @@
         };
 
         localStorage.setItem('settings', JSON.stringify(settings));
+
+        var toolSettings = {
+          tool: this.tool,
+          eraserRadius: this.$.sketch.eraserRadius,
+          toneRadius: this.$.sketch.toneRadius,
+          toneSpacing: this.$.sketch.toneSpacing,
+        }
+
+        localStorage.setItem('toolSettings', JSON.stringify(toolSettings));
       },
 
       _restoreData: function() {
@@ -615,6 +624,14 @@
           this.$.sketch.$.data.tonePoints = save.tonePoints ?? this.$.sketch.$.data.tonePoints;
           this.$.sketch.$.data.history = save.history ?? this.$.sketch.data.history;
           this.$.sketch.$.data.head = save.head ?? this.$.sketch.data.head;
+        }
+
+        var toolSettings = JSON.parse(localStorage.getItem('toolSettings'));
+        if(toolSettings) {
+          this.$.sketch.desiredTool = toolSettings.tool ?? this.$.sketch.desiredTool;
+          this.$.sketch.eraserRadius = toolSettings.eraserRadius ?? this.$.sketch.eraserRadius;
+          this.$.sketch.toneRadius = toolSettings.toneRadius ?? this.$.sketch.toneRadius;
+          this.$.sketch.toneSpacing = toolSettings.toneSpacing ?? this.$.sketch.toneSpacing;
         }
       },
 
