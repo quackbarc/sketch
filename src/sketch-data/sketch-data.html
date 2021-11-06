@@ -141,37 +141,33 @@
 
       _canvasData: null,
 
+      _line: null,
+
       // Public functions
 
       drawStart: function() {
-        if(this.length < this.MAX_LENGTH) {
-          this._setLength(this.length + (this.lines.length == 0 ? 0 : 1));
-          this.push('lines', []);
-        }
+        this._line = [];
+        this._setLength(this.length + (this.lines.length == 0 ? 0 : 1));
       },
 
       draw: function(x, y) {
-        if(this.length < this.MAX_LENGTH) {
-          this.push('lines.' + (this.lines.length - 1), x, y);
-          this._setLength(this.length + 4);
-        }
+        this._line.push(x, y);
+        this._setLength(this.length + 4);
+        return this._line.slice(this._line.length - 4, this._line.length);
       },
 
       drawEnd: function() {
-        let start = this.lines.length - 1;
-        let addedLine = this.lines[start];
-
-        if(addedLine.length > 0) {
-          var action = [{
-            start: start,
-            added: [addedLine],
+        if(this._line.length > 0) {
+          var action = {
+            start: this.lines.length,
+            added: [this._line.slice()],
             removed: []
-          }];
-          this.pushHistory(action);
+          };
+          this.push('lines', this._line);
+          this.pushHistory([action]);
         }
         else {
-          // empty lines/single-clicks won't appear on the history
-          this.lines.pop(start);
+          this._setLength(this.length - (this.lines.length == 0 ? 0 : 1));
         }
       },
 

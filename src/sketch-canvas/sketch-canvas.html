@@ -357,18 +357,19 @@
       },
 
       _draw(x, y, px, py) {
-        this.$.data.draw(x, y);
-        var lastLine = this.$.data.lines[this.$.data.lines.length - 1];
-        this._drawLine(lastLine.slice(lastLine.length - 4, lastLine.length));
+        var lastSegment = this.$.data.draw(x, y);
+        if(lastSegment) {
+          this._drawLine(lastSegment);
+        }
       },
 
       _drawEnd(x, y) {
         // transforms single dots into lines
-        var lastLine = this.$.data.lines[this.$.data.lines.length - 1];
-
+        var lastLine = this.$.data._line;
         if(lastLine.length == 2) {
           this._draw(x, y, x, y);
         }
+
         this.$.data.drawEnd();
       },
 
