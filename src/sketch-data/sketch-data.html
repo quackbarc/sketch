@@ -295,8 +295,8 @@
         // credits to noz for the original algorithm
         var sX = (x - radius) - ((x - radius) % spacing);
         var sY = (y - radius) - ((y - radius) % spacing);
-        var eX = (x + radius) + ((x + radius) % spacing);
-        var eY = (y + radius) + ((y + radius) % spacing);
+        var eX = (x + radius);
+        var eY = (y + radius);
         
         for (var i = sX; i <= eX; i += spacing) {
             for (var j = sY; j <= eY; j += spacing) {
