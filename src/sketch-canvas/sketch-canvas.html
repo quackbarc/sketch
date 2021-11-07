@@ -45,10 +45,10 @@
       is: 'sketch-canvas',
 
       ready: function() {
-        this._scene = this.$.sketchCanvas.getContext("2d");
+        this._scene = this.$.sketchCanvas.getContext("2d", { alpha: false });
         this._scene.strokeStyle = "red";
         this._scene.lineWidth = 3;
-        this._canvas = document.createElement('canvas').getContext('2d');
+        this._canvas = document.createElement('canvas').getContext('2d', { alpha: false });
         this._canvas.canvas.width = 800;
         this._canvas.canvas.height = 600;
         this._canvas.strokeStyle = "black";
@@ -64,6 +64,7 @@
         }
         this._canvas.fillStyle = "black";
         this._activeTool = null;
+        this._render(true);
       },
 
       behaviors: [
@@ -157,7 +158,7 @@
 
       set data(data) {
         this.$.data.data = data;
-        this._render();
+        this._render(true);
       },
 
       get canvasData() {
@@ -204,14 +205,14 @@
       undo: function(event) {
         if(!this.disabled) {
           this.$.data.undo();
-          this._render();
+          this._render(true);
         }
       },
 
       redo: function(event) {
         if(!this.disabled) {
           this.$.data.redo();
-          this._render();
+          this._render(true);
         }
       },
 
@@ -257,7 +258,7 @@
         if(this.disabled) {
           if(event.buttons > 0) {
             this.stop();
-            this._render();
+            this._render(true);
           }
           return;
         }
@@ -413,7 +414,7 @@
       _erase(x, y, px, py) {
         var erased = this.$.data.erase(x, y, px, py, this.eraserRadius);
         if(erased) {
-          this._render();
+          this._render(true);
         }
       },
 
@@ -427,7 +428,7 @@
 
       _move(x, y, px, py) {
         this.$.data.move(x, y, px, py);
-        this._render();
+        this._render(true);
       },
 
       _moveEnd() {
@@ -452,6 +453,8 @@
         this.$.data.draw(this._prevX, this._prevY);
         this.$.data.draw(x, y);
         this.$.data.drawEnd();
+
+        this._drawLine([this._prevX, this._prevY, x, y]);
         this._render();
       },
 
@@ -680,13 +683,18 @@
         }
       },
 
-      _render() {
-        this._clear();
-
-        for(var i in this.$.data.lines) {
-          this._drawLine(this.$.data.lines[i]);
+      /**
+       * Composite the offscreen canvas to the scene.
+       * Rebuild should be avoided in append operations.
+       * @param {Boolean} rebuild Rebuild scene from data
+       */
+      _render(rebuild) {
+        if (rebuild) {
+          this._clear();
+          for(var i in this.$.data.lines) {
+            this._drawLine(this.$.data.lines[i]);
+          }
         }
-
         this._scene.drawImage(this._canvas.canvas, 0, 0, 800, 600);
       },
 

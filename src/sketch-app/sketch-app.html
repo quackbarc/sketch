@@ -610,12 +610,12 @@
 
       _flipX: function() {
         this.$.sketch.$.data.flip(true, false);
-        this.$.sketch._render();
+        this.$.sketch._render(true);
       },
 
       _flipY: function() {
         this.$.sketch.$.data.flip(false, true);
-        this.$.sketch._render();
+        this.$.sketch._render(true);
       },
 
       _fill: function() {
