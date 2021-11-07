@@ -203,6 +203,13 @@
           toggles
           on-tap="_draw"></paper-icon-button>
       <paper-icon-button
+          title="{{localize('shape')}}"
+          icon="timeline"
+          disabled="{{_swapDisabled(sketchDisabled, loading)}}"
+          active="{{_isShaping(tool)}}"
+          toggles
+          on-tap="_shape"></paper-icon-button>
+      <paper-icon-button
           title="{{localize('fill')}}"
           icon="editor:format-color-fill"
           disabled="{{_swapDisabled(sketchDisabled, loading)}}"
@@ -233,11 +240,6 @@
                 <paper-icon-button
                     icon="swap-vert"
                     on-tap="_flipY"></paper-icon-button>
-                <paper-icon-button
-                    id="lineMode"
-                    icon="timeline"
-                    toggles
-                    on-tap="_toggleLineMode"></paper-icon-button>
               </div>
 
               <hr />
@@ -372,6 +374,10 @@
         target="[[target]]"
         keys="p b"
         on-keys-pressed="_draw"></iron-a11y-keys>
+      <iron-a11y-keys
+        target="[[target]]"
+        keys="l"
+        on-keys-pressed="_shape"></iron-a11y-keys>
     <iron-a11y-keys
         target="[[target]]"
         keys="ctrl+enter"
@@ -555,7 +561,7 @@
       },
 
       _onGet: function(data) {
-        this.$.sketch.data = data.detail;
+        this.$.sketch.$.data.data = data.detail;
         this.$.sketch.play();
       },
 
@@ -600,18 +606,9 @@
 
       _savedSpacing: 0.5,
       _savedSmoothing: 1,
-      _toggleLineMode: function() {
-        if(this.$.lineMode.active) {
-          _savedSpacing = this.$.sketch.spacing;
-          _savedSmoothing = this.$.sketch.smoothing;
 
-          this.$.sketch.spacing = 9999;
-          this.$.sketch.smoothing = 1;
-        }
-        else {
-          this.$.sketch.spacing = _savedSpacing;
-          this.$.sketch.smoothing = _savedSmoothing;
-        }
+      _shape: function() {
+        this.$.sketch.desiredTool = 'shape';
       },
 
       _flipX: function() {
@@ -731,6 +728,10 @@
 
       _isMoving: function(tool) {
         return tool === 'move';
+      },
+
+      _isShaping: function(tool) {
+        return tool === 'shape';
       },
 
       _isFilling: function(tool) {

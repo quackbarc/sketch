@@ -45,7 +45,12 @@
       is: 'sketch-canvas',
 
       ready: function() {
-        this._canvas = this.$.sketchCanvas.getContext("2d");
+        this._scene = this.$.sketchCanvas.getContext("2d");
+        this._scene.strokeStyle = "red";
+        this._scene.lineWidth = 3;
+        this._canvas = document.createElement('canvas').getContext('2d');
+        this._canvas.canvas.width = 800;
+        this._canvas.canvas.height = 600;
         this._canvas.strokeStyle = "black";
         this._canvas.lineWidth = 3;
         if(localStorage.getItem('beta')) {
@@ -160,6 +165,8 @@
       },
 
       // Private properties
+
+      _scene: null,
 
       _canvas: null,
 
@@ -321,6 +328,12 @@
               middle: this._move.bind(this),
               end: this._moveEnd.bind(this)
             }
+          case 'shape':
+            return {
+              start: this._shapeStart.bind(this),
+              middle: this._shape.bind(this),
+              end: this._shapeEnd.bind(this)
+            }
           case 'fill':
             return {
               start: this._fill.bind(this),
@@ -369,6 +382,7 @@
           this.$.data.draw(x, y);
           var lastLine = this.$.data.lines[this.$.data.lines.length - 1];
           this._drawLine(lastLine.slice(lastLine.length - 4, lastLine.length));
+          this._render();
         }
       },
 
@@ -388,6 +402,7 @@
         }
 
         this.$.data.drawEnd();
+        this._render();
       },
 
       _eraseStart(x, y) {
@@ -419,6 +434,27 @@
         this.$.data.moveEnd();
       },
 
+      _shapeStart(x, y) {
+        this._prevX = x;
+        this._prevY = y;
+      },
+
+      _shape(x, y, px, py) {
+        this._render();
+        this._scene.beginPath();
+        this._scene.moveTo(this._prevX, this._prevY);
+        this._scene.lineTo(x, y);
+        this._scene.stroke();
+      },
+
+      _shapeEnd(x, y) {
+        this.$.data.drawStart();
+        this.$.data.draw(this._prevX, this._prevY);
+        this.$.data.draw(x, y);
+        this.$.data.drawEnd();
+        this._render();
+      },
+
       /**
        * Fills an area with tone, computed from raster data in canvas.
        * @param {Number} x        x position in canvas
@@ -442,6 +478,7 @@
         for(var p in linePoints) {
           this._drawLine(linePoints[p]);
         }
+        this._render();
       },
 
       /**
@@ -583,6 +620,7 @@
         for(var p in tonePoints) {
           this._drawLine(tonePoints[p]);
         }
+        this._render();
       },
 
       _toneEnd(x, y) {
@@ -631,6 +669,8 @@
               }
             }
           }
+
+          this._scene.drawImage(this._canvas.canvas, 0, 0, 800, 600);
         }
 
         this._lastTimestamp = timestamp;
@@ -646,6 +686,8 @@
         for(var i in this.$.data.lines) {
           this._drawLine(this.$.data.lines[i]);
         }
+
+        this._scene.drawImage(this._canvas.canvas, 0, 0, 800, 600);
       },
 
       _canEdit(canEdit, disabled) {
