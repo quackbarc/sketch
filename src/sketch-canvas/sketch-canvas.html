@@ -431,7 +431,12 @@
         if (this.toneSpacing > 3) {
           linePoints = this.$.data.toneArea(flood.bounds, flood.mask, this.toneSpacing);
         } else {
-          linePoints = flood.lines;
+          if (this.toneSpacing > 1) {
+            // Poor's man hashing... for now
+            linePoints = flood.lines.filter((l, i) => l[1] % (this.toneSpacing*2) == 0);
+          } else {
+            linePoints = flood.lines;
+          }
           this.$.data.drawLines(linePoints);
         }
         for(var p in linePoints) {
@@ -447,74 +452,85 @@
        * @returns {Object}        Computed mask, bounds and lines.
        */
       _floodFill(data, startX, startY) {
-        var mask = new Array(data.length/4).fill(0),
+        var mask = new Uint8Array(800*600),
           bounds = [startX, startY, startX, startY],
           lines = [],
           newPos,
-          x,
-          y,
-          pixelPos,
+          curPos,
+          testPos,
+          newPoint,
+          curPoint,
           reachLeft,
           reachRight,
           drawingBoundLeft = 0,
           drawingBoundTop = 0,
           drawingBoundRight = 800,
           drawingBoundBottom = 600,
-          pixelStack = [[startX, startY]];
+          pixelStack = [(startY * 800 + startX) * 4];
+        
+        inBounds = (pos) => {
+          return !isNaN(pos);
+        };
+        isNotDirty = (pos) => {
+          return data[pos] + data[pos + 1] + data[pos + 2] != 0;
+        };
+        toPoint = (pos) => {
+          return [(pos/4) % drawingBoundRight, Math.floor((pos/4) / drawingBoundRight)];
+        };
+        // I want this to support arbitrary angles to allow hashing, leaving it at 90º for now...
+        step = (pos, x, y) => {
+          let ret = pos + (y + x * drawingBoundRight) * 4; // normalized step at 90º
+          let abs = ((pos/4) % drawingBoundRight) + y; // abscissa bounds check
+          return abs > 0 && abs < drawingBoundRight && ret > 0 && ret < 1920000 ? ret : NaN;
+        };
 
         while (pixelStack.length) {
-
-          newPos = pixelStack.pop();
-          x = newPos[0];
-          y = newPos[1];
-
-          // Get current pixel position
-          pixelPos = (y * 800 + x) * 4;
+          testPos = pixelStack.pop();
 
           // Go up as long as the color matches and are inside the canvas
-          while (y > drawingBoundTop && this._isNotBlack(data, pixelPos)) {
-            y -= 1;
-            pixelPos -= drawingBoundRight * 4;
-          }
+          do {
+            newPos = testPos;
+            testPos = step(newPos, 0, -1);
+          } while (inBounds(testPos) && isNotDirty(testPos));
 
-          // New start
-          newPos = [x, y];
+          // Start
+          testPos = newPos;
 
-          pixelPos += drawingBoundRight * 4;
-          y += 1;
           reachLeft = false;
           reachRight = false;
 
           // Go down as long as the color matches and in inside the canvas
-          while (y < drawingBoundBottom && this._isNotBlack(data, pixelPos)) {
-            y += 1;
+          do {
+            curPos = testPos;
 
             // Dirty pixel, mark in mask.
             {
-              data[pixelPos + 0] = 0;
-              data[pixelPos + 1] = 0;
-              data[pixelPos + 2] = 0;
+              data[curPos + 0] = 0;
+              data[curPos + 1] = 0;
+              data[curPos + 2] = 0;
 
-              mask[pixelPos/4] = 1;
+              mask[curPos/4] = 1;
             }
 
-            if (x > drawingBoundLeft) {
-              if (this._isNotBlack(data, pixelPos - 4)) {
+            testPos = step(curPos, -1, 0);
+            if (inBounds(testPos)) {
+              if (isNotDirty(testPos)) {
                 if (!reachLeft) {
                   // Add pixel to stack
-                  pixelStack.push([x - 1, y]);
+                  pixelStack.push(testPos);
                   reachLeft = true;
                 }
               } else if (reachLeft) {
                 reachLeft = false;
               }
             }
-
-            if (x < drawingBoundRight) {
-              if (this._isNotBlack(data, pixelPos + 4)) {
+            
+            testPos = step(curPos, 1, 0);
+            if (inBounds(testPos)) {
+              if (isNotDirty(testPos)) {
                 if (!reachRight) {
                   // Add pixel to stack
-                  pixelStack.push([x + 1, y]);
+                  pixelStack.push(testPos);
                   reachRight = true;
                 }
               } else if (reachRight) {
@@ -522,25 +538,32 @@
               }
             }
 
-            pixelPos += drawingBoundRight * 4;
-          }
+            testPos = step(curPos, 0, 1);
+            if (inBounds(testPos)) {
+              // As long as it's in bounds, use as end
+              curPos = testPos;
+            }
+          } while(inBounds(testPos) && isNotDirty(testPos));
+
+          newPoint = toPoint(newPos);
+          curPoint = toPoint(curPos);
 
           // Expand bounds if necessary
-          if (bounds[0] > newPos[0]) {
-            bounds[0] = newPos[0];
+          if (bounds[0] > newPoint[0]) {
+            bounds[0] = newPoint[0];
           }
-          if (bounds[1] > newPos[1]) {
-            bounds[1] = newPos[1];
+          if (bounds[1] > newPoint[1]) {
+            bounds[1] = newPoint[1];
           }
-          if (bounds[2] < x) {
-            bounds[2] = x;
+          if (bounds[2] < curPoint[0]) {
+            bounds[2] = curPoint[0];
           }
-          if (bounds[3] < y) {
-            bounds[3] = y;
+          if (bounds[3] < curPoint[1]) {
+            bounds[3] = curPoint[1];
           }
 
           // Trace lines
-          lines.push([newPos[0], newPos[1], x, y]);
+          lines.push([newPoint[0], newPoint[1], curPoint[0], curPoint[1]]);
         }
 
         return {
@@ -550,23 +573,13 @@
         };
       },
 
-      /**
-       * Test if the n pixel is not black in a data array, no tolerance
-       * @param {Array}  data     Image data array
-       * @param {Number} pixelPos The N pixel in array
-       * @returns {Boolean}       Is n Pixel any black?
-       */
-      _isNotBlack(data, pixelPos) {
-        return data[pixelPos] + data[pixelPos + 1] + data[pixelPos + 2] != 0;
-      },
-
       _toneStart(x, y) {
         this.$.data.toneStart();
         this._tone(x, y, x, y);
       },
 
       _tone(x, y, px, py) {
-        var tonePoints = this.$.data.tone(x, y, px, py, this.toneRadius, this.toneSpacing);
+        var tonePoints = this.$.data.tone(x, y, px, py, this.toneRadius, Math.max(this.toneSpacing, 4));
         for(var p in tonePoints) {
           this._drawLine(tonePoints[p]);
         }
