@@ -150,6 +150,7 @@
               tone-radius="{{toneRadius}}"
               tone-spacing="{{toneSpacing}}"
               eraser-radius="{{eraserRadius}}"
+              shape-sides="{{shapeSides}}"
               animation-speed="{{animationSpeed}}"
               disabled="{{sketchDisabled}}"></sketch-canvas>
       </fit-ratio-container>
@@ -274,6 +275,30 @@
                       value="{{eraserRadius}}"
                       max="50"
                       min="1"
+                      editable></paper-slider>
+              </div>
+
+              <hr />
+              <h2>Shape</h2>
+              <div class="settings-item slider">
+                  <div style="text-align: center;">
+                    <paper-icon-button
+                        icon="remove"
+                        on-tap="_shapeLine"></paper-icon-button>
+                    <paper-icon-button
+                        icon="check-box-outline-blank"
+                        on-tap="_shapeSquare"></paper-icon-button>
+                    <paper-icon-button
+                        icon="radio-button-unchecked"
+                        on-tap="_shapeCircle"></paper-icon-button>
+                  </div>
+
+                  <div>Sides</div>
+                  <paper-slider
+                      value="{{shapeSides}}"
+                      max-markers="8"
+                      max="96"
+                      min="2"
                       editable></paper-slider>
               </div>
 
@@ -606,6 +631,18 @@
 
       _shape: function() {
         this.$.sketch.desiredTool = 'shape';
+      },
+
+      _shapeLine: function() {
+        this.$.sketch.shapeSides = 2;
+      },
+
+      _shapeSquare: function() {
+        this.$.sketch.shapeSides = 4;
+      },
+
+      _shapeCircle: function() {
+        this.$.sketch.shapeSides = 64;
       },
 
       _flipX: function() {
