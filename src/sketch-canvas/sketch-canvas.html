@@ -591,7 +591,7 @@
         step = (pos, x, y) => {
           let ret = pos + (y + x * drawingBoundRight) * 4; // normalized step at 90º
           let abs = ((pos/4) % drawingBoundRight) + y; // abscissa bounds check
-          return abs > 0 && abs < drawingBoundRight && ret > 0 && ret < 1920000 ? ret : NaN;
+          return abs >= 0 && abs < drawingBoundRight && ret > 0 && ret < 1920000 ? ret : NaN;
         };
 
         while (pixelStack.length) {
@@ -601,6 +601,10 @@
           do {
             newPos = testPos;
             testPos = step(newPos, 0, -1);
+            if (inBounds(testPos)) {
+              // As long as it's in bounds, use as start
+              newPos = testPos;
+            }
           } while (inBounds(testPos) && isNotDirty(testPos));
 
           // Start
