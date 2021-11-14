@@ -660,7 +660,7 @@
 
       _swap: function() {
         var swapDisabled = this._swapDisabled(this.sketchDisabled, this.loading, this.ink);
-        if(!swapDisabled) {
+        if(!swapDisabled && !this.drawing) {
           this.$.api.swap(this.$.sketch.$.data.alteredDots());
           this.sketchDisabled = true;
           this.undoDisabled = true;
@@ -675,12 +675,16 @@
           this.$.sketch.$.data.history = this.$.sketch.$.data.history.slice(0, -1);
         }
         else {
-          this.$.sketch.undo();
+          if(!this.drawing) {
+            this.$.sketch.undo();
+          }
         }
       },
 
       _redo: function() {
-        this.$.sketch.redo();
+        if(!this.drawing) {
+          this.$.sketch.redo();
+        }
       },
 
       _erase: function(e) {
@@ -704,6 +708,10 @@
       },
 
       _reset: function() {
+        if(this.drawing) {
+          return;
+        }
+
         this.$.sketch.stop();
 
         if(this.sketchDisabled && !this.undoDisabled) {
@@ -721,6 +729,10 @@
       },
 
       _peek: function() {
+        if(this.drawing) {
+          return;
+        }
+
         this.$.api.peek();
         this.sketchDisabled = true;
         this.undoDisabled = false;
@@ -757,6 +769,10 @@
       _paste: function() {
         if(!navigator.clipboard.readText) {
           return this._alert('unable to read clipboard');
+        }
+
+        if(this.drawing) {
+          return;
         }
 
         navigator.clipboard.readText()
