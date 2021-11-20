@@ -12,18 +12,21 @@
         id="getMaxIDRequest"
         url="https://kawaii-cors.herokuapp.com/https://garyc.me/sketch/getMaxID.php"
         handle-as="text"
-        on-response="_onSwap"></iron-ajax>
+        on-response="_onSwap"
+        on-error="_onError"></iron-ajax>
     <iron-ajax
         id="swapRequest"
         url="https://kawaii-cors.herokuapp.com/https://garyc.me/sketch/swap.php?v=32"
         method="POST"
         handle-as="text"
-        on-response="_onSwap"></iron-ajax>
+        on-response="_onSwap"
+        on-error="_onError"></iron-ajax>
     <iron-ajax
         id="getRequest"
         url="https://kawaii-cors.herokuapp.com/https://garyc.me/sketch/get.php"
         handle-as="text"
-        on-response="_onGet"></iron-ajax>
+        on-response="_onGet"
+        on-error="_onError"></iron-ajax>
   </template>
   <script>
   (function() {
@@ -124,7 +127,12 @@
         this._setSketches(parseInt(stats[0]));
         this._setArtists(parseInt(stats[1]));
         this._setPeekers(parseInt(stats[2]));
-      }
+      },
+
+      _onError: function(event) {
+        this.fire('swap-failed', {swap: event.srcElement == this.$.swapRequest});
+        this._setLoading(false);
+      },
     });
   })();
   </script>

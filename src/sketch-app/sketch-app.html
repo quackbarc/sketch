@@ -647,8 +647,9 @@
 
       // Event handlers for ajax
 
-      _onSwapFailed: function() {
+      _onSwapFailed: function(e) {
         this.sketchDisabled = false;
+        this._alert(e.detail.swap ? 'failed to swap' : 'failed to fetch');
       },
 
       _onGet: function(data) {
