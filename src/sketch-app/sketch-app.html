@@ -128,12 +128,9 @@
         color: #000;
         padding: 8px;
         position: relative;
-        width: 390px;
+        width: min-content;
         max-height: 300px;
-      }
-
-      .settings div {
-        margin: 8px;
+        overflow-y: scroll;
       }
 
       .settings h2 {
@@ -147,29 +144,43 @@
 
       .settings .settings-item {
         display: flex;
-        margin: 0px;
+        min-width: 370px;
         padding: 2px 10px;
       }
+      .settings .settings-item > * {
+          align-items: center;
+      }
       .settings .settings-item > div {
-        display: flex;
-        flex-grow: 1;
+        display: flex; /* cheap centering */
+        padding: 8px;
+        flex: 1 1 auto;
         align-items: center;
       }
+      .settings .settings-item > paper-toggle-button {
+        flex: 0 1 auto;
+        padding-left: 20px;
+      }
       .settings .settings-item.slider > div {
-        flex: 2;
+        flex: 1 1 0;
       }
       .settings .settings-item.slider > paper-slider {
-        flex: 3;
-        width: auto;
-      }
-      .settings .settings-item > paper-toggle-button {
-        justify-content: flex-end;
-        padding-left: 20px;
+        flex: 0 1 auto;
+        width: 210px;
       }
 
       .settings .settings-double {
-        margin: 0;
         display: flex;
+        min-width: 410px;
+        margin: 0;
+      }
+      .settings .settings-double .settings-item {
+        flex: 1;
+        min-width: 0;
+      }
+      .settings-double .settings-item.slider > paper-slider {
+        flex: 1 0 auto;
+        width: auto;
+        max-width: 210px;
       }
       .settings .settings-double .settings-item:nth-Child(1) {
         padding-right: 0px;
@@ -243,6 +254,7 @@
       <paper-menu-button
           id="menuEraser"
           disabled="{{_toolDisabled(sketchDisabled, loading)}}"
+          dynamic-align
           vertical-align="bottom"
           vertical-offset="60"
           on-opened-changed="_erase">
@@ -288,6 +300,7 @@
       <paper-menu-button
           id="menuScreentone"
           disabled="{{_toolDisabled(sketchDisabled, loading)}}"
+          dynamic-align
           vertical-align="bottom"
           vertical-offset="60"
           on-opened-changed="_screentone">
@@ -320,6 +333,8 @@
           </div>
       </paper-menu-button>
       <paper-menu-button
+          dynamic-align
+          allow-outside-scroll
           vertical-align="bottom"
           vertical-offset="60">
           <paper-icon-button
