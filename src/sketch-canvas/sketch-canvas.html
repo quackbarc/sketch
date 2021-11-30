@@ -321,14 +321,13 @@
             if(isInBounds) {
               this._action(tool).end(x, y);
               this.$.sketchCanvas.releasePointerCapture(event.pointerId);
-              this.drawing = false;
             }
             else {
               var intersection = this.$.data._intersections([[x, y], [this._lastX, this._lastY]], [[0, 0], [800, 600]]);
               this._action(tool).middle(...intersection[0], this._lastX, this._lastY);
               this._action(tool).end(...intersection[0]);
-              this.drawing = false;
             }
+            this.drawing = false;
             this._activeTool = null;
           }
         }
