@@ -283,8 +283,10 @@
           return;
         }
 
-        var tool = this.tool;
+        var pointerErasing = (event.buttons == 32 || event.buttons == 2);
         var pressed = event.buttons > 0;
+
+        var tool = pointerErasing ? "eraser" : this.tool;
         var point = this._scaleCoordinates(this._bounds, event.clientX, event.clientY, 800, 600);
         var x = point[0];
         var y = point[1];
@@ -293,7 +295,7 @@
         var wasInBounds = this._lastX >= 0 && this._lastX < 800 && this._lastY >= 0 && this._lastY < 600;
 
         if(isInBounds && pressed) {
-          this._activeTool = (event.buttons == 32 || event.buttons == 2) ? 'eraser' : null;
+          this._activeTool = pointerErasing ? 'eraser' : null;
           if(this._wasPressed) {
             if(wasInBounds) {
               if(this.timeResolution != 0 && Math.floor(event.timeStamp / this.timeResolution) - Math.floor(this._lastEventTimeStamp / this.timeResolution) == 0) {
@@ -327,7 +329,7 @@
               this._action(tool).end(...intersection[0]);
               this.drawing = false;
             }
-            this._activeTool = (event.buttons == 32 || event.buttons == 2) ? 'eraser' : null;
+            this._activeTool = null;
           }
         }
 
