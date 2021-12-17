@@ -916,8 +916,7 @@
         span.hidden = true;
         this._hideStats();
 
-        let sleepPromise = this._sleep(3000);
-        this._sleepPromise = sleepPromise;
+        let sleepPromise = this._sleepPromise = this._sleep(3000);
         await sleepPromise;
 
         if(this._sleepPromise === sleepPromise) {
