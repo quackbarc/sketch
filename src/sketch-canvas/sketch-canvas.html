@@ -198,6 +198,8 @@
 
       _lastEventTimeStamp: 0,
 
+      _pointerType: null,
+
       // Public methods
 
       play: function() {
@@ -283,6 +285,11 @@
           return;
         }
 
+        // thanks firefox
+        if(this._pointerType != null && this._pointerType != event.pointerType) {
+          return;
+        }
+
         var pointerErasing = (event.buttons == 32 || event.buttons == 2);
         var pressed = event.buttons > 0;
 
@@ -295,6 +302,7 @@
         var wasInBounds = this._lastX >= 0 && this._lastX < 800 && this._lastY >= 0 && this._lastY < 600;
 
         if(isInBounds && pressed) {
+          this._pointerType = this._pointerType == null ? event.pointerType : this._pointerType;
           this._activeTool = pointerErasing ? 'eraser' : null;
           if(this._wasPressed) {
             if(wasInBounds) {
@@ -328,6 +336,7 @@
               this._action(tool).end(...intersection[0]);
             }
             this.drawing = false;
+            this._pointerType = null;
             this._activeTool = null;
           }
         }
