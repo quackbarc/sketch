@@ -480,18 +480,18 @@
               if(lastPoint === null || this._within(lastPoint, rect)) {
                 nln.push(point);
               } else {
-                nln = [];
                 nln.push(...this._intersections([lastPoint, point], rect), point);
               }
             } else if(lastPoint && this._within(lastPoint, rect)) {
               nln.push(...this._intersections([lastPoint, point], rect));
               nlns.push(nln.flat());
+              nln = [];
             }
 
             lastPoint = point;
           }
 
-          if(nln.length > 0) {
+          if(nln.length > 1) {
             nlns.push(nln.flat());
           }
 
