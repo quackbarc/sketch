@@ -299,6 +299,7 @@
 
       moveEnd: function() {
         if(this.lines.length > 0) {
+          this._action[0].added = this._action[0].added.slice();
           this.pushHistory(this._action);
         }
       },
