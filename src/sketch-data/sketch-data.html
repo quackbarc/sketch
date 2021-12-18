@@ -465,29 +465,34 @@
       },
 
       _clip: function(lines) {
-        let r = [[0, 0], [800, 600]];
+        const rect = [[0, 0], [800, 600]];
 
         return lines.flatMap((ln) => {
-          let nln = [[ln[0], ln[1]]];
+          var nlns = [];
+          let nln = [];
+          let lastPoint = null;
 
-          for(let i = 2; i < ln.length; i += 2) {
-            nln.push(...this._intersections([ln.slice(i - 4, i - 2), ln.slice(i - 2, i)], r), ln.slice(i, i + 2));
-          }
+          for(let i = 0; i < ln.length; i += 2) {
+            var point = ln.slice(i, i+2);
 
-          let nlns = [];
-          let pp = null;
-
-          nln.forEach((p) => {
-            if(this._within(p, r)) {
-              if(pp === null || !this._within(pp, r)) {
-                nlns.push([]);
+            if(this._within(point, rect)) {
+              if(lastPoint === null || this._within(lastPoint, rect)) {
+                nln.push(point);
+              } else {
+                nln = [];
+                nln.push(...this._intersections([lastPoint, point], rect), point);
               }
-
-              nlns[nlns.length - 1].push(...p);
+            } else if(lastPoint && this._within(lastPoint, rect)) {
+              nln.push(...this._intersections([lastPoint, point], rect));
+              nlns.push(nln.flat());
             }
 
-            pp = p;
-          });
+            lastPoint = point;
+          }
+
+          if(nln.length > 0) {
+            nlns.push(nln.flat());
+          }
 
           return nlns;
         });
