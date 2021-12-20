@@ -483,8 +483,11 @@
                 nln.push(...this._intersections([lastPoint, point], rect), point);
               }
             } else if(lastPoint && this._within(lastPoint, rect)) {
-              nln.push(...this._intersections([lastPoint, point], rect));
-              nlns.push(nln.flat());
+              var ints = this._intersections([lastPoint, point], rect);
+              if(ints.length > 0) {
+                nln.push(ints);
+                nlns.push(nln.flat());
+              }
               nln = [];
             }
 
