@@ -373,6 +373,12 @@
                       noink></paper-toggle-button>
               </div>
               <div class="settings-item">
+                  <div>Automatically save tool settings</div>
+                  <paper-toggle-button
+                      checked="{{autosaveTools}}"
+                      noink></paper-toggle-button>
+              </div>
+              <div class="settings-item">
                   <div>Restrict drawing past ink limit</div>
                   <paper-toggle-button
                       checked="{{limitedInk}}"
@@ -572,6 +578,10 @@
           type: Boolean,
           value: true
         },
+        autosaveTools: {
+          type: Boolean,
+          value: true
+        },
 
         flooredInk: {
           type: Number,
@@ -627,24 +637,30 @@
           localStorage.removeItem('save' + this.tabID);
         }
 
+        if(this.autosaveTools) {
+          var toolSettings = {
+            tool: this.tool,
+            eraserRadius: this.$.sketch.eraserRadius,
+            toneRadius: this.$.sketch.toneRadius,
+            toneSpacing: this.$.sketch.toneSpacing,
+          };
+
+          localStorage.setItem('toolSettings', JSON.stringify(toolSettings));
+        }
+        else {
+          localStorage.removeItem('toolSettings');
+        }
+
         var settings = {
           timeResolution: this.$.sketch.timeResolution,
           animationSpeed: this.$.sketch.animationSpeed,
           detectScreentone: this.$.sketch.$.data.detectScreentone,
           limitedInk: this.$.sketch.$.data.limitedInk,
           autosave: this.autosave,
+          autosaveTools: this.autosaveTools,
         };
 
         localStorage.setItem('settings', JSON.stringify(settings));
-
-        var toolSettings = {
-          tool: this.tool,
-          eraserRadius: this.$.sketch.eraserRadius,
-          toneRadius: this.$.sketch.toneRadius,
-          toneSpacing: this.$.sketch.toneSpacing,
-        }
-
-        localStorage.setItem('toolSettings', JSON.stringify(toolSettings));
       },
 
       _restoreData: function() {
@@ -657,6 +673,7 @@
           this.$.sketch.$.data.detectScreentone = settings.detectScreentone ?? this.$.sketch.$.data.detectScreentone;
           this.$.sketch.$.data.limitedInk = settings.limitedInk ?? this.$.sketch.$.data.limitedInk;
           this.autosave = settings.autosave ?? this.autosave;
+          this.autosaveTools = settings.autosaveTools ?? this.autosaveTools;
         }
 
         var save = JSON.parse(localStorage.getItem('save' + this.tabID));
