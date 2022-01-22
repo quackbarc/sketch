@@ -308,7 +308,7 @@
         this._action = [];
       },
 
-      tone: function(x, y, px, py, radius, spacing) {
+      tone: function(x, y, px, py, radius, spacing, offX, offY) {
         if(this.length >= this.MAX_LENGTH && this.limitedInk) {
           return;
         }
@@ -326,8 +326,8 @@
         // credits to noz for the original algorithm
 
         // anchoring the loop to start at the nearest possible tone point at the top-left
-        var sX = (x - radius) - ((x - radius) % spacing);
-        var sY = (y - radius) - ((y - radius) % spacing);
+        var sX = (x - radius) - ((x + offX - radius) % spacing);
+        var sY = (y - radius) - ((y + offY - radius) % spacing);
         var eX = (x + radius);
         var eY = (y + radius);
         for (var i = sX; i <= eX; i += spacing) {

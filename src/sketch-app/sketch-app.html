@@ -213,6 +213,8 @@
               line-step="{{lineStep}}"
               tone-radius="{{toneRadius}}"
               tone-spacing="{{toneSpacing}}"
+              tone-offset-x="{{toneOffsetX}}"
+              tone-offset-y="{{toneOffsetY}}"
               eraser-radius="{{eraserRadius}}"
               time-resolution="{{timeResolution}}"
               animation-speed="{{animationSpeed}}"
@@ -327,6 +329,25 @@
                           value="{{toneRadius}}"
                           min="1"
                           max="20"
+                          editable></paper-slider>
+                  </div>
+              </div>
+              <h2>Screentone Offset</h2>
+              <div class="settings-double">
+                  <div class="settings-item slider">
+                      <div>X</div>
+                      <paper-slider
+                          value="{{toneOffsetX}}"
+                          min="0"
+                          max="40"
+                          editable></paper-slider>
+                  </div>
+                  <div class="settings-item slider">
+                      <div>Y</div>
+                      <paper-slider
+                          value="{{toneOffsetY}}"
+                          min="0"
+                          max="40"
                           editable></paper-slider>
                   </div>
               </div>
@@ -642,6 +663,8 @@
           var toolSettings = {
             tool: this.tool,
             eraserRadius: this.$.sketch.eraserRadius,
+            toneOffsetX: this.$.sketch.toneOffsetX,
+            toneOffsetY: this.$.sketch.toneOffsetY,
             toneRadius: this.$.sketch.toneRadius,
             toneSpacing: this.$.sketch.toneSpacing,
           };
@@ -689,6 +712,8 @@
         if(toolSettings) {
           this.$.sketch.desiredTool = toolSettings.tool ?? this.$.sketch.desiredTool;
           this.$.sketch.eraserRadius = toolSettings.eraserRadius ?? this.$.sketch.eraserRadius;
+          this.$.sketch.toneOffsetX = toolSettings.toneOffsetX ?? this.$.sketch.toneOffsetX;
+          this.$.sketch.toneOffsetY = toolSettings.toneOffsetY ?? this.$.sketch.toneOffsetY;
           this.$.sketch.toneRadius = toolSettings.toneRadius ?? this.$.sketch.toneRadius;
           this.$.sketch.toneSpacing = toolSettings.toneSpacing ?? this.$.sketch.toneSpacing;
         }

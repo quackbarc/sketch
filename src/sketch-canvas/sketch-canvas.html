@@ -145,6 +145,16 @@
           notify: true,
           value: 8
         },
+        toneOffsetX: {
+          type: Number,
+          notify: true,
+          value: 0
+        },
+        toneOffsetY: {
+          type: Number,
+          notify: true,
+          value: 0
+        },
         eraserRadius: {
           type: Number,
           notify: true,
@@ -450,7 +460,7 @@
       },
 
       _tone(x, y, px, py) {
-        var tonePoints = this.$.data.tone(x, y, px, py, this.toneRadius, this.toneSpacing);
+        var tonePoints = this.$.data.tone(x, y, px, py, this.toneRadius, this.toneSpacing, this.toneOffsetX, this.toneOffsetY);
         for(var p in tonePoints) {
           this._drawLine(tonePoints[p]);
         }
