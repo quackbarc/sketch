@@ -512,7 +512,8 @@
         peekers="{{peekers}}"
         loading="{{loading}}"
         on-get="_onGet"
-        on-swap-failed="_onSwapFailed"></sketch-api>
+        on-swap-failed="_onSwapFailed"
+        on-swap-waiting="_onSwapWaiting"></sketch-api>
   </template>
 
   <script>
@@ -694,6 +695,10 @@
       },
 
       // Event handlers for ajax
+
+      _onSwapWaiting: function() {
+        this._alert('waiting for other sketch...');
+      },
 
       _onSwapFailed: function(e) {
         this.sketchDisabled = false;

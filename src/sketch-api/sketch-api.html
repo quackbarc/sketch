@@ -70,6 +70,10 @@
         }
       },
 
+      // Private properties
+
+      _waiting: false,
+
       // Public functions
 
       peek: function() {
@@ -102,9 +106,14 @@
         var data = event.detail.response;
 
         if(data == "wait") {
+          if(!this._waiting) {
+            this.fire('swap-waiting');
+          }
+          this._waiting = true;
           setTimeout(this.$.getRequest.generateRequest.bind(this.$.getRequest), GET_INTERVAL);
         }
         else {
+          this._waiting = false;
           this.fire('get', data);
           this._setLoading(false);
         }
