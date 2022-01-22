@@ -367,6 +367,12 @@
                       noink></paper-toggle-button>
               </div>
               <div class="settings-item">
+                  <div>Automatically save sketch and history</div>
+                  <paper-toggle-button
+                      checked="{{autosave}}"
+                      noink></paper-toggle-button>
+              </div>
+              <div class="settings-item">
                   <div>Restrict drawing on ink limit</div>
                   <paper-toggle-button
                       checked="{{limitedInk}}"
@@ -555,12 +561,16 @@
         },
         rememberTab: {
           type: Boolean,
-          computed: "_rememberTab(sketchDisabled, ink)"
+          computed: "_rememberTab(autosave, sketchDisabled, ink)"
         },
 
         hideSwap: {
           type: Boolean,
           value: false
+        },
+        autosave: {
+          type: Boolean,
+          value: true
         },
 
         flooredInk: {
@@ -598,8 +608,8 @@
         return loading || !enabled;
       },
 
-      _rememberTab: function(disabled, ink) {
-          return !disabled && ink > 0;
+      _rememberTab: function(autosave, sketchDisabled, ink) {
+        return autosave && !sketchDisabled && ink > 0;
       },
 
       _saveData: function() {
@@ -622,6 +632,7 @@
           animationSpeed: this.$.sketch.animationSpeed,
           detectScreentone: this.$.sketch.$.data.detectScreentone,
           limitedInk: this.$.sketch.$.data.limitedInk,
+          autosave: this.autosave,
         };
 
         localStorage.setItem('settings', JSON.stringify(settings));
@@ -645,6 +656,7 @@
           this.$.sketch.animationSpeed = settings.animationSpeed ?? this.$.sketch.animationSpeed;
           this.$.sketch.$.data.detectScreentone = settings.detectScreentone ?? this.$.sketch.$.data.detectScreentone;
           this.$.sketch.$.data.limitedInk = settings.limitedInk ?? this.$.sketch.$.data.limitedInk;
+          this.autosave = settings.autosave ?? this.autosave;
         }
 
         var save = JSON.parse(localStorage.getItem('save' + this.tabID));
