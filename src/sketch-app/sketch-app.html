@@ -215,6 +215,7 @@
               tone-spacing="{{toneSpacing}}"
               tone-offset-x="{{toneOffsetX}}"
               tone-offset-y="{{toneOffsetY}}"
+              fill-screentone="{{fillScreentone}}"
               eraser-radius="{{eraserRadius}}"
               time-resolution="{{timeResolution}}"
               animation-speed="{{animationSpeed}}"
@@ -292,13 +293,31 @@
           active="{{_isDrawing(tool)}}"
           toggles="{{!_isDrawing(tool)}}"
           on-tap="_draw"></paper-icon-button>
-      <paper-icon-button
-          title="{{localize('fill')}}"
-          icon="editor:format-color-fill"
+      <paper-menu-button
+          id="menuFill"
           disabled="{{_toolDisabled(sketchDisabled, loading)}}"
-          active="{{_isFilling(tool)}}"
-          toggles="{{!_isFilling(tool)}}"
-          on-tap="_fill"></paper-icon-button>
+          dynamic-align
+          vertical-align="bottom"
+          vertical-offset="60"
+          on-opened-changed="_fill">
+        <paper-icon-button
+            class="dropdown-trigger"
+            title="{{localize('fill')}}"
+            icon="editor:format-color-fill"
+            active="{{_isFilling(tool)}}"
+            toggles="{{!_isFilling(tool)}}"></paper-icon-button>
+          <div class="dropdown-content settings">
+              <h2>Filling</h2>
+              <div class="settings-item">
+                  <div>Screentone</div>
+                  <paper-toggle-button
+                      checked="{{fillScreentone}}"
+                      noink></paper-toggle-button>
+              </div>
+              <!-- would've added screentone options here as well if polymer
+              wasn't so recursive about it -->
+          </div>
+      </paper-menu-button>
       <paper-menu-button
           id="menuScreentone"
           disabled="{{_toolDisabled(sketchDisabled, loading)}}"
@@ -663,6 +682,7 @@
           var toolSettings = {
             tool: this.tool,
             eraserRadius: this.$.sketch.eraserRadius,
+            fillScreentone: this.$.sketch.fillScreentone,
             toneOffsetX: this.$.sketch.toneOffsetX,
             toneOffsetY: this.$.sketch.toneOffsetY,
             toneRadius: this.$.sketch.toneRadius,
@@ -712,6 +732,7 @@
         if(toolSettings) {
           this._setSetting("tool", toolSettings, this.$.sketch, "desiredTool");
           this._setSetting("eraserRadius", toolSettings);
+          this._setSetting("fillScreentone", toolSettings);
           this._setSetting("toneOffsetX", toolSettings);
           this._setSetting("toneOffsetY", toolSettings);
           this._setSetting("toneRadius", toolSettings);
@@ -782,8 +803,8 @@
         this._menuAction(e, this.$.menuScreentone, 'screentone');
       },
 
-      _fill: function() {
-        this.$.sketch.desiredTool = 'fill';
+      _fill: function(e) {
+        this._menuAction(e, this.$.menuFill, 'fill');
       },
 
       _reset: function() {

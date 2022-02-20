@@ -135,6 +135,11 @@
           notify: true,
           value: 10
         },
+        fillScreentone: {
+          type: Boolean,
+          notify: true,
+          value: false
+        },
         toneSpacing: {
           type: Number,
           notify: true,
@@ -437,7 +442,15 @@
       },
 
       _fill(x, y) {
-        this.$.data.fill(x, y, this.$.sketchCanvas);
+        if(this.fillScreentone) {
+          this.$.data.fill(x, y, this.$.sketchCanvas, "tone", {
+            spacing: this.toneSpacing,
+            offX: this.toneOffsetX,
+            offY: this.toneOffsetY,
+          });
+        } else {
+          this.$.data.fill(x, y, this.$.sketchCanvas, "normal");
+        }
         this._render();
       },
 

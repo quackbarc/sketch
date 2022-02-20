@@ -232,7 +232,7 @@
         }
       },
 
-      fill: function(x, y, canvas) {
+      fill: function(x, y, canvas, mode = "normal", modeSettings = {}) {
         if(this.length >= this.MAX_LENGTH && this.limitedInk) {
           return;
         }
@@ -245,12 +245,14 @@
         var action = {
           start: this.lines.length,
           added: [],
-          removed: []
+          removed: [],
+          addedPoints: [],
         }
 
         // using typed array to save memory
         let mask = new Uint8Array(800*600);
         let queue = [[x, y]];
+        let maskLines = [];
         while(queue.length > 0) {
           const [qx, qy] = queue.shift();
           if(mask[this._maskIndex(qx, qy)]) {
@@ -265,11 +267,12 @@
           }
           rx--;
 
-          action.added.push([lx, qy, rx + 1, qy]);
+          maskLines.push([lx, qy, rx, qy]);
           this._queueLine(lx, rx, qy + 1, queue);
           this._queueLine(lx, rx, qy - 1, queue);
         }
 
+        [action.added, action.addedPoints] = this._fillPattern(maskLines, mode, modeSettings);
         this._doAction([action]);
         this.pushHistory([action]);
       },
@@ -459,6 +462,39 @@
         if(oldLength > 0 && this.lines.length == 0) {
           this._setLength(0);
         }
+      },
+
+      _fillPattern: function(maskLines, type = "normal", settings = {}) {
+        var lines = [];
+        var tonePoints = [];
+
+        switch(type) {
+          case "normal":
+            for(let i in maskLines) {
+              let line = maskLines[i].slice();
+              line[2] = line[2] + 1;
+              lines.push(line);
+            }
+            break;
+          case "tone":
+            for(let i in maskLines) {
+              let line = maskLines[i];
+              if((line[1] - settings.offY) % settings.spacing == 0) {
+                // shift left by offset, snap to spacing, then shift right by offset
+                let sX = Math.ceil((line[0] - settings.offX) / settings.spacing) * settings.spacing + settings.offX;
+                for(let x = sX; x <= line[2] + 1; x += settings.spacing) {
+                  // no need for tonePoints check as they're skipped by the fill mask anyway
+                  lines.push([x, line[1], x, line[1]]);
+                  tonePoints.push(`${x}:${line[1]}`);
+                }
+              }
+            }
+            break;
+          default:
+            throw new TypeError('Unknown fill pattern');
+        }
+
+        return [lines, tonePoints];
       },
 
       _pad: function(n, width) {
