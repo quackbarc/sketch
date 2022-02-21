@@ -25,8 +25,8 @@
           readOnly: true
         },
         tonePoints: {
-          type: Array,
-          value: []
+          type: Set,
+          value: new Set()
         },
         length: {
           type: Number,
@@ -108,11 +108,11 @@
 
       set data(data) {
         var oldLines = this.lines.slice();
-        var oldPoints = this.tonePoints.slice();
+        var oldPoints = new Set(this.tonePoints);
         var lines = data.length > 0 ? data.split(" ") : [];
         this._setLength(data.length);
         this._setLines(new Array(lines.length));
-        this.tonePoints = [];
+        this.tonePoints = new Set();
 
         for(var i = 0; i < lines.length; i++) {
           var line = new Array(lines[i].length / 2 | 0);
@@ -123,7 +123,7 @@
 
           if(this.detectScreentone &&
             (line.length == 4 && line[0] == line[2] && line[1] == line[3])) {
-              this.tonePoints.push(`${line[0]}:${line[1]}`);
+              this.tonePoints.add(`${line[0]}:${line[1]}`);
           }
 
           this.lines[i] = line;
@@ -133,7 +133,7 @@
           start: 0,
           added: this.lines.slice(),
           removed: oldLines,
-          addedPoints: this.tonePoints.slice(),
+          addedPoints: [...this.tonePoints],
           removedPoints: oldPoints
         }];
 
@@ -211,7 +211,7 @@
                 action.added.push(second);
               }
 
-              if(this.tonePoints.includes(line[j] + ":" + line[j + 1])) {
+              if(this.tonePoints.has(line[j] + ":" + line[j + 1])) {
                 action.removedPoints = [line[j] + ":" + line[j + 1]];
               }
 
@@ -337,7 +337,7 @@
             for (var j = sY; j <= eY; j += spacing) {
                 if (this._within([i, j], rect)
                     && this._insideCircle(x, y, i, j, radius)
-                    && !this.tonePoints.includes(i + ":" + j)) {
+                    && !this.tonePoints.has(i + ":" + j)) {
                       var points = [i, j, i, j];
                       linePoints.push(points);
                       action.addedPoints.push(i + ":" + j);
@@ -404,14 +404,14 @@
           if(action[i].addedPoints) {
             for(var j in action[i].addedPoints) {
               var point = action[i].addedPoints[j];
-              this.tonePoints.push(point);
+              this.tonePoints.add(point);
             }
           }
 
           if(action[i].removedPoints) {
             for(var j in action[i].removedPoints) {
               var point = action[i].removedPoints[j];
-              this.tonePoints.splice(this.tonePoints.indexOf(point), 1);
+              this.tonePoints.delete(point);
             }
           }
         }
@@ -443,14 +443,14 @@
           if(actionR[i].addedPoints) {
             for(var j in actionR[i].addedPoints) {
               var point = actionR[i].addedPoints[j];
-              this.tonePoints.splice(this.tonePoints.indexOf(point), 1);
+              this.tonePoints.delete(point);
             }
           }
 
           if(actionR[i].removedPoints) {
             for(var j in actionR[i].removedPoints) {
               var point = actionR[i].removedPoints[j];
-              this.tonePoints.push(point);
+              this.tonePoints.add(point);
             }
           }
         }
