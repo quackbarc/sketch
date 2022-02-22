@@ -314,8 +314,37 @@
                       checked="{{fillScreentone}}"
                       noink></paper-toggle-button>
               </div>
-              <!-- would've added screentone options here as well if polymer
-              wasn't so recursive about it -->
+              <h2>Screentoning</h2>
+              <div class="settings-item slider">
+                  <div>Spacing</div>
+                  <paper-slider
+                      value="{{toneSpacing}}"
+                      disabled="{{!fillScreentone}}"
+                      min="2"
+                      max="40"
+                      editable></paper-slider>
+              </div>
+              <h2>Screentone Offset</h2>
+              <div class="settings-double">
+                  <div class="settings-item slider">
+                      <div>X</div>
+                      <paper-slider
+                          value="{{toneOffsetX}}"
+                          disabled="{{!fillScreentone}}"
+                          min="-20"
+                          max="20"
+                          editable></paper-slider>
+                  </div>
+                  <div class="settings-item slider">
+                      <div>Y</div>
+                      <paper-slider
+                          value="{{toneOffsetY}}"
+                          disabled="{{!fillScreentone}}"
+                          min="-20"
+                          max="20"
+                          editable></paper-slider>
+                  </div>
+              </div>
           </div>
       </paper-menu-button>
       <paper-menu-button
@@ -570,6 +599,17 @@
       },
 
       ready: function() {
+        // override to fix constant string-int casting of .value between
+        // paper-slider instances with the textarea that would eventually
+        // cause stack errors
+        Polymer.IronRangeBehavior._changeValue = function(event) {
+          this.value = parseInt(event.target.value);
+          this.fire('change');
+        };
+        document.querySelectorAll('paper-slider').forEach((e) => {
+          e._changeValue = Polymer.IronRangeBehavior._changeValue;
+        });
+
         setInterval(this._saveData.bind(this), 10000);
 
         this._restoreData();
