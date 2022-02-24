@@ -121,9 +121,14 @@
             line[j / 2] = parseInt(lines[i].substr(j, 2), 36);
           }
 
-          if(this.detectScreentone &&
-            (line.length == 4 && line[0] == line[2] && line[1] == line[3])) {
+          if(this.detectScreentone) {
+            if(line.length == 4 && line[0] == line[2] && line[1] == line[3]) {
               this.tonePoints.add(`${line[0]}:${line[1]}`);
+            }
+            else if(line.length == 4 && line[0]+2 == line[2] && line[1]+2 == line[3]) {
+              line = [line[0], line[1], line[0], line[1]];
+              this.tonePoints.add(`${line[0]}:${line[1]}`);
+            }
           }
 
           this.lines[i] = line;
