@@ -1,0 +1,7 @@
+{
+  "name": "sketch",
+  "short_name": "sketch",
+  "description": "A simple polymer client for garyc.me/sketch",
+  "start_url": "/",
+  "display": "standalone"
+}

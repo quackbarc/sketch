@@ -1,0 +1,21 @@
+{
+  "en": {
+    "swap": "Swap",
+    "reset": "Reset",
+    "undo": "Undo",
+    "redo": "Redo",
+    "eraser": "Eraser",
+    "move": "Move",
+    "pen": "Pen",
+    "screentone": "Screentone",
+    "fill": "Fill",
+    "settings": "Settings",
+    "peek": "Peek",
+    "viewGallery": "View gallery",
+    "save": "Save",
+    "ink": "{amount, number, percent} ink used",
+    "sketches": "{num, plural, =-1 {- sketches} one {# sketch} other {# sketches}}",
+    "artists": "{num, plural, =-1 {- artists} one {# artist} other {# artists}}",
+    "peekers": "{num, plural, =-1 {- peekers} one {# peeker} other {# peekers}}"
+  }
+}
