@@ -526,7 +526,7 @@
             } else if(lastPoint && this._within(lastPoint, rect)) {
               var ints = this._intersections([lastPoint, point], rect);
               if(ints.length > 0) {
-                nln.push(ints);
+                nln.push(...ints);
                 nlns.push(nln.flat());
               }
               nln = [];
