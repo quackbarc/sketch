@@ -4,8 +4,8 @@ A fork of dagwaging's Polymer client for garyc.me/sketch.
 
 ## Serving the application
 
-First, make sure you have the [Polymer CLI](https://www.npmjs.com/package/polymer-cli) installed.
-Then run `polymer serve` to serve your application locally.
+First, make sure you have [Bower](https://www.npmjs.com/package/bower) and the [Polymer CLI](https://www.npmjs.com/package/polymer-cli) installed.
+Run `bower install` to install project dependencies and then `polymer serve` to serve the application locally.
 
 ### Viewing Your Application
 
