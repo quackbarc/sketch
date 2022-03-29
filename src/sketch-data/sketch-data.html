@@ -153,6 +153,8 @@
 
       _line: null,
 
+      _moveDist: null,
+
       // Public functions
 
       drawStart: function() {
@@ -283,10 +285,13 @@
       },
 
       moveStart: function() {
+        this._moveDist = { x: 0, y: 0 };
         this._action = [{
           start: 0,
           removed: this.lines.map(line => line.map(i => i)),
-          added: this.lines.map(line => line.map(i => i))
+          removedPoints: Array.from(this.tonePoints),
+          added: this.lines.map(line => line.map(i => i)),
+          addedPoints: Array.from(this.tonePoints),
         }];
       },
 
@@ -302,12 +307,24 @@
           return moved;
         });
 
+        this._moveDist.x += x - px;
+        this._moveDist.y += y - py;
         this._setLines(this._action[0].added);
       },
 
       moveEnd: function() {
         if(this.lines.length > 0) {
-          this._action[0].added = this._action[0].added.slice();
+          const action = this._action[0];
+          action.added = action.added.slice();
+
+          for(let i in action.addedPoints) {
+            let [x, y] = action.addedPoints[i].split(":");
+            x = parseInt(x) + this._moveDist.x;
+            y = parseInt(y) + this._moveDist.y;
+            action.addedPoints[i] = `${x}:${y}`;
+          }
+          this.tonePoints = new Set(action.addedPoints);
+
           this.pushHistory(this._action);
         }
       },
