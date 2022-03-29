@@ -411,16 +411,18 @@
 
       _doAction: function(action) {
         var oldLength = this.lines.length;
+        let addedLength = 0;
+        let removedLength = 0;
 
         for(var i in action) {
           Array.prototype.splice.apply(this.lines, [action[i].start, action[i].removed.length].concat(action[i].added));
 
           for(var j in action[i].added) {
-            this._setLength(this.length + action[i].added[j].length * 2 + 1);
+            addedLength += action[i].added[j].length * 2 + 1;
           }
 
           for(var j in action[i].removed) {
-            this._setLength(this.length - action[i].removed[j].length * 2 - 1);
+            removedLength += action[i].removed[j].length * 2 - 1;
           }
 
           if(action[i].addedPoints) {
@@ -438,6 +440,8 @@
           }
         }
 
+        this._setLength(this.length + addedLength - removedLength);
+
         if(oldLength == 0 && this.lines.length > 0) {
           this._setLength(this.length - 1);
         }
@@ -449,17 +453,19 @@
 
       _undoAction: function(action) {
         var oldLength = this.lines.length;
+        let addedLength = 0;
+        let removedLength = 0;
         var actionR = action.slice(0).reverse();
 
         for(var i in actionR) {
           Array.prototype.splice.apply(this.lines, [actionR[i].start, actionR[i].added.length].concat(actionR[i].removed));
 
           for(var j in actionR[i].added) {
-            this._setLength(this.length - actionR[i].added[j].length * 2 - 1);
+            addedLength += actionR[i].added[j].length * 2 + 1;
           }
 
           for(var j in actionR[i].removed) {
-            this._setLength(this.length + actionR[i].removed[j].length * 2 + 1);
+            removedLength += actionR[i].removed[j].length * 2 - 1;
           }
 
           if(actionR[i].addedPoints) {
@@ -476,6 +482,8 @@
             }
           }
         }
+
+        this._setLength(this.length - addedLength + removedLength);
 
         if(oldLength == 0 && this.lines.length > 0) {
           this._setLength(this.length - 1);
