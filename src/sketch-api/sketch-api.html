@@ -67,12 +67,16 @@
           value: -1,
           notify: true,
           readOnly: true
-        }
+        },
+        waiting: {
+          type: Boolean,
+          value: false,
+          notify: true,
+          readOnly: true,
+        },
       },
 
       // Private properties
-
-      _waiting: false,
 
       // Public functions
 
@@ -106,16 +110,13 @@
         var data = event.detail.response;
 
         if(data == "wait") {
-          if(!this._waiting) {
-            this.fire('swap-waiting');
-          }
-          this._waiting = true;
+          this._setWaiting(true);
           setTimeout(this.$.getRequest.generateRequest.bind(this.$.getRequest), GET_INTERVAL);
         }
         else {
-          this._waiting = false;
-          this.fire('get', data);
+          this._setWaiting(false);
           this._setLoading(false);
+          this.fire('get', data);
         }
       },
 

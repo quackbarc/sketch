@@ -8,6 +8,7 @@
 <link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
 <link rel="import" href="../../bower_components/paper-progress/paper-progress.html">
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../../bower_components/paper-slider/paper-slider.html">
 <link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
@@ -76,19 +77,37 @@
         position: relative;
       }
 
-      paper-toolbar .title {
+      .saveWrapper {
+        display: inline-block;
+        align-self: end;
+      }
+
+      paper-toolbar {
+        color: var(--paper-grey-900);
+        background: var(--paper-grey-50);
+      }
+
+      paper-toolbar .text {
         user-select: none;  /* prevents selection when pressing down with a pen */
-        margin: 0;
       }
 
-      .title span {
+      .row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+      }
+
+      .text span {
+        display: inline-block;
         margin: 0px 8px;
-        font-size: 20px;
+        font-size: 18px;
         font-family: "Jost", "Roboto", "Noto", sans-serif;
-        line-height: normal;
+        line-height: 1.1;
       }
 
-      .title .stats {
+      .text {
+        width: 200px;
         display: inline-block;
       }
 
@@ -115,11 +134,48 @@
       paper-icon-button[toggles]:not([active]),
       paper-icon-button[disabled],
       paper-menu-button[disabled] {
-        color: #3c0101;
+        color: var(--paper-grey-400);
+      }
+
+      paper-icon-button.save {
+        width: 52px;
+        height: 52px;
+        padding-bottom: 0px;
+        position: absolute;
+        bottom: 0;
+        color: var(--primary-color);
+      }
+
+      paper-progress#swapProgress {
+        width: 110px;
+        margin: 0px 10px;
+      }
+
+      paper-button {
+        width: 120px;
+        text-transform: lowercase;
+      }
+
+      paper-button.long {
+        width: 250px;
+      }
+
+      paper-button.swap {
+        background: var(--paper-indigo-a200);
+        color: #fff;
+      }
+
+      paper-button.swap[disabled] {
+        background: var(--paper-indigo-200);
       }
 
       paper-menu-button {
         padding: 0;
+      }
+
+      #tool-picker {
+        display: flex;
+        flex-direction: column;
       }
 
       .settings {
@@ -186,19 +242,6 @@
         padding-right: 0px;
       }
 
-      /* for hideStats */
-
-      .title {
-        display: flex;
-      }
-      .title .stats {
-        margin-left: auto;
-      }
-      .title .stats span {
-        /* really dumb workaround */
-        margin-left: 3px;
-      }
-
     </style>
 
     <div class="content">
@@ -224,285 +267,247 @@
               on-tool-changed="_closeMenus"
               drawing="{{drawing}}"
               disabled="{{sketchDisabled}}"></sketch-canvas>
+
+          <!-- 0 width wrapper for absolute save button so the button doesn't
+          affect the canvas's ratio maintenance -->
+          <div class="saveWrapper">
+            <paper-icon-button
+                title="{{localize('save')}}"
+                class="save"
+                icon="save"
+                on-tap="_save"></paper-icon-button>
+          </div>
       </fit-ratio-container>
-      <paper-fab
-          title="{{localize('swap')}}"
-          icon="send"
-          hidden="{{hideSwap}}"
-          disabled="{{_swapDisabled(sketchDisabled, loading, ink)}}"
-          on-tap="_swap"></paper-fab>
     </div>
 
-    <paper-toolbar id="toolbar">
-      <paper-progress
-          class="fit"
-          hidden="{{!loading}}"
-          indeterminate></paper-progress>
+    <paper-toolbar id="toolbar" class="medium-tall">
+      <div class="row">
+        <paper-menu-button
+            dynamic-align
+            allow-outside-scroll
+            vertical-align="bottom"
+            vertical-offset="60">
+            <paper-icon-button
+                class="dropdown-trigger"
+                title="{{localize('tool')}}"
+                icon="{{toolIcon}}"></paper-icon-button>
+            <div class="dropdown-content" id="tool-picker">
+                <paper-icon-button
+                    title="{{localize('pen')}}"
+                    icon="create"
+                    disabled="{{_toolDisabled(sketchDisabled, loading)}}"
+                    active="{{_isDrawing(tool)}}"
+                    toggles="{{!_isDrawing(tool)}}"
+                    on-tap="_draw"></paper-icon-button>
+                <paper-icon-button
+                    title="{{localize('eraser')}}"
+                    icon="mdi:eraser-variant"
+                    disabled="{{_toolDisabled(sketchDisabled, loading)}}"
+                    active="{{_isErasing(tool)}}"
+                    toggles="{{!_isErasing(tool)}}"
+                    on-tap="_erase"></paper-icon-button>
+                <paper-icon-button
+                    title="{{localize('screentone')}}"
+                    icon="editor:border-clear"
+                    disabled="{{_toolDisabled(sketchDisabled, loading)}}"
+                    active="{{_isToning(tool)}}"
+                    toggles="{{!_isToning(tool)}}"
+                    on-tap="_screentone"></paper-icon-button>
+                <paper-icon-button
+                    title="{{localize('fill')}}"
+                    icon="editor:format-color-fill"
+                    disabled="{{_toolDisabled(sketchDisabled, loading)}}"
+                    active="{{_isFilling(tool)}}"
+                    toggles="{{!_isFilling(tool)}}"
+                    on-tap="_fill"></paper-icon-button>
+                <paper-icon-button
+                    title="{{localize('move')}}"
+                    icon="mdi:cursor-move"
+                    disabled="{{_toolDisabled(sketchDisabled, loading)}}"
+                    active="{{_isMoving(tool)}}"
+                    toggles="{{!_isMoving(tool)}}"
+                    on-tap="_move"></paper-icon-button>
+            </div>
+        </paper-menu-button>
+        <paper-button
+            raised
+            disabled="{{_resetDisabled(sketchDisabled, loading, canUndo, ink)}}"
+            on-tap="_reset">reset
+        </paper-button>
+        <paper-button
+            raised
+            disabled="{{_undoDisabled(sketchDisabled, loading, canUndo, undoDisabled)}}"
+            on-tap="_undo">undo
+        </paper-button>
+        <div class="text">
+          <span>{{localize('ink', 'amount', flooredInk)}}</span>
+        </div>
+        <paper-button
+            raised class="swap"
+            disabled="{{_swapDisabled(sketchDisabled, loading, ink)}}"
+            on-tap="_swap">{{swapText}}
+        </paper-button>
+        <paper-progress
+            class="transiting"
+            id="swapProgress"
+            value="{{swapProgressValue}}">
+        </paper-progress>
+        <div class="text stats">
+            <span>{{localize('sketches', 'num', sketches)}}</span>
+            <span>{{localize('artists', 'num', artists)}}</span>
+        </div>
+      </div>
 
-      <paper-icon-button
-          title="{{localize('reset')}}"
-          icon="delete"
-          disabled="{{_resetDisabled(sketchDisabled, loading, canUndo, ink)}}"
-          on-tap="_reset"></paper-icon-button>
-      <paper-icon-button
-          title="{{localize('undo')}}"
-          icon="undo"
-          disabled="{{_undoDisabled(sketchDisabled, loading, canUndo, undoDisabled)}}"
-          on-tap="_undo"></paper-icon-button>
-      <paper-icon-button
-          title="{{localize('redo')}}"
-          icon="redo"
-          disabled="{{_editDisabled(loading, canRedo)}}"
-          on-tap="_redo"></paper-icon-button>
-      <paper-menu-button
-          id="menuEraser"
-          disabled="{{_toolDisabled(sketchDisabled, loading)}}"
-          dynamic-align
-          vertical-align="bottom"
-          vertical-offset="60"
-          on-opened-changed="_erase">
-          <paper-icon-button
-              class="dropdown-trigger"
-              title="{{localize('eraser')}}"
-              icon="mdi:eraser-variant"
-              active="{{_isErasing(tool)}}"
-              toggles="{{!_isErasing(tool)}}"></paper-icon-button>
-          <div class="dropdown-content settings">
-              <h2>Eraser</h2>
-              <div class="settings-item slider">
+      <div class="middle row">
+        <paper-menu-button
+            dynamic-align
+            allow-outside-scroll
+            vertical-align="bottom"
+            vertical-offset="60">
+            <paper-icon-button
+                class="dropdown-trigger"
+                title="{{localize('settings')}}"
+                icon="settings"></paper-icon-button>
+            <div class="dropdown-content settings">
+                <h2>Eraser</h2>
+                <div class="settings-item slider">
                   <div>Radius</div>
                   <paper-slider
                       value="{{eraserRadius}}"
                       min="1"
                       max="50"
                       editable></paper-slider>
-              </div>
-          </div>
-      </paper-menu-button>
-      <paper-icon-button
-          title="{{localize('move')}}"
-          icon="mdi:cursor-move"
-          disabled="{{_toolDisabled(sketchDisabled, loading)}}"
-          active="{{_isMoving(tool)}}"
-          toggles="{{!_isMoving(tool)}}"
-          on-tap="_move"></paper-icon-button>
-      <paper-icon-button
-          title="{{localize('pen')}}"
-          icon="create"
-          disabled="{{_toolDisabled(sketchDisabled, loading)}}"
-          active="{{_isDrawing(tool)}}"
-          toggles="{{!_isDrawing(tool)}}"
-          on-tap="_draw"></paper-icon-button>
-      <paper-menu-button
-          id="menuFill"
-          disabled="{{_toolDisabled(sketchDisabled, loading)}}"
-          dynamic-align
-          vertical-align="bottom"
-          vertical-offset="60"
-          on-opened-changed="_fill">
-        <paper-icon-button
-            class="dropdown-trigger"
-            title="{{localize('fill')}}"
-            icon="editor:format-color-fill"
-            active="{{_isFilling(tool)}}"
-            toggles="{{!_isFilling(tool)}}"></paper-icon-button>
-          <div class="dropdown-content settings">
-              <h2>Filling</h2>
-              <div class="settings-item">
+                </div>
+                <hr>
+                <h2>Filling</h2>
+                <div class="settings-item">
                   <div>Screentone</div>
                   <paper-toggle-button
                       checked="{{fillScreentone}}"
                       noink></paper-toggle-button>
-              </div>
-              <h2>Screentoning</h2>
-              <div class="settings-item slider">
-                  <div>Spacing</div>
-                  <paper-slider
-                      value="{{toneSpacing}}"
-                      disabled="{{!fillScreentone}}"
-                      min="2"
-                      max="40"
-                      editable></paper-slider>
-              </div>
-              <h2>Screentone Offset</h2>
-              <div class="settings-double">
+                </div>
+                <hr>
+                <h2>Screentoning</h2>
+                <div class="settings-double">
                   <div class="settings-item slider">
-                      <div>X</div>
-                      <paper-slider
-                          value="{{toneOffsetX}}"
-                          disabled="{{!fillScreentone}}"
-                          min="-20"
-                          max="20"
-                          editable></paper-slider>
+                    <div>Spacing</div>
+                    <paper-slider
+                        value="{{toneSpacing}}"
+                        min="2"
+                        max="40"
+                        editable></paper-slider>
                   </div>
                   <div class="settings-item slider">
-                      <div>Y</div>
-                      <paper-slider
-                          value="{{toneOffsetY}}"
-                          disabled="{{!fillScreentone}}"
-                          min="-20"
-                          max="20"
-                          editable></paper-slider>
+                    <div>Radius</div>
+                    <paper-slider
+                        value="{{toneRadius}}"
+                        min="1"
+                        max="20"
+                        editable></paper-slider>
                   </div>
-              </div>
-          </div>
-      </paper-menu-button>
-      <paper-menu-button
-          id="menuScreentone"
-          disabled="{{_toolDisabled(sketchDisabled, loading)}}"
-          dynamic-align
-          vertical-align="bottom"
-          vertical-offset="60"
-          on-opened-changed="_screentone">
-        <paper-icon-button
-            class="dropdown-trigger"
-            title="{{localize('screentone')}}"
-            icon="editor:border-clear"
-            active="{{_isToning(tool)}}"
-            toggles="{{!_isToning(tool)}}"></paper-icon-button>
-          <div class="dropdown-content settings">
-              <h2>Screentoning</h2>
-              <div class="settings-double">
+                </div>
+                <h2>Screentone Offset</h2>
+                <div class="settings-double">
                   <div class="settings-item slider">
-                      <div>Spacing</div>
-                      <paper-slider
-                          value="{{toneSpacing}}"
-                          min="2"
-                          max="40"
-                          editable></paper-slider>
+                    <div>X</div>
+                    <paper-slider
+                        value="{{toneOffsetX}}"
+                        min="-20"
+                        max="20"
+                        editable></paper-slider>
                   </div>
                   <div class="settings-item slider">
-                      <div>Radius</div>
-                      <paper-slider
-                          value="{{toneRadius}}"
-                          min="1"
-                          max="20"
-                          editable></paper-slider>
+                    <div>Y</div>
+                    <paper-slider
+                        value="{{toneOffsetY}}"
+                        min="-20"
+                        max="20"
+                        editable></paper-slider>
                   </div>
-              </div>
-              <h2>Screentone Offset</h2>
-              <div class="settings-double">
-                  <div class="settings-item slider">
-                      <div>X</div>
-                      <paper-slider
-                          value="{{toneOffsetX}}"
-                          min="-20"
-                          max="20"
-                          editable></paper-slider>
-                  </div>
-                  <div class="settings-item slider">
-                      <div>Y</div>
-                      <paper-slider
-                          value="{{toneOffsetY}}"
-                          min="-20"
-                          max="20"
-                          editable></paper-slider>
-                  </div>
-              </div>
-          </div>
-      </paper-menu-button>
-      <paper-menu-button
-          dynamic-align
-          allow-outside-scroll
-          vertical-align="bottom"
-          vertical-offset="60">
-          <paper-icon-button
-              class="dropdown-trigger"
-              title="{{localize('settings')}}"
-              icon="settings"></paper-icon-button>
-          <div class="dropdown-content settings">
+                </div>
 
-              <h2>General</h2>
-              <div class="settings-item slider">
-                  <div>Sample Rate (ms)</div>
-                  <paper-slider
-                      value="{{timeResolution}}"
-                      min="0"
-                      max="50"
-                      editable></paper-slider>
-              </div>
-              <div class="settings-item slider">
-                  <div>Animation speed</div>
-                  <paper-slider
-                      value="{{animationSpeed}}"
-                      min="5"
-                      max="30"
-                      editable></paper-slider>
-              </div>
-              <div class="settings-item">
-                  <div>Hide swap button</div>
-                  <paper-toggle-button
-                      checked="{{hideSwap}}"
-                      noink></paper-toggle-button>
-              </div>
-              <div class="settings-item">
-                  <div>Automatically save sketch and history</div>
-                  <paper-toggle-button
-                      checked="{{autosave}}"
-                      noink></paper-toggle-button>
-              </div>
-              <div class="settings-item">
-                  <div>Automatically save tool settings</div>
-                  <paper-toggle-button
-                      checked="{{autosaveTools}}"
-                      noink></paper-toggle-button>
-              </div>
-              <div class="settings-item">
-                  <div>Restrict drawing past ink limit</div>
-                  <paper-toggle-button
-                      checked="{{limitedInk}}"
-                      noink></paper-toggle-button>
-              </div>
-              <div class="settings-item">
-                  <div>Automatically detect screentone of pastes</div>
-                  <paper-toggle-button
-                      checked="{{detectScreentone}}"
-                      noink></paper-toggle-button>
-              </div>
+                <hr>
+                <h2>General</h2>
+                <div class="settings-item slider">
+                    <div>Sample Rate (ms)</div>
+                    <paper-slider
+                        value="{{timeResolution}}"
+                        min="0"
+                        max="50"
+                        editable></paper-slider>
+                </div>
+                <div class="settings-item slider">
+                    <div>Animation speed</div>
+                    <paper-slider
+                        value="{{animationSpeed}}"
+                        min="5"
+                        max="30"
+                        editable></paper-slider>
+                </div>
+                <div class="settings-item">
+                    <div>Hide swap button</div>
+                    <paper-toggle-button
+                        checked="{{hideSwap}}"
+                        noink></paper-toggle-button>
+                </div>
+                <div class="settings-item">
+                    <div>Automatically save sketch and history</div>
+                    <paper-toggle-button
+                        checked="{{autosave}}"
+                        noink></paper-toggle-button>
+                </div>
+                <div class="settings-item">
+                    <div>Automatically save tool settings</div>
+                    <paper-toggle-button
+                        checked="{{autosaveTools}}"
+                        noink></paper-toggle-button>
+                </div>
+                <div class="settings-item">
+                    <div>Restrict drawing past ink limit</div>
+                    <paper-toggle-button
+                        checked="{{limitedInk}}"
+                        noink></paper-toggle-button>
+                </div>
+                <div class="settings-item">
+                    <div>Automatically detect screentone of pastes</div>
+                    <paper-toggle-button
+                        checked="{{detectScreentone}}"
+                        noink></paper-toggle-button>
+                </div>
 
-              <hr>
-              <h2>Etch-a-Sketch</h2>
-              <div class="settings-item">
-                  <div>Etch-a-Sketch mode</div>
-                  <paper-toggle-button
-                      checked="{{etchMode}}"
-                      noink></paper-toggle-button>
-              </div>
-              <div class="settings-item slider">
-                  <div>Line step (px)</div>
-                  <paper-slider
-                      value="{{lineStep}}"
-                      max="20"
-                      min="1"
-                      disabled="{{!etchMode}}"
-                      editable></paper-slider>
-              </div>
-          </div>
-      </paper-menu-button>
-
-      <div class="title">
-        <span>{{localize('ink', 'amount', flooredInk)}}</span>
-        <span id="alert"></span>
-        <div class="stats">
-          <span>{{localize('sketches', 'num', sketches)}}</span>
-          <span>{{localize('artists', 'num', artists)}}</span>
-          <span>{{localize('peekers', 'num', peekers)}}</span>
+                <hr>
+                <h2>Etch-a-Sketch</h2>
+                <div class="settings-item">
+                    <div>Etch-a-Sketch mode</div>
+                    <paper-toggle-button
+                        checked="{{etchMode}}"
+                        noink></paper-toggle-button>
+                </div>
+                <div class="settings-item slider">
+                    <div>Line step (px)</div>
+                    <paper-slider
+                        value="{{lineStep}}"
+                        max="20"
+                        min="1"
+                        disabled="{{!etchMode}}"
+                        editable></paper-slider>
+                </div>
+            </div>
+        </paper-menu-button>
+        <paper-button
+            raised class="long"
+            on-tap="_viewGallery">view the sketch gallery</paper-button>
+        <div class="text">
+            <span id="alert"></span>
+        </div>
+        <paper-button
+            raised class="long"
+            disabled="{{loading}}"
+            on-tap="_peek">peek at latest sketch</paper-button>
+        <div class="text stats">
+            <span>{{localize('peekers', 'num', peekers)}}</span>
         </div>
       </div>
-
-      <paper-icon-button
-          title="{{localize('peek')}}"
-          icon="visibility"
-          disabled="{{loading}}"
-          on-tap="_peek"></paper-icon-button>
-      <paper-icon-button
-          title="{{localize('viewGallery')}}"
-          icon="view-module"
-          on-tap="_viewGallery"></paper-icon-button>
-      <paper-icon-button
-          title="{{localize('save')}}"
-          icon="save"
-          on-tap="_save"></paper-icon-button>
     </paper-toolbar>
 
     <iron-a11y-keys
@@ -580,9 +585,10 @@
         artists="{{artists}}"
         peekers="{{peekers}}"
         loading="{{loading}}"
+        waiting="{{waiting}}"
         on-get="_onGet"
         on-swap-failed="_onSwapFailed"
-        on-swap-waiting="_onSwapWaiting"></sketch-api>
+        on-waiting-changed="_onSwapWaiting"></sketch-api>
   </template>
 
   <script>
@@ -668,7 +674,22 @@
           type: Number,
           readOnly: true,
           computed: "_flooredInk(ink)"
-        }
+        },
+        toolIcon: {
+          type: String,
+          readOnly: true,
+          computed: "_toolIcon(tool)"
+        },
+        swapText: {
+          type: String,
+          readOnly: true,
+          computed: "_swapText(sketchDisabled, undoDisabled, loading, waiting)"
+        },
+        swapProgressValue: {
+          type: Number,
+          readOnly: true,
+          computed: "_swapProgressValue(sketchDisabled, undoDisabled, loading, waiting)"
+        },
       },
 
       // Private properties
@@ -786,7 +807,9 @@
       // Event handlers for ajax
 
       _onSwapWaiting: function() {
-        this._alert('waiting for other sketch...');
+        if(this._waiting) {
+          this._alert('waiting for other sketch...');
+        }
       },
 
       _onSwapFailed: function(e) {
@@ -831,7 +854,7 @@
       },
 
       _erase: function(e) {
-        this._menuAction(e, this.$.menuEraser, 'eraser');
+        this.$.sketch.desiredTool = 'eraser';
       },
 
       _draw: function() {
@@ -843,11 +866,11 @@
       },
 
       _screentone: function(e) {
-        this._menuAction(e, this.$.menuScreentone, 'screentone');
+        this.$.sketch.desiredTool = 'screentone';
       },
 
       _fill: function(e) {
-        this._menuAction(e, this.$.menuFill, 'fill');
+        this.$.sketch.desiredTool = 'fill';
       },
 
       _reset: function() {
@@ -1011,15 +1034,70 @@
         return Math.floor(ink*100) / 100;
       },
 
+      _toolIcon: function(tool) {
+        switch(tool) {
+          case "pen":
+            return "create";
+            break;
+          case "eraser":
+            return "mdi:eraser-variant";
+            break;
+          case "screentone":
+            return "editor:border-clear";
+            break;
+          case "fill":
+            return "editor:format-color-fill";
+            break;
+          case "move":
+            return "mdi:cursor-move";
+            break;
+          default:
+            return "create";
+        }
+      },
+
+      _swapText: function(sketchDisabled, undoDisabled, loading, waiting) {
+        if(sketchDisabled && !loading) {
+          return "done";
+        }
+
+        if(sketchDisabled && undoDisabled) {
+          if(waiting) {
+            return "waiting...";
+          }
+          else {
+            return "swapping...";
+          }
+        }
+        if(sketchDisabled) {
+          return "peeking...";
+        }
+
+        return "swap";
+      },
+
+      _swapProgressValue: function(sketchDisabled, undoDisabled, loading, waiting) {
+        if(sketchDisabled && !loading) {
+          return 100;
+        }
+        if(sketchDisabled && undoDisabled) {
+          return waiting ? 66 : 33;
+        }
+        if(sketchDisabled) {
+          return 66;
+        }
+
+        return 0;
+      },
+
       _hideStats: function() {
-        var title = document.querySelector('.title');
-        var stats = title.querySelector('.stats');
-        var span = title.querySelector('span'); // first span
-        var alertSpan = title.querySelector('span#alert');
+        const row = document.querySelector(".row.middle");
+        const texts = Array.from(document.querySelectorAll(".text"));
+        let maxWidth = 940;
 
-        var maxWidth = span.offsetWidth + alertSpan.offsetWidth + stats.offsetWidth + 26 // margins + 2
-
-        stats.style.visibility = title.offsetWidth <= maxWidth ? 'hidden' : ''
+        for(let i in texts) {
+          texts[i].hidden = row.offsetWidth <= maxWidth;
+        }
       },
 
       _hideUI: function(event) {
@@ -1031,21 +1109,14 @@
       },
 
       _alert: async function(message) {
-        var title = document.querySelector('.title');
-        var span = document.querySelector('.title span');
         var alertSpan = document.querySelector('#alert');
-
         alertSpan.innerHTML = message;
-        span.hidden = true;
-        this._hideStats();
 
         let sleepPromise = this._sleepPromise = this._sleep(3000);
         await sleepPromise;
 
         if(this._sleepPromise === sleepPromise) {
           alertSpan.innerHTML = '';
-          span.hidden = false;
-          this._hideStats();
         }
       },
 
