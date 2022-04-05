@@ -382,6 +382,23 @@
           this.pushHistory(this._action);
         }
       },
+	  
+	  drawLines: function(linePoints) {
+        var action = {
+          start: this.lines.length,
+          added: linePoints,
+          removed: [],
+          addedPoints: []
+        };
+
+        if(action.added.length > 0) {
+          this._doAction([action]);
+          this._action = [action];
+          this.pushHistory(this._action);
+        }
+
+        return linePoints;
+      },
 
       alteredDots: function() {
         var oldLines = this.lines.slice();

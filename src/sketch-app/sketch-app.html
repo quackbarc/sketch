@@ -217,6 +217,7 @@
               tone-offset-y="{{toneOffsetY}}"
               fill-screentone="{{fillScreentone}}"
               eraser-radius="{{eraserRadius}}"
+			  shape-sides="{{shapeSides}}"
               time-resolution="{{timeResolution}}"
               animation-speed="{{animationSpeed}}"
               limited-ink="{{limitedInk}}"
@@ -401,6 +402,36 @@
               </div>
           </div>
       </paper-menu-button>
+	  
+	  <paper-menu-button
+          id="menuShape"
+          disabled="{{_toolDisabled(sketchDisabled, loading)}}"
+          dynamic-align
+          vertical-align="bottom"
+          vertical-offset="60"
+          on-opened-changed="_shape">
+          <paper-icon-button
+              class="dropdown-trigger"
+              title="{{localize('shape')}}"
+              icon="timeline"
+              active="{{_isShaping(tool)}}"
+              toggles="{{!_isShaping(tool)}}"></paper-icon-button>
+          <div class="dropdown-content settings">
+              <h2>Shape Tool</h2>
+              <div class="settings-item slider">
+                  <div>Sides</div>
+                  <paper-slider
+                      value="{{shapeSides}}"
+                      min="2"
+                      max="96"
+                      editable></paper-slider>
+              </div>
+          </div>
+	  </paper-menu-button> 
+	  
+	  
+	  
+	  
       <paper-menu-button
           dynamic-align
           allow-outside-scroll
@@ -478,7 +509,8 @@
                       editable></paper-slider>
               </div>
           </div>
-      </paper-menu-button>
+      </paper-menu-button> 
+	  
 
       <div class="title">
         <span>{{localize('ink', 'amount', flooredInk)}}</span>
@@ -537,6 +569,10 @@
         target="[[target]]"
         keys="b p"
         on-keys-pressed="_draw"></iron-a11y-keys>
+	<iron-a11y-keys
+        target="[[target]]"
+        keys="l"
+        on-keys-pressed="_shape"></iron-a11y-keys>
     <iron-a11y-keys
         target="[[target]]"
         keys="f"
@@ -841,6 +877,22 @@
       _move: function() {
         this.$.sketch.desiredTool = 'move';
       },
+	  
+	  _shape: function() {
+        this.$.sketch.desiredTool = 'shape';
+      },
+	  
+	  _shapeLine: function() {
+        this.$.sketch.shapeSides = 2;
+      },
+
+      _shapeSquare: function() {
+        this.$.sketch.shapeSides = 4;
+      },
+
+      _shapeCircle: function() {
+        this.$.sketch.shapeSides = 64;
+      },
 
       _screentone: function(e) {
         this._menuAction(e, this.$.menuScreentone, 'screentone');
@@ -969,6 +1021,10 @@
 
       _isMoving: function(tool) {
         return tool === 'move';
+      },
+	  
+      _isShaping: function(tool) {
+        return tool === 'shape';
       },
 
       _isToning: function(tool) {
