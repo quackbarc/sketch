@@ -108,7 +108,7 @@
 
       set data(data) {
         var oldLines = this.lines.slice();
-        var oldPoints = new Set(this.tonePoints);
+        var oldPoints = Array.from(this.tonePoints);
         var lines = data.length > 0 ? data.split(" ") : [];
         this._setLength(data.length);
         this._setLines(new Array(lines.length));
