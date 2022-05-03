@@ -1,6 +1,6 @@
 # \<sketch\>
 
-A fork of dagwaging's Polymer client for garyc.me/sketch.
+A fork of [dagwaging](https://github.com/dagwaging/sketch)'s Polymer client for garyc.me/sketch.
 
 ## Serving the application
 
