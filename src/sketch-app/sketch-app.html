@@ -436,6 +436,12 @@
                       noink></paper-toggle-button>
               </div>
               <div class="settings-item">
+                  <div>Toggle tool settings with keybind</div>
+                  <paper-toggle-button
+                      checked="{{keybindToggling}}"
+                      noink></paper-toggle-button>
+              </div>
+              <div class="settings-item">
                   <div>Automatically save sketch and history</div>
                   <paper-toggle-button
                       checked="{{autosave}}"
@@ -651,6 +657,8 @@
           computed: "_rememberTab(autosave, sketchDisabled, ink)"
         },
 
+        // settings
+
         hideSwap: {
           type: Boolean,
           value: false
@@ -663,6 +671,12 @@
           type: Boolean,
           value: true
         },
+        keybindToggling: {
+          type: Boolean,
+          value: true
+        },
+
+        // visual
 
         flooredInk: {
           type: Number,
@@ -742,6 +756,7 @@
           limitedInk: this.$.sketch.$.data.limitedInk,
           autosave: this.autosave,
           autosaveTools: this.autosaveTools,
+          keybindToggling: this.keybindToggling,
         };
 
         localStorage.setItem('settings', JSON.stringify(settings));
@@ -758,6 +773,7 @@
           this._setSetting("limitedInk", settings);
           this._setSetting("autosave", settings);
           this._setSetting("autosaveTools", settings);
+          this._setSetting("keybindToggling", settings);
         }
 
         var save = JSON.parse(localStorage.getItem('save' + this.tabID));
@@ -983,7 +999,7 @@
 
       _menuAction: function(event, elem, tool) {
         if(event.type == 'keys-pressed') {
-          if(this.$.sketch.desiredTool == tool) {
+          if(this.keybindToggling && this.$.sketch.desiredTool == tool) {
             elem.toggle();
           }
         }
