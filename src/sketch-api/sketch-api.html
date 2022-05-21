@@ -94,6 +94,39 @@
         a.click();
       },
 
+      saveSVG: function(lines) {
+        let path = lines.map(function(line) {
+          let p = [];
+          for(let i = 0; i < line.length; i += 2) {
+            let coords = line.slice(i, i+2);
+            // if statement prevents single coords that
+            // could break the SVG
+            if(coords.length == 2) {
+              p.push(i == 0 ? "M" : "L");
+              p.push(coords.join(" "));
+            }
+          }
+          return p.join(" ");
+        });
+
+        var xml = (
+            '<svg viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">\n'
+            + '  <path\n'
+            + '    d="' + path.join(" ") + '"\n'
+            + '    fill="white"\n'
+            + '    stroke="black"\n'
+            + '    stroke-width="3px"\n'
+            + '    stroke-linecap="round"\n'
+            + '    stroke-linejoin="round"/>\n'
+            + '</svg>'
+        );
+
+        var a = document.createElement('a');
+        a.setAttribute('download', 'sketch.svg');
+        a.href = 'data:image/svg+xml,' + encodeURIComponent(xml);
+        a.click();
+      },
+
       // Private functions
 
       _getStats: function() {

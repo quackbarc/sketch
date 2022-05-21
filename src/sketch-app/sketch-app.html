@@ -11,6 +11,7 @@
 <link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../../bower_components/paper-slider/paper-slider.html">
 <link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/iron-icons/editor-icons.html">
 <link rel="import" href="../mdi/mdi.html">
@@ -128,14 +129,17 @@
         padding: 0;
       }
 
-      .settings {
+      .settings, .menu {
         font-family: 'Roboto', 'Noto', sans-serif;
         font-size: 16px;
         color: #000;
         padding: 8px;
-        position: relative;
-        width: min-content;
         max-height: 300px;
+        width: min-content;
+      }
+
+      .settings {
+        position: relative;
         overflow-y: scroll;
       }
 
@@ -190,6 +194,14 @@
       }
       .settings .settings-double .settings-item:nth-Child(1) {
         padding-right: 0px;
+      }
+
+      .menu paper-item {
+        min-width: 180px;
+        cursor: pointer;
+      }
+      .menu paper-item iron-icon {
+        margin-right: 1em;
       }
 
       /* for hideStats */
@@ -540,10 +552,25 @@
           title="{{localize('viewGallery')}}"
           icon="view-module"
           on-tap="_viewGallery"></paper-icon-button>
-      <paper-icon-button
-          title="{{localize('save')}}"
-          icon="save"
-          on-tap="_save"></paper-icon-button>
+      <paper-menu-button
+          dynamic-align
+          vertical-align="bottom"
+          vertical-offset="60">
+          <paper-icon-button
+              class="dropdown-trigger"
+              title="{{localize('save')}}"
+              icon="save"></paper-icon-button>
+          <div class="dropdown-content menu">
+              <paper-item on-tap="_save">
+                  <iron-icon icon="save"></iron-icon>
+                  <div>Save as PNG</div>
+              </paper-item>
+              <paper-item on-tap="_saveSVG">
+                  <iron-icon icon="mdi:content-save-cog"></iron-icon>
+                  <div>Save as SVG</div>
+              </paper-item>
+          </div>
+      </paper-menu-button>
     </paper-toolbar>
 
     <iron-a11y-keys
@@ -938,6 +965,10 @@
 
       _save: function() {
         this.$.api.save(this.$.sketch.canvasData);
+      },
+
+      _saveSVG: function() {
+        this.$.api.saveSVG(this.$.sketch.$.data.lines);
       },
 
       _copyImage: function() {
