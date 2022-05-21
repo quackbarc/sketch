@@ -199,6 +199,35 @@
         margin-left: 3px;
       }
 
+      /* paper-menu-button sizing fix */
+      #toolbar paper-menu-button {
+        box-sizing: border-box;
+        width: 40px;
+        height: 40px;
+        /* move padding to paper-menu-button so its content size remains
+           consistent with the other paper-icons, for icon resizability
+           and proper flex calculation.
+           the unfortunate side-effect of this would be that since a
+           paper-icon's ripple effect is localized to paper-icon, the
+           ripple's gonna be smaller. */
+        padding: 8px;
+        /* properly center paper-icons on chrome.
+           the problem actually lies in #trigger's height but there's
+           no mix-in for that */
+        display: flex;
+      }
+      #toolbar paper-menu-button paper-icon-button.dropdown-trigger {
+        padding: 0px;
+        width: 100%;
+        height: 100%;
+      }
+
+      @media (max-width: 600px) {
+        #toolbar paper-menu-button,
+        #toolbar paper-icon-button {
+          padding: 6px;
+        }
+      }
     </style>
 
     <div class="content">
