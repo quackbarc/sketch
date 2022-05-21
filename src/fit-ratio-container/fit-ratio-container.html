@@ -37,6 +37,10 @@
 
       _ratio: 1,
 
+      ready: function() {
+        window.screen.orientation.addEventListener("change", this._onIronResize.bind(this));
+      },
+
       _notifyAll: function(element) {
         return true;
       },
