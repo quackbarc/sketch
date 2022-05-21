@@ -76,6 +76,12 @@
         position: relative;
       }
 
+      #toolbar.alertOnly paper-icon-button,
+      #toolbar.alertOnly paper-menu-button,
+      #toolbar.alertOnly .title > *:not(#alert) {
+        display: none;
+      }
+
       paper-toolbar .title {
         user-select: none;  /* prevents selection when pressing down with a pen */
         margin: 0;
@@ -1082,6 +1088,9 @@
 
         alertSpan.innerHTML = message;
         span.hidden = true;
+        if(title.clientWidth < alertSpan.scrollWidth) {
+          this.$.toolbar.classList.add("alertOnly");
+        }
         this._hideStats();
 
         let sleepPromise = this._sleepPromise = this._sleep(3000);
@@ -1090,6 +1099,7 @@
         if(this._sleepPromise === sleepPromise) {
           alertSpan.innerHTML = '';
           span.hidden = false;
+          this.$.toolbar.classList.remove("alertOnly");
           this._hideStats();
         }
       },
