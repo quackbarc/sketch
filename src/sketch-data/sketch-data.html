@@ -145,6 +145,26 @@
         this.pushHistory(action);
       },
 
+      get swapData() {
+        var oldLines = JSON.parse(JSON.stringify(this.lines));
+        var lines = this.lines;
+
+        for(var i = 0; i < lines.length; i++) {
+          let line = lines[i];
+          // offset dots for visibility on the gallery since the
+          // canvas there uses a flat lineCap
+          if(line.length == 4 && line[0] == line[2] && line[1] == line[3]) {
+            var x = line[0];
+            var y = line[1];
+            lines[i] = [x, y, x + 2, y + 2];
+          }
+        };
+
+        var data = this.data;
+        this._setLines(oldLines);
+        return data;
+      },
+
       // Private properties
 
       _action: null,
@@ -381,22 +401,6 @@
         if(this._action.length > 0) {
           this.pushHistory(this._action);
         }
-      },
-
-      alteredDots: function() {
-        var oldLines = this.lines.slice();
-        for(var i = 0; i < this.lines.length; i++) {
-          var line = this.lines[i];
-          if(line.length == 4 && line[0] == line[2] && line[1] == line[3]) {
-            var x = line[0];
-            var y = line[1];
-            this.lines[i] = [x, y, x + 2, y + 2];
-          }
-        };
-
-        var data = this.data;
-        this._setLines(oldLines);
-        return data;
       },
 
       // Private functions

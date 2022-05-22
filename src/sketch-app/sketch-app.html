@@ -886,7 +886,7 @@
       _swap: function() {
         var swapDisabled = this._swapDisabled(this.sketchDisabled, this.loading, this.ink);
         if(!swapDisabled && !this.drawing) {
-          this.$.api.swap(this.$.sketch.$.data.alteredDots());
+          this.$.api.swap(this.$.sketch.$.data.swapData);
           this.sketchDisabled = true;
           this.undoDisabled = true;
         }
