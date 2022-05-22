@@ -798,6 +798,8 @@
           var toolSettings = {
             tool: this.tool,
             eraserRadius: this.$.sketch.eraserRadius,
+            etchStep: this.$.sketch.lineStep,
+            etchCursor: this.$.sketch.cursor,
             fillScreentone: this.$.sketch.fillScreentone,
             toneOffsetX: this.$.sketch.toneOffsetX,
             toneOffsetY: this.$.sketch.toneOffsetY,
@@ -853,6 +855,8 @@
         if(toolSettings) {
           this._setSetting("tool", toolSettings, this.$.sketch, "desiredTool");
           this._setSetting("eraserRadius", toolSettings);
+          this._setSetting("etchStep", toolSettings, this.$.sketch, "lineStep");
+          this._setSetting("etchCursor", toolSettings, this.$.sketch, "cursor");
           this._setSetting("fillScreentone", toolSettings);
           this._setSetting("toneOffsetX", toolSettings);
           this._setSetting("toneOffsetY", toolSettings);
