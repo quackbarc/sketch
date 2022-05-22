@@ -4,7 +4,8 @@
     created: function() {
         this._trackTabOpen();
         window.addEventListener('pagehide', this._trackTabClose.bind(this));
-        document.addEventListener('onfreeze', this._trackTabClose.bind(this));
+        window.addEventListener('freeze', this._trackTabClose.bind(this), {capture: true});
+        window.addEventListener('resume', this._trackTabOpen.bind(this), {capture: true});
     },
 
     properties: {

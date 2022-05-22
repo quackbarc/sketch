@@ -682,7 +682,7 @@
 
         this._restoreData();
         window.addEventListener('pagehide', this._saveData.bind(this));
-        document.addEventListener('onfreeze', this._saveData.bind(this));
+        window.addEventListener('freeze', this._saveData.bind(this), {capture: true});
         window.addEventListener("resize", this._hideStats.bind(this));
 
         // Prevent Chrome from capturing CTRL+S
