@@ -24,20 +24,19 @@
     // private properties
 
     _deltaX: 0,
+
     _deltaY: 0,
+
+    _interval: null,
 
     // public methods
 
     etchEvent: function(event) {
-      // main parser of arrow events
-
       event.preventDefault();
       var key = event.key.substr(5).toLowerCase();
 
       if(event.type == "keydown") {
-        if(this._deltaX == 0 && this._deltaY == 0) {
-          this._etchDrawStart();
-        }
+        let etchStart = this._deltaX == 0 && this._deltaY == 0;
 
         switch(key) {
           case 'left':  this._deltaX = -1; break;
@@ -45,7 +44,11 @@
           case 'up':    this._deltaY = -1; break;
           case 'down':  this._deltaY = 1;
         };
-        this._etchDraw(this._deltaX, this._deltaY);
+
+        if(etchStart) {
+          this._etchDrawStart();
+          this._etchDraw();
+        }
       }
       else if(event.type == "keyup") {
         switch(key) {
@@ -64,22 +67,26 @@
     // private methods
 
     _etchDrawStart: function() {
+      let res = Math.max(this.timeResolution, 5);
       this._drawStart(this.cursor.x, this.cursor.y);
-    },
-
-    _etchDraw: function(dx, dy) {
-      var lastX = x = this.cursor.x;
-      var lastY = y = this.cursor.y;
-
-      x += this.lineStep * dx;
-      y += this.lineStep * dy;
-      this.cursor.x = (x < 0 ? 0 : (x > 800 ? 800 : x));
-      this.cursor.y = (y < 0 ? 0 : (y > 600 ? 600 : y));
-      this._draw(this.cursor.x, this.cursor.y, lastX, lastY);
+      this._interval = setInterval(this._etchDraw.bind(this), res);
     },
 
     _etchDrawEnd: function() {
       this._drawEnd(this.cursor.x, this.cursor.y);
+      clearInterval(this._interval);
+    },
+
+    _etchDraw: function() {
+      var lastX = x = this.cursor.x;
+      var lastY = y = this.cursor.y;
+      x += this.lineStep * this._deltaX;
+      y += this.lineStep * this._deltaY;
+      this.cursor.x = Math.min(800, Math.max(0, x));
+      this.cursor.y = Math.min(600, Math.max(0, y));
+      if(!(this.cursor.x == lastX && this.cursor.y == lastY)) {
+        this._draw(this.cursor.x, this.cursor.y, lastX, lastY);
+      }
     }
   }
 </script>
