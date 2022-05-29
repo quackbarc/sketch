@@ -51,18 +51,14 @@
         this._canvas = this.$.sketchCanvas.getContext("2d");
         this._canvas.strokeStyle = "black";
         this._canvas.lineWidth = 3;
-        if(localStorage.getItem('beta')) {
-          this._canvas.lineJoin = "miter";
-          this._canvas.miterLimit = 10;
-          this._canvas.lineCap = "butt";
-        }
-        else {
-          this._canvas.lineJoin = "round";
-          this._canvas.lineCap = "round";
-        }
         this._canvas.fillStyle = "black";
         this._activeTool = null;
-
+        if(localStorage.getItem("beta")) {
+          let beta = parseInt(localStorage.getItem("beta"));
+          this.renderType = Number.isNaN(beta) ? 1 : beta;
+        }
+        // manually fire rendering now that we have the canvas context
+        this._updateRendering();
         this._clear();
       },
 
@@ -134,6 +130,17 @@
           type: Number,
           notify: true,
           value: 10
+        },
+        renderType: {
+          /* enum
+            0, default rendering
+            1, gallery rendering without miter
+            2, gallery rendering with miter
+          */
+          type: Number,
+          notify: true,
+          value: 0,
+          observer: "_updateRendering"
         },
         fillScreentone: {
           type: Boolean,
@@ -287,6 +294,24 @@
         }
 
         this._lastTool = this.tool;
+      },
+
+      _updateRendering: function(event) {
+        if(!this._canvas) {
+          return;
+        }
+
+        this._canvas.lineJoin = "round";
+        this._canvas.lineCap = "round";
+        if(this.renderType >= 1) {
+          this._canvas.lineCap = "butt";
+          if(this.renderType == 2) {
+            this._canvas.lineJoin = "miter";
+            this._canvas.miterLimit = 10;
+          }
+        }
+
+        this._render();
       },
 
       _processEvent(event) {
@@ -484,6 +509,15 @@
       },
 
       _drawLine(points) {
+        if(this.renderType >= 1
+          && points.length == 4
+          && points[0] == points[2] && points[1] == points[3]) {
+            points = [
+              points[0], points[1],
+              points[0]+2, points[1]+2
+            ];
+        }
+
         if(points[0] == points[2] && points[1] == points[3]) {
           this._canvas.beginPath();
           this._canvas.arc(points[0], points[1], 1.5, 0, Math.PI * 2);
