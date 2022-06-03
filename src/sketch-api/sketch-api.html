@@ -94,7 +94,7 @@
         a.click();
       },
 
-      saveSVG: function(lines) {
+      saveSVG: function(lines, renderType) {
         let path = lines.map(function(line) {
           let p = [];
           for(let i = 0; i < line.length; i += 2) {
@@ -109,6 +109,9 @@
           return p.join(" ");
         });
 
+        let linecap = renderType >= 1 ? "butt" : "round";
+        let linejoin = renderType >= 2 ? "miter" : "round";
+
         var xml = (
             '<svg viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">\n'
             + '  <path\n'
@@ -116,8 +119,9 @@
             + '    fill="white"\n'
             + '    stroke="black"\n'
             + '    stroke-width="3px"\n'
-            + '    stroke-linecap="round"\n'
-            + '    stroke-linejoin="round"/>\n'
+            + '    stroke-miterlimit="10"\n'
+            + '    stroke-linecap="' + linecap + '"\n'
+            + '    stroke-linejoin="' + linejoin + '"/>\n'
             + '</svg>'
         );
 
