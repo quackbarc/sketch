@@ -1,7 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/app-localize-behavior/app-localize-behavior.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
-<link rel="import" href="../../bower_components/iron-a11y-keys-behavior/iron-a11y-keys-behavior.html">
 <link rel="import" href="../../bower_components/iron-a11y-keys/iron-a11y-keys.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/paper-toggle-button/paper-toggle-button.html">
@@ -19,49 +18,6 @@
 <link rel="import" href="../sketch-canvas/sketch-canvas.html">
 <link rel="import" href="../sketch-api/sketch-api.html">
 <link rel="import" href="../sketch-tabs/sketch-tabs.html">
-
-<dom-module id="arrow-events">
-  <script>
-    // custom key event module for keyup events for etch mode
-    // since iron-a11y-keys only fires keypress events
-
-    Polymer({
-      is: 'arrow-events',
-
-      behaviors: [
-        Polymer.IronA11yKeysBehavior
-      ],
-
-      properties: {
-        target: {
-          type: Object,
-          observer: '_targetChanged'
-        }
-      },
-
-      keyBindings: {
-        'up:keydown down:keydown left:keydown right:keydown': '_fire',
-        'up:keyup down:keyup left:keyup right:keyup': '_fire',
-      },
-
-      // stolen from iron-a11y-keys
-
-      attached: function() {
-        if (!this.target) {
-          this.target = this.parentNode;
-        }
-      },
-
-      _targetChanged: function(target) {
-        this.keyEventTarget = target;
-      },
-
-      _fire: function(event) {
-        this.fire('arrow-event', event.detail, {});
-      }
-    });
-  </script>
-</dom-module>
 
 <dom-module id="sketch-app">
   <template>
@@ -638,9 +594,10 @@
         keys="tab"
         on-keys-pressed="_hideUI"></iron-a11y-keys>
 
-    <arrow-events
+    <iron-a11y-keys
         target="[[target]]"
-        on-arrow-event="_arrowEvent"></arrow-events>
+        keys="up:keydown down:keydown left:keydown right:keydown up:keyup down:keyup left:keyup right:keyup"
+        on-keys-pressed="_etchEvent"></iron-a11y-keys>
 
     <sketch-api
         id="api"
@@ -1143,7 +1100,7 @@
         return new Promise(resolve => setTimeout(resolve, ms));
       },
 
-      _arrowEvent: function(event) {
+      _etchEvent: function(event) {
         if(this.etchMode && !this.sketchDisabled) {
           this.$.sketch.etchEvent(event.detail.keyboardEvent);
         };
