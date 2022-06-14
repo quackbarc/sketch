@@ -11,6 +11,8 @@
     "fill": "Fill",
     "settings": "Settings",
     "peek": "Peek",
+    "copySketch": "Copy sketch data",
+    "pasteSketch": "Paste sketch data",
     "viewGallery": "View gallery",
     "save": "Save",
     "ink": "{amount, number, percent} ink used",

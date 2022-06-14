@@ -152,6 +152,11 @@
         padding-right: 0px;
       }
 
+      .settings-buttons {
+        display: flex;
+        justify-content: center;
+      }
+
       .menu paper-item {
         min-width: 180px;
         cursor: pointer;
@@ -414,7 +419,19 @@
               title="{{localize('settings')}}"
               icon="settings"></paper-icon-button>
           <div class="dropdown-content settings">
+              <h2>Actions</h2>
+              <div class="settings-buttons">
+                  <paper-icon-button
+                      on-tap="_copy"
+                      title="{{localize('copySketch')}}"
+                      icon="content-copy"></paper-icon-button>
+                  <paper-icon-button
+                      on-tap="_paste"
+                      title="{{localize('pasteSketch')}}"
+                      icon="content-paste"></paper-icon-button>
+              </div>
 
+              <hr>
               <h2>General</h2>
               <div class="settings-item slider">
                   <div>Sample Rate (ms)</div>
