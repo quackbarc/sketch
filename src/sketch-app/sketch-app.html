@@ -1043,6 +1043,13 @@
             this.$.sketch.data = text;
             this.sketchDisabled = false;
             this._alert('pasted from clipboard');
+          })
+          .catch(error => {
+            if(error instanceof DOMException) {
+              this._alert('no permission to read clipboard');
+            } else {
+              throw error;
+            }
           });
       },
 
