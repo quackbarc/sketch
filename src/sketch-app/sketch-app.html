@@ -637,7 +637,8 @@
       ],
 
       listeners: {
-        'app-resources-loaded': '_hideStats'
+        'app-resources-loaded': '_hideStats',
+        'alert': '_onAlert',
       },
 
       ready: function() {
@@ -839,7 +840,7 @@
         }
       },
 
-      // Event handlers for ajax
+      // Event handlers for API and ajax
 
       _onSwapWaiting: function() {
         this._alert('waiting for other sketch...');
@@ -853,6 +854,10 @@
       _onGet: function(data) {
         this.$.sketch.data = data.detail;
         this.$.sketch.play();
+      },
+
+      _onAlert: function(message) {
+        this._alert(message.detail);
       },
 
       // Event handlers for buttons
