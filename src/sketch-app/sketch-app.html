@@ -11,6 +11,8 @@
 <link rel="import" href="../../bower_components/paper-slider/paper-slider.html">
 <link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-item/paper-icon-item.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item-body.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/iron-icons/editor-icons.html">
 <link rel="import" href="../mdi/mdi.html">
@@ -85,6 +87,19 @@
         padding: 0;
       }
 
+      paper-item,
+      paper-icon-item {
+        --paper-item-min-height: 40px;
+        min-width: 180px;
+      }
+      paper-icon-item {
+        --paper-item-icon-width: 40px;
+      }
+
+      paper-icon-item.button-item {
+        cursor: pointer;
+      }
+
       .settings, .menu {
         font-family: 'Roboto', 'Noto', sans-serif;
         font-size: 16px;
@@ -116,17 +131,23 @@
       .settings .settings-item > * {
         align-items: center;
       }
-      .settings .settings-item > div {
-        display: flex; /* cheap centering */
+      .settings .settings-item > div,
+      .settings .settings-item > paper-item-body {
+        display: flex;
         padding: 8px;
         flex: 1 1 auto;
-        align-items: center;
+      }
+      .settings .settings-item > paper-item-body {
+        --paper-item-body-two-line-min-height: 48px;
+        align-items: start;
+        min-width: min-content;
       }
       .settings .settings-item > paper-toggle-button {
         flex: 0 1 auto;
         padding-left: 20px;
       }
-      .settings .settings-item.slider > div {
+      .settings .settings-item.slider > div,
+      .settings .settings-item.slider > paper-item-body {
         flex: 1 1 0;
       }
       .settings .settings-item.slider > paper-slider {
@@ -150,19 +171,6 @@
       }
       .settings .settings-double .settings-item:nth-Child(1) {
         padding-right: 0px;
-      }
-
-      .settings-buttons {
-        display: flex;
-        justify-content: center;
-      }
-
-      .menu paper-item {
-        min-width: 180px;
-        cursor: pointer;
-      }
-      .menu paper-item iron-icon {
-        margin-right: 1em;
       }
 
       /* for hideStats */
@@ -277,14 +285,17 @@
               toggles="{{!_isErasing(tool)}}"></paper-icon-button>
           <div class="dropdown-content settings">
               <h2>Eraser</h2>
-              <div class="settings-item slider">
-                  <div>Radius</div>
+              <paper-item class="settings-item slider">
+                  <paper-item-body two-line>
+                      <div>Radius</div>
+                      <div secondary>Brush size, in px</div>
+                  </paper-item-body>
                   <paper-slider
                       value="{{eraserRadius}}"
                       min="1"
                       max="50"
                       editable></paper-slider>
-              </div>
+              </paper-item>
           </div>
       </paper-menu-button>
       <paper-icon-button
@@ -316,42 +327,51 @@
             toggles="{{!_isFilling(tool)}}"></paper-icon-button>
           <div class="dropdown-content settings">
               <h2>Filling</h2>
-              <div class="settings-item">
+              <paper-item class="settings-item">
                   <div>Screentone</div>
                   <paper-toggle-button
                       checked="{{fillScreentone}}"
                       noink></paper-toggle-button>
-              </div>
+              </paper-item>
               <h2>Screentoning</h2>
-              <div class="settings-item slider">
-                  <div>Spacing</div>
+              <paper-item class="settings-item slider">
+                  <paper-item-body two-line>
+                      <div>Spacing</div>
+                      <div secondary>Space between tones, in px</div>
+                  </paper-item-body>
                   <paper-slider
                       value="{{toneSpacing}}"
                       disabled="{{!fillScreentone}}"
                       min="2"
                       max="40"
                       editable></paper-slider>
-              </div>
+              </paper-item>
               <h2>Screentone Offset</h2>
               <div class="settings-double">
-                  <div class="settings-item slider">
-                      <div>X</div>
+                  <paper-item class="settings-item slider">
+                      <paper-item-body two-line>
+                          <div>X</div>
+                          <div secondary>(in px)</div>
+                      </paper-item-body>
                       <paper-slider
                           value="{{toneOffsetX}}"
                           disabled="{{!fillScreentone}}"
                           min="-20"
                           max="20"
                           editable></paper-slider>
-                  </div>
-                  <div class="settings-item slider">
-                      <div>Y</div>
+                  </paper-item>
+                  <paper-item class="settings-item slider">
+                      <paper-item-body two-line>
+                          <div>Y</div>
+                          <div secondary>(in px)</div>
+                      </paper-item-body>
                       <paper-slider
                           value="{{toneOffsetY}}"
                           disabled="{{!fillScreentone}}"
                           min="-20"
                           max="20"
                           editable></paper-slider>
-                  </div>
+                  </paper-item>
               </div>
           </div>
       </paper-menu-button>
@@ -371,41 +391,53 @@
           <div class="dropdown-content settings">
               <h2>Screentoning</h2>
               <div class="settings-double">
-                  <div class="settings-item slider">
-                      <div>Spacing</div>
+                  <paper-item class="settings-item slider">
+                      <paper-item-body two-line>
+                          <div>Spacing</div>
+                          <div secondary>(in px)</div>
+                      </paper-item-body>
                       <paper-slider
                           value="{{toneSpacing}}"
                           min="2"
                           max="40"
                           editable></paper-slider>
-                  </div>
-                  <div class="settings-item slider">
-                      <div>Radius</div>
+                  </paper-item>
+                  <paper-item class="settings-item slider">
+                      <paper-item-body two-line>
+                          <div>Radius</div>
+                          <div secondary>(in px)</div>
+                      </paper-item-body>
                       <paper-slider
                           value="{{toneRadius}}"
                           min="1"
                           max="20"
                           editable></paper-slider>
-                  </div>
+                  </paper-item>
               </div>
               <h2>Screentone Offset</h2>
               <div class="settings-double">
-                  <div class="settings-item slider">
-                      <div>X</div>
+                  <paper-item class="settings-item slider">
+                      <paper-item-body two-line>
+                          <div>X</div>
+                          <div secondary>(in px)</div>
+                      </paper-item-body>
                       <paper-slider
                           value="{{toneOffsetX}}"
                           min="-20"
                           max="20"
                           editable></paper-slider>
-                  </div>
-                  <div class="settings-item slider">
-                      <div>Y</div>
+                  </paper-item>
+                  <paper-item class="settings-item slider">
+                      <paper-item-body two-line>
+                          <div>Y</div>
+                          <div secondary>(in px)</div>
+                      </paper-item-body>
                       <paper-slider
                           value="{{toneOffsetY}}"
                           min="-20"
                           max="20"
                           editable></paper-slider>
-                  </div>
+                  </paper-item>
               </div>
           </div>
       </paper-menu-button>
@@ -420,89 +452,101 @@
               icon="settings"></paper-icon-button>
           <div class="dropdown-content settings">
               <h2>Actions</h2>
-              <div class="settings-buttons">
-                  <paper-icon-button
-                      on-tap="_copy"
-                      title="{{localize('copySketch')}}"
-                      icon="content-copy"></paper-icon-button>
-                  <paper-icon-button
-                      on-tap="_paste"
-                      title="{{localize('pasteSketch')}}"
-                      icon="content-paste"></paper-icon-button>
-              </div>
+              <paper-icon-item
+                  class="button-item"
+                  on-tap="_copy">
+                      <iron-icon item-icon icon="content-copy"></iron-icon>
+                      <div>Copy sketch data</div>
+              </paper-icon-item>
+              <paper-icon-item
+                  class="button-item"
+                  on-tap="_paste">
+                      <iron-icon item-icon icon="content-paste"></iron-icon>
+                      <div>Paste sketch data</div>
+              </paper-icon-item>
 
               <hr>
               <h2>General</h2>
-              <div class="settings-item slider">
-                  <div>Sample Rate (ms)</div>
+              <paper-item class="settings-item slider">
+                  <paper-item-body two-line>
+                      <div>Sample Rate</div>
+                      <div secondary>Input latency, in ms</div>
+                  </paper-item-body>
                   <paper-slider
                       value="{{timeResolution}}"
                       min="0"
                       max="50"
                       editable></paper-slider>
-              </div>
-              <div class="settings-item slider">
+              </paper-item>
+              <paper-item class="settings-item slider">
                   <div>Animation speed</div>
                   <paper-slider
                       value="{{animationSpeed}}"
                       min="5"
                       max="30"
                       editable></paper-slider>
-              </div>
-              <div class="settings-item">
+              </paper-item>
+              <paper-item class="settings-item">
                   <div>Hide swap button</div>
                   <paper-toggle-button
                       checked="{{hideSwap}}"
                       noink></paper-toggle-button>
-              </div>
-              <div class="settings-item">
+              </paper-item>
+              <paper-item class="settings-item">
                   <div>Toggle tool settings with keybind</div>
                   <paper-toggle-button
                       checked="{{keybindToggling}}"
                       noink></paper-toggle-button>
-              </div>
-              <div class="settings-item">
+              </paper-item>
+              <paper-item class="settings-item">
                   <div>Automatically save sketch and history</div>
                   <paper-toggle-button
                       checked="{{autosave}}"
                       noink></paper-toggle-button>
-              </div>
-              <div class="settings-item">
+              </paper-item>
+              <paper-item class="settings-item">
                   <div>Automatically save tool settings</div>
                   <paper-toggle-button
                       checked="{{autosaveTools}}"
                       noink></paper-toggle-button>
-              </div>
-              <div class="settings-item">
+              </paper-item>
+              <paper-item class="settings-item">
                   <div>Restrict drawing past ink limit</div>
                   <paper-toggle-button
                       checked="{{limitedInk}}"
                       noink></paper-toggle-button>
-              </div>
-              <div class="settings-item">
+              </paper-item>
+              <paper-item class="settings-item">
                   <div>Automatically detect screentone of pastes</div>
                   <paper-toggle-button
                       checked="{{detectScreentone}}"
                       noink></paper-toggle-button>
-              </div>
+              </paper-item>
 
               <hr>
               <h2>Etch-a-Sketch</h2>
-              <div class="settings-item">
-                  <div>Etch-a-Sketch mode</div>
+              <paper-item class="settings-item">
+                  <paper-item-body two-line>
+                      <div>Etch-a-Sketch mode</div>
+                      <div secondary>Use the arrow keys to draw</div>
+                  </paper-item-body>
                   <paper-toggle-button
                       checked="{{etchMode}}"
                       noink></paper-toggle-button>
-              </div>
-              <div class="settings-item slider">
-                  <div>Line step (px)</div>
+              </paper-item>
+              <paper-item class="settings-item slider">
+                  <paper-item-body two-line>
+                      <div>Line step</div>
+                      <div secondary>Line length per step, in px</div>
+                  </paper-item-body>
+                  <div></div>
                   <paper-slider
                       value="{{lineStep}}"
                       max="20"
                       min="1"
                       disabled="{{!etchMode}}"
                       editable></paper-slider>
-              </div>
+              </paper-item>
           </div>
       </paper-menu-button>
 
@@ -534,14 +578,18 @@
               title="{{localize('save')}}"
               icon="save"></paper-icon-button>
           <div class="dropdown-content menu">
-              <paper-item on-tap="_save">
-                  <iron-icon icon="save"></iron-icon>
-                  <div>Save as PNG</div>
-              </paper-item>
-              <paper-item on-tap="_saveSVG">
-                  <iron-icon icon="mdi:content-save-cog"></iron-icon>
-                  <div>Save as SVG</div>
-              </paper-item>
+              <paper-icon-item
+                  class="button-item"
+                  on-tap="_save">
+                      <iron-icon item-icon icon="save"></iron-icon>
+                      <div>Save as PNG</div>
+              </paper-icon-item>
+              <paper-icon-item
+                  class="button-item"
+                  on-tap="_saveSVG">
+                      <iron-icon item-icon icon="mdi:content-save-cog"></iron-icon>
+                      <div>Save as SVG</div>
+              </paper-icon-item>
           </div>
       </paper-menu-button>
     </paper-toolbar>
