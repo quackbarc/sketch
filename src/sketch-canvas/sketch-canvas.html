@@ -212,6 +212,8 @@
 
       _wasPressed: null,
 
+      _wasPlaying: false,
+
       _lastTool: null,
 
       _lastX: null,
@@ -317,11 +319,21 @@
       _processEvent(event) {
         event.preventDefault();
 
-        if(this.disabled) {
+        if(this.playing) {
           if(event.buttons > 0) {
             this.stop();
-            this._render();
+            this._wasPlaying = true;
           }
+          return;
+        } else if(this._wasPlaying) {
+          if(event.buttons == 0) {
+            this._render();
+            this._wasPlaying = false;
+          }
+          return;
+        }
+
+        if(this.disabled) {
           return;
         }
 
