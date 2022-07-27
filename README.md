@@ -1,40 +1,32 @@
+
 # \<sketch\>
 
-A fork of [dagwaging](https://github.com/dagwaging/sketch)'s Polymer client for garyc.me/sketch.
+https://quackbarc.github.io/sketch/
 
-## Serving the application
+A fork of [dagwaging](https://github.com/dagwaging/sketch)'s Polymer client for [garyc.me/sketch](https://garyc.me/sketch)\*, with additional features like screentoning and filling.
 
-First, make sure you have [Bower](https://www.npmjs.com/package/bower) and the [Polymer CLI](https://www.npmjs.com/package/polymer-cli) installed.
-Run `bower install` to install project dependencies and then `polymer serve` to serve the application locally.
+<sup>\* garyc.me/sketch is an anarchy draw-swapping website, and drawings may contain NSFW content or worse than that. Visit at your own risk.</sup>
 
-### Viewing Your Application
+---
 
-```
-$ polymer serve
-```
+## Running the app locally
 
-### Building Your Application
+1. Make sure you have [Bower](https://www.npmjs.com/package/bower) and the [Polymer CLI](https://www.npmjs.com/package/polymer-cli) installed in your system.
+2. Run `bower install` to install project dependencies.
 
-```
-$ polymer build
-```
+**NOTE**: Requests to garyc.me are done via CORS proxy. The proxy hard-coded on this project only whitelists the public client websites, so online functionality like swapping and stats fetching with it may not work on local environments. For the time being, you may instead replace it with your own proxy (at [sketch-api.html](/src/sketch-api/sketch-api.html)) to get it working.
 
-This will create a `build/` folder with `bundled/` and `unbundled/` sub-folders
-containing a bundled (Vulcanized) and unbundled builds, both run through HTML,
-CSS, and JS optimizers.
+### Serving the app
 
-You can serve the built versions by giving `polymer serve` a folder to serve
-from:
+    polymer serve
 
-```
-$ polymer serve build/bundled
-```
+By default, the demo will be served to localhost.
 
-### Running Tests
+### Building the app
 
-```
-$ polymer test
-```
+    polymer build
 
-Your application is already set up to be tested via [web-component-tester](https://github.com/Polymer/web-component-tester).
-Run `polymer test` to run your application's test suite locally.
+This will build a minified ES6-compatible version onto `build/es6-bundled/`, as per [polymer.json](/polymer.json).
+To serve the build:
+
+    polymer serve build/es6-bundled
