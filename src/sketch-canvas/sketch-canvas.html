@@ -88,6 +88,7 @@
         },
         playing: {
           type: Boolean,
+          notify: true,
           readOnly: true,
           value: false
         },
@@ -235,8 +236,11 @@
         window.requestAnimationFrame(this._animate.bind(this));
       },
 
-      stop: function() {
+      stop: function(render=false) {
         this._setPlaying(false);
+        if(render) {
+          this._render();
+        }
       },
 
       undo: function(event) {
@@ -577,6 +581,9 @@
 
         if(this.playing && this._playProgressLines < this.$.data.lines.length) {
           window.requestAnimationFrame(this._animate.bind(this));
+        }
+        else {
+          this._setPlaying(false);
         }
       },
 

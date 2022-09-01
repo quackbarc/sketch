@@ -14,6 +14,7 @@
 <link rel="import" href="../../bower_components/paper-item/paper-icon-item.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item-body.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/av-icons.html">
 <link rel="import" href="../../bower_components/iron-icons/editor-icons.html">
 <link rel="import" href="../mdi/mdi.html">
 <link rel="import" href="../fit-ratio-container/fit-ratio-container.html">
@@ -221,6 +222,7 @@
               id="sketch"
               ink="{{ink}}"
               tool="{{tool}}"
+              playing="{{playing}}"
               can-undo="{{canUndo}}"
               can-redo="{{canRedo}}"
               etch-mode="{{etchMode}}"
@@ -440,6 +442,7 @@
           </div>
       </paper-menu-button>
       <paper-menu-button
+          id="settingsButton"
           dynamic-align
           allow-outside-scroll
           vertical-align="bottom"
@@ -450,6 +453,22 @@
               icon="settings"></paper-icon-button>
           <div class="dropdown-content settings">
               <h2>Actions</h2>
+              <template is="dom-if" if="[[!playing]]">
+                  <paper-icon-item
+                      class="button-item"
+                      on-tap="_play">
+                          <iron-icon item-icon icon="av:play-arrow"></iron-icon>
+                          <div>Play sketch animation</div>
+                  </paper-icon-item>
+              </template>
+              <template is="dom-if" if="[[playing]]">
+                  <paper-icon-item
+                      class="button-item"
+                      on-tap="_stop">
+                          <iron-icon item-icon icon="av:stop"></iron-icon>
+                          <div>Stop sketch animation</div>
+                  </paper-icon-item>
+              </template>
               <paper-icon-item
                   class="button-item"
                   on-tap="_copy">
@@ -907,6 +926,16 @@
       },
 
       // Event handlers for buttons
+
+      _play: function(e) {
+        this.$.sketch.play();
+        this.$.settingsButton.close();
+      },
+
+      _stop: function(e) {
+        this.$.sketch.stop(true);
+        this.$.settingsButton.close();
+      },
 
       _swap: function() {
         var swapDisabled = this._swapDisabled(this.sketchDisabled, this.loading, this.ink);
