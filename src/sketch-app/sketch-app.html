@@ -1060,7 +1060,7 @@
 
         navigator.clipboard.readText()
           .then(text => {
-            text = text.trim();
+            text = text.replace(/^[ '"]+|[ '"]+$/g, '');
 
             const pattern = /^[\s0-9a-zA-Z]*$/;
             var isValidData = pattern.test(text);
