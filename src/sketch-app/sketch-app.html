@@ -13,6 +13,8 @@
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../../bower_components/paper-item/paper-icon-item.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item-body.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/iron-icons/av-icons.html">
 <link rel="import" href="../../bower_components/iron-icons/editor-icons.html">
@@ -153,6 +155,9 @@
         flex: 0 1 auto;
         width: 210px;
       }
+      .settings .settings-item.dropdown {
+        --paper-item-min-height: 56px;
+      }
 
       .settings .settings-double {
         display: flex;
@@ -237,6 +242,7 @@
               animation-speed="{{animationSpeed}}"
               limited-ink="{{limitedInk}}"
               detect-screentone="{{detectScreentone}}"
+              render-type="{{renderType}}"
               on-tool-changed="_closeMenus"
               drawing="{{drawing}}"
               disabled="{{sketchDisabled}}"></sketch-canvas>
@@ -538,6 +544,19 @@
                   <paper-toggle-button
                       checked="{{detectScreentone}}"
                       noink></paper-toggle-button>
+              </paper-item>
+              <paper-item class="settings-item dropdown">
+                  <div>Rendering style</div>
+                  <paper-dropdown-menu
+                    no-label-float>
+                    <paper-listbox
+                      class="dropdown-content"
+                      selected="{{renderType}}">
+                      <paper-item>Default</paper-item>
+                      <paper-item>Gallery-style (no miter)</paper-item>
+                      <paper-item>Gallery-style</paper-item>
+                    </paper-listbox>
+                  </paper-dropdown-menu>
               </paper-item>
 
               <hr>
@@ -861,6 +880,7 @@
           autosave: this.autosave,
           autosaveTools: this.autosaveTools,
           keybindToggling: this.keybindToggling,
+          renderType: this.$.sketch.renderType,
         };
 
         localStorage.setItem('settings', JSON.stringify(settings));
@@ -878,6 +898,7 @@
           this._setSetting("autosave", settings);
           this._setSetting("autosaveTools", settings);
           this._setSetting("keybindToggling", settings);
+          this._setSetting("renderType", settings);
         }
 
         var save = JSON.parse(localStorage.getItem('save' + this.tabID));

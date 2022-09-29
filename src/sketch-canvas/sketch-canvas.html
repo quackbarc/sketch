@@ -53,11 +53,6 @@
         this._canvas.lineWidth = 3;
         this._canvas.fillStyle = "black";
         this._activeTool = null;
-        if(localStorage.getItem("beta")) {
-          let beta = parseInt(localStorage.getItem("beta"));
-          this.renderType = Number.isNaN(beta) ? 1 : beta;
-        }
-        // manually fire rendering now that we have the canvas context
         this._updateRendering();
         this._clear();
       },
@@ -317,6 +312,7 @@
           }
         }
 
+        this._setPlaying(false);
         this._render();
       },
 
