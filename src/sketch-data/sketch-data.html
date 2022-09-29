@@ -18,6 +18,11 @@
       // Public properties
 
       properties: {
+        line: {
+          type: Array,
+          value: [],
+          notify: true
+        },
         lines: {
           type: Array,
           value: [],
@@ -171,14 +176,12 @@
 
       _canvasData: null,
 
-      _line: null,
-
       _moveDist: null,
 
       // Public functions
 
       drawStart: function() {
-        this._line = [];
+        this.line = [];
         this._setLength(this.length + (this.lines.length == 0 ? 0 : 1));
       },
 
@@ -187,25 +190,25 @@
           return;
         }
 
-        this._line.push(x, y);
+        this.line.push(x, y);
         this._setLength(this.length + 4);
-        return this._line.slice(this._line.length - 4, this._line.length);
+        return this.line.slice(this.line.length - 4, this.line.length);
       },
 
       drawEnd: function() {
         // lines with only 1 point should be dealt with in sketch-canvas
         // threshold is only such in case draw() rejects adding the extra point
-        if(this._line.length > 2) {
+        if(this.line.length > 2) {
           var action = {
             start: this.lines.length,
-            added: [this._line.slice()],
+            added: [this.line.slice()],
             removed: []
           };
-          this.push('lines', this._line);
+          this.push('lines', this.line);
           this.pushHistory([action]);
         }
         else {
-          this._setLength(this.length - (this._line.length * 2) - (this.lines.length == 0 ? 0 : 1));
+          this._setLength(this.length - (this.line.length * 2) - (this.lines.length == 0 ? 0 : 1));
         }
       },
 

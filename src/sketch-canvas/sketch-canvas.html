@@ -458,8 +458,7 @@
 
       _drawEnd(x, y) {
         // transforms single dots into lines
-        var lastLine = this.$.data._line;
-        if(lastLine.length == 2) {
+        if(this.$.data.line.length == 2) {
           this._draw(x, y, x, y);
         }
 
