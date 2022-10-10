@@ -529,7 +529,7 @@
             ];
         }
 
-        if(points[0] == points[2] && points[1] == points[3]) {
+        if(points.length == 4 && (points[0] == points[2] && points[1] == points[3])) {
           this._canvas.beginPath();
           this._canvas.arc(points[0], points[1], 1.5, 0, Math.PI * 2);
           this._canvas.fill();
