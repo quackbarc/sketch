@@ -138,6 +138,11 @@
           value: 0,
           observer: "_updateRendering"
         },
+        renderSegmented: {
+          type: Boolean,
+          notify: true,
+          value: false
+        },
         fillScreentone: {
           type: Boolean,
           notify: true,
@@ -190,13 +195,15 @@
         this._render();
       },
 
-      get canvasData() {
+      get canvasURL() {
         return this.$.sketchCanvas.toDataURL("image/png");
       },
 
       // Private properties
 
       _canvas: null,
+
+      _canvasData: null,
 
       _playProgressLines: 0,
 
@@ -442,13 +449,23 @@
 
       _drawStart(x, y) {
         this.$.data.drawStart();
+        this._canvasData = this._canvas.getImageData(0, 0, 800, 600);
         this._draw(x, y, x, y);
       },
 
       _draw(x, y, px, py) {
-        var lastSegment = this.$.data.draw(x, y);
-        if(lastSegment) {
-          this._drawLine(lastSegment);
+        if(this.renderSegmented) {
+          let line = this.$.data.draw(x, y);
+          if(line.length >= 4) {
+            this._drawLine(line);
+          }
+        }
+        else {
+          this.$.data.draw(x, y);
+          this._renderCanvasData();
+          if(this.$.data.line.length >= 4) {
+            this._drawLine(this.$.data.line);
+          }
         }
       },
 
@@ -588,6 +605,13 @@
         for(var i in this.$.data.lines) {
           this._drawLine(this.$.data.lines[i]);
         }
+      },
+
+      _renderCanvasData() {
+        if(this._canvasData == null) {
+          throw TypeError("Can't render _canvasData when it's null.");
+        }
+        this._canvas.putImageData(this._canvasData, 0, 0);
       },
 
       _canEdit(canEdit, disabled) {

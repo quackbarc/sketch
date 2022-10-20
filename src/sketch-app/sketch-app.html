@@ -243,6 +243,7 @@
               limited-ink="{{limitedInk}}"
               detect-screentone="{{detectScreentone}}"
               render-type="{{renderType}}"
+              render-segmented="{{renderSegmented}}"
               on-tool-changed="_closeMenus"
               drawing="{{drawing}}"
               disabled="{{sketchDisabled}}"></sketch-canvas>
@@ -543,6 +544,18 @@
                   <div>Automatically detect screentone of pastes</div>
                   <paper-toggle-button
                       checked="{{detectScreentone}}"
+                      noink></paper-toggle-button>
+              </paper-item>
+
+              <hr>
+              <h2>Rendering</h2>
+              <paper-item class="settings-item">
+                  <paper-item-body two-line>
+                      <div>Render lines in segments while drawing</div>
+                      <div secondary>May speed up drawing with lower sample rates</div>
+                  </paper-item-body>
+                  <paper-toggle-button
+                      checked="{{renderSegmented}}"
                       noink></paper-toggle-button>
               </paper-item>
               <paper-item class="settings-item dropdown">
@@ -1043,7 +1056,7 @@
       },
 
       _save: function() {
-        this.$.api.save(this.$.sketch.canvasData);
+        this.$.api.save(this.$.sketch.canvasURL);
       },
 
       _saveSVG: function() {
