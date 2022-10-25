@@ -238,6 +238,7 @@
               tone-offset-y="{{toneOffsetY}}"
               fill-screentone="{{fillScreentone}}"
               eraser-radius="{{eraserRadius}}"
+              eraser-nonpartial="{{eraserNonpartial}}"
               time-resolution="{{timeResolution}}"
               animation-speed="{{animationSpeed}}"
               limited-ink="{{limitedInk}}"
@@ -292,6 +293,12 @@
               toggles="{{!_isErasing(tool)}}"></paper-icon-button>
           <div class="dropdown-content settings">
               <h2>Eraser</h2>
+              <paper-item class="settings-item">
+                  <div>Erase entire lines</div>
+                  <paper-toggle-button
+                      checked="{{eraserNonpartial}}"
+                      noink></paper-toggle-button>
+              </paper-item>
               <paper-item class="settings-item slider">
                   <paper-item-body two-line>
                       <div>Radius</div>
@@ -870,6 +877,7 @@
           var toolSettings = {
             tool: this.tool,
             eraserRadius: this.$.sketch.eraserRadius,
+            eraserNonpartial: this.$.sketch.eraserNonpartial,
             etchStep: this.$.sketch.lineStep,
             etchCursor: this.$.sketch.cursor,
             fillScreentone: this.$.sketch.fillScreentone,
@@ -929,6 +937,7 @@
         if(toolSettings) {
           this._setSetting("tool", toolSettings, this.$.sketch, "desiredTool");
           this._setSetting("eraserRadius", toolSettings);
+          this._setSetting("eraserNonpartial", toolSettings);
           this._setSetting("etchStep", toolSettings, this.$.sketch, "lineStep");
           this._setSetting("etchCursor", toolSettings, this.$.sketch, "cursor");
           this._setSetting("fillScreentone", toolSettings);

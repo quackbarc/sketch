@@ -173,6 +173,11 @@
           notify: true,
           value: 3
         },
+        eraserNonpartial: {
+          type: Boolean,
+          notify: true,
+          value: false
+        },
 
         // bubblers
 
@@ -490,7 +495,11 @@
       },
 
       _erase(x, y, px, py) {
-        var erased = this.$.data.erase(x, y, px, py, this.eraserRadius);
+        var erased = this.$.data.erase(
+          x, y, px, py,
+          this.eraserRadius,
+          this.eraserNonpartial,
+        );
         if(erased) {
           this._render();
         }

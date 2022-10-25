@@ -216,7 +216,7 @@
         this._action = [];
       },
 
-      erase: function(x, y, px, py, radius) {
+      erase: function(x, y, px, py, radius, nonpartial) {
         var erased = false;
 
         for(var i = 0; i < this.lines.length; i++) {
@@ -224,21 +224,23 @@
 
           for(var j = 0; j < line.length; j += 2) {
             if(this._insideCircle(line[j], line[j+1], x, y, radius)) {
-              var first = line.slice(0, j);
-              var second = line.slice(j + 2);
-
               var action = {
                 start: i,
                 added: [],
                 removed: [this.lines[i]]
               };
 
-              if(first.length > 2) {
-                action.added.push(first);
-              }
+              if(!nonpartial) {
+                var first = line.slice(0, j);
+                var second = line.slice(j + 2);
 
-              if(second.length > 2) {
-                action.added.push(second);
+                if(first.length > 2) {
+                  action.added.push(first);
+                }
+
+                if(second.length > 2) {
+                  action.added.push(second);
+                }
               }
 
               if(this.tonePoints.has(line[j] + ":" + line[j + 1])) {
@@ -247,13 +249,13 @@
 
               this._doAction([action]);
               this._action.push(action);
-              erased = true
+              erased = true;
               break;
             }
           }
         }
 
-        return erased
+        return erased;
       },
 
       eraseEnd: function() {
