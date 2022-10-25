@@ -357,8 +357,14 @@
         var x = point[0];
         var y = point[1];
 
+        var moved = !(this._lastX == x && this._lastY == y);
         var isInBounds = x >= 0 && x < 800 && y >= 0 && y < 600;
         var wasInBounds = this._lastX >= 0 && this._lastX < 800 && this._lastY >= 0 && this._lastY < 600;
+
+        // prevent consecutive actions on the same coordinates
+        if(!moved && (this._wasPressed == pressed)) {
+          return;
+        }
 
         if(isInBounds && pressed) {
           this._pointerType = this._pointerType == null ? event.pointerType : this._pointerType;
