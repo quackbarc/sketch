@@ -1,0 +1,55 @@
+
+name: deploy-to-gh
+
+on:
+  push:
+    branches:
+      - experimental
+      - workflows
+
+defaults:
+  run:
+    shell: cmd
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout experimental branch
+        uses: actions/checkout@v3
+        with:
+          ref: experimental
+          fetch-depth: 0
+
+      - name: Create gh-pages worktree
+        run: git worktree add "%GITHUB_WORKSPACE%/build/es6-bundled" gh-pages
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '14'
+
+      - name: Setup NPM cache for Polymer
+        uses: actions/cache@v3
+        id: npm-cache
+        with:
+          path: c:/npm/cache
+          key: ${{ runner.os }}-node
+
+      - name: Setup Polymer
+        run: npm install -g polymer-cli@1.9.11
+
+      - name: Install dependencies
+        run: polymer install
+
+      - name: Build app
+        run: polymer build
+
+      - name: Upload build
+        run: |
+          git worktree repair "%GITHUB_WORKSPACE%/build/es6-bundled"
+          cd build/es6-bundled
+          git config --local user.name "GitHub Actions"
+          git config --local user.email "actions@github.com"
+          git commit -m "deploy from %GITHUB_SHA%" -a
+          git push origin gh-pages
