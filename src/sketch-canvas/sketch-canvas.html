@@ -52,9 +52,9 @@
         const canvas2 = document.createElement("canvas");
         canvas2.width = this.$.sketchCanvas.width;
         canvas2.height = this.$.sketchCanvas.height;
-        this._canvas2 = canvas2.getContext("2d");
+        this._canvas2 = canvas2.getContext("2d", {alpha: false});
 
-        this._canvas = this.$.sketchCanvas.getContext("2d");
+        this._canvas = this.$.sketchCanvas.getContext("2d", {alpha: false});
         this._canvas.strokeStyle = "black";
         this._canvas.lineWidth = 3;
         this._canvas.fillStyle = "black";
