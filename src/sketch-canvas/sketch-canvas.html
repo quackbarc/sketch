@@ -48,6 +48,12 @@
       is: 'sketch-canvas',
 
       ready: function() {
+        // create backup canvas to quickly rebuild already-drawn lines
+        const canvas2 = document.createElement("canvas");
+        canvas2.width = this.$.sketchCanvas.width;
+        canvas2.height = this.$.sketchCanvas.height;
+        this._canvas2 = canvas2.getContext("2d");
+
         this._canvas = this.$.sketchCanvas.getContext("2d");
         this._canvas.strokeStyle = "black";
         this._canvas.lineWidth = 3;
@@ -138,11 +144,6 @@
           value: 0,
           observer: "_updateRendering"
         },
-        renderSegmented: {
-          type: Boolean,
-          notify: true,
-          value: false
-        },
         fillScreentone: {
           type: Boolean,
           notify: true,
@@ -207,8 +208,6 @@
       // Private properties
 
       _canvas: null,
-
-      _canvasData: null,
 
       _playProgressLines: 0,
 
@@ -459,24 +458,16 @@
       },
 
       _drawStart(x, y) {
+        this._canvas2.drawImage(this._canvas.canvas, 0, 0, 800, 600);
         this.$.data.drawStart();
-        this._canvasData = this._canvas.getImageData(0, 0, 800, 600);
         this._draw(x, y, x, y);
       },
 
       _draw(x, y, px, py) {
-        if(this.renderSegmented) {
-          let line = this.$.data.draw(x, y);
-          if(line.length >= 4) {
-            this._drawLine(line);
-          }
-        }
-        else {
-          this.$.data.draw(x, y);
-          this._renderCanvasData();
-          if(this.$.data.line.length >= 4) {
-            this._drawLine(this.$.data.line);
-          }
+        this._canvas.drawImage(this._canvas2.canvas, 0, 0, 800, 600);
+        this.$.data.draw(x, y);
+        if(this.$.data.line.length >= 4) {
+          this._drawLine(this.$.data.line);
         }
       },
 
@@ -590,18 +581,23 @@
           var pointsDrawn = 0;
 
           while(pointsDrawn < pointsToDraw && this.playing) {
-            this._drawLine(this.$.data.lines[this._playProgressLines].slice(this._playProgressPoints, this._playProgressPoints + 4));
+            this._canvas.drawImage(this._canvas2.canvas, 0, 0, 800, 600);
+            this._drawLine(this.$.data.lines[this._playProgressLines].slice(0, this._playProgressPoints + 4));
 
             pointsDrawn++;
             this._playProgressPoints += 2;
             if(this._playProgressPoints >= this.$.data.lines[this._playProgressLines].length - 2) {
               this._playProgressPoints = 0;
               this._playProgressLines++;
+              this._canvas2.drawImage(this._canvas.canvas, 0, 0, 800, 600);
               if(this._playProgressLines >= this.$.data.lines.length) {
                 break;
               }
             }
           }
+        }
+        else {
+          this._canvas2.drawImage(this._canvas.canvas, 0, 0, 800, 600);
         }
 
         this._lastTimestamp = timestamp;
@@ -620,13 +616,6 @@
         for(var i in this.$.data.lines) {
           this._drawLine(this.$.data.lines[i]);
         }
-      },
-
-      _renderCanvasData() {
-        if(this._canvasData == null) {
-          throw TypeError("Can't render _canvasData when it's null.");
-        }
-        this._canvas.putImageData(this._canvasData, 0, 0);
       },
 
       _canEdit(canEdit, disabled) {
