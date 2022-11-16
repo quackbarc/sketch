@@ -216,7 +216,7 @@
         this._action = [];
       },
 
-      erase: function(x, y, px, py, radius, nonpartial) {
+      erase: function(x, y, px, py, radius, eraseStrokes) {
         var erased = false;
 
         for(var i = 0; i < this.lines.length; i++) {
@@ -230,7 +230,7 @@
                 removed: [this.lines[i]]
               };
 
-              if(!nonpartial) {
+              if(!eraseStrokes) {
                 var first = line.slice(0, j);
                 var second = line.slice(j + 2);
 

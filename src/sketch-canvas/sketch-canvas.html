@@ -174,7 +174,7 @@
           notify: true,
           value: 3
         },
-        eraserNonpartial: {
+        eraseStrokes: {
           type: Boolean,
           notify: true,
           value: false
@@ -489,7 +489,7 @@
         var erased = this.$.data.erase(
           x, y, px, py,
           this.eraserRadius,
-          this.eraserNonpartial,
+          this.eraseStrokes,
         );
         if(erased) {
           this._render();
