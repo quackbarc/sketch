@@ -517,12 +517,6 @@
                       editable></paper-slider>
               </paper-item>
               <paper-item class="settings-item">
-                  <div>Hide swap button</div>
-                  <paper-toggle-button
-                      checked="{{hideSwap}}"
-                      noink></paper-toggle-button>
-              </paper-item>
-              <paper-item class="settings-item">
                   <div>Toggle tool settings with keybind</div>
                   <paper-toggle-button
                       checked="{{keybindToggling}}"
@@ -550,6 +544,27 @@
                   <div>Automatically detect screentone of pastes</div>
                   <paper-toggle-button
                       checked="{{detectScreentone}}"
+                      noink></paper-toggle-button>
+              </paper-item>
+
+              <hr>
+              <h2>Appearance</h2>
+              <paper-item class="settings-item dropdown">
+                  <div>Background</div>
+                  <paper-dropdown-menu
+                    no-label-float>
+                    <paper-listbox
+                      class="dropdown-content"
+                      selected="{{backgroundType}}">
+                      <paper-item>Light</paper-item>
+                      <paper-item>Dark</paper-item>
+                    </paper-listbox>
+                  </paper-dropdown-menu>
+              </paper-item>
+              <paper-item class="settings-item">
+                  <div>Hide swap button</div>
+                  <paper-toggle-button
+                      checked="{{hideSwap}}"
                       noink></paper-toggle-button>
               </paper-item>
 
@@ -794,6 +809,15 @@
           type: Boolean,
           value: false
         },
+        backgroundType: {
+          /* enum
+            0, white background
+            1, dark background
+          */
+          type: Number,
+          value: 0,
+          observer: "_onBackgroundChange"
+        },
         autosave: {
           type: Boolean,
           value: true
@@ -891,6 +915,7 @@
           autosave: this.autosave,
           autosaveTools: this.autosaveTools,
           keybindToggling: this.keybindToggling,
+          backgroundType: this.backgroundType,
           renderType: this.$.sketch.renderType,
         };
 
@@ -909,6 +934,7 @@
           this._setSetting("autosave", settings);
           this._setSetting("autosaveTools", settings);
           this._setSetting("keybindToggling", settings);
+          this._setSetting("backgroundType", settings);
           this._setSetting("renderType", settings);
         }
 
@@ -1159,7 +1185,26 @@
         return tool === 'fill';
       },
 
-      // display-related methods
+      // UI-related methods
+
+      _onBackgroundChange: function(type) {
+        let background;
+        switch(type) {
+          case 1:
+            background = "background-dark";
+            break;
+          case 0:
+          default:
+            background = "background-light";
+            break;
+        }
+
+        let classlist = document.body.classList;
+        classlist.add(background);
+        Array.from(classlist)
+          .filter(cl => (cl.startsWith("background-") && cl != background))
+          .forEach(cl => classlist.remove(cl));
+      },
 
       _menuAction: function(event, elem, tool) {
         if(event.type == 'keys-pressed') {

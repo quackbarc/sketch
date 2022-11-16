@@ -29,12 +29,31 @@
         --paper-progress-active-color: var(--paper-indigo-a200);
         --paper-slider-input: {width: 80px};
       }
+
+      .background-dark {
+        background-color: #222;
+      }
     </style>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Jost&display=swap" rel="stylesheet">
-
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        // apply preferred background early on
+        let settings = localStorage.getItem("settings") || "{}";
+        let backgroundType = JSON.parse(settings).backgroundType || 0;
+        switch(backgroundType) {
+          case 1:
+            document.body.classList.add("background-dark");
+            break;
+          case 0:
+          default:
+            document.body.classList.add("background-light");
+            break;
+        }
+      });
+    </script>
   </head>
   <body>
     <sketch-app></sketch-app>
