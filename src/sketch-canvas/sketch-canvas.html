@@ -540,11 +540,13 @@
         if (this.toneSpacing > 3) {
           linePoints = this.$.data.toneArea(flood.bounds, flood.mask, this.toneSpacing);
         } else {
+          // Extend fill lines by 1px to make ends visible on gallery-style rendering
+          var lines = flood.lines.map((l) => [l[0], l[1], l[2] + 1, l[3]]);
           if (this.toneSpacing > 1) {
             // Poor's man hashing... for now
-            linePoints = flood.lines.filter((l, i) => l[1] % (this.toneSpacing*2) == 0);
+            linePoints = lines.filter((l, i) => l[1] % (this.toneSpacing*2) == 0);
           } else {
-            linePoints = flood.lines;
+            linePoints = lines;
           }
           this.$.data.drawLines(linePoints);
         }
