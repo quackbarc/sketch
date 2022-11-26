@@ -96,6 +96,13 @@
 
       saveSVG: function(lines, renderType) {
         let path = lines.map(function(line) {
+          // override for screentones with gallery-style renderTypes
+          if(line.length == 4
+            && (line[0] == line[2] && line[1] == line[3])
+            && (renderType == 1 || renderType == 2)) {
+            return `M ${line[0]} ${line[1]} L ${line[0] + 2} ${line[1] + 2}`;
+          }
+
           let p = [];
           for(let i = 0; i < line.length; i += 2) {
             let coords = line.slice(i, i+2);
