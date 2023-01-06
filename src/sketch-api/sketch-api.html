@@ -171,6 +171,7 @@
           setTimeout(this.$.swapRequest.generateRequest.bind(this.$.swapRequest), (1 - id) * 1000);
         }
         else {
+          this.$.getStatsRequest.generateRequest();
           this.$.getRequest.params = { id: id || "" };
           this.$.getRequest.generateRequest();
         }
