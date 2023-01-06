@@ -46,6 +46,7 @@
 
       paper-toolbar .title {
         user-select: none;  /* prevents selection when pressing down with a pen */
+        pointer-events: auto; /* allows tooltips when hovered on */
         margin: 0;
       }
 
@@ -615,9 +616,9 @@
         <span>{{localize('ink', 'amount', flooredInk)}}</span>
         <span id="alert"></span>
         <div class="stats">
-          <span>{{localize('sketches', 'num', sketches)}}</span>
-          <span>{{localize('artists', 'num', artists)}}</span>
-          <span>{{localize('peekers', 'num', peekers)}}</span>
+          <span title="{{localize('tooltipSketches')}}">{{localize('sketches', 'num', sketches)}}</span>
+          <span title="{{localize('tooltipArtists')}}">{{localize('artists', 'num', artists)}}</span>
+          <span title="{{localize('tooltipPeekers')}}">{{localize('peekers', 'num', peekers)}}</span>
         </div>
       </div>
 
