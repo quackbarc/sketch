@@ -530,12 +530,6 @@
                       noink></paper-toggle-button>
               </paper-item>
               <paper-item class="settings-item">
-                  <div>Automatically save tool settings</div>
-                  <paper-toggle-button
-                      checked="{{autosaveTools}}"
-                      noink></paper-toggle-button>
-              </paper-item>
-              <paper-item class="settings-item">
                   <div>Restrict drawing past ink limit</div>
                   <paper-toggle-button
                       checked="{{limitedInk}}"
@@ -823,10 +817,6 @@
           type: Boolean,
           value: true
         },
-        autosaveTools: {
-          type: Boolean,
-          value: true
-        },
         keybindToggling: {
           type: Boolean,
           value: true
@@ -888,25 +878,20 @@
           localStorage.removeItem('save' + this.tabID);
         }
 
-        if(this.autosaveTools) {
-          var toolSettings = {
-            tool: this.tool,
-            eraserRadius: this.$.sketch.eraserRadius,
-            eraseStrokes: this.$.sketch.eraseStrokes,
-            etchStep: this.$.sketch.lineStep,
-            etchCursor: this.$.sketch.cursor,
-            fillScreentone: this.$.sketch.fillScreentone,
-            toneOffsetX: this.$.sketch.toneOffsetX,
-            toneOffsetY: this.$.sketch.toneOffsetY,
-            toneRadius: this.$.sketch.toneRadius,
-            toneSpacing: this.$.sketch.toneSpacing,
-          };
+        var toolSettings = {
+          tool: this.tool,
+          eraserRadius: this.$.sketch.eraserRadius,
+          eraseStrokes: this.$.sketch.eraseStrokes,
+          etchStep: this.$.sketch.lineStep,
+          etchCursor: this.$.sketch.cursor,
+          fillScreentone: this.$.sketch.fillScreentone,
+          toneOffsetX: this.$.sketch.toneOffsetX,
+          toneOffsetY: this.$.sketch.toneOffsetY,
+          toneRadius: this.$.sketch.toneRadius,
+          toneSpacing: this.$.sketch.toneSpacing,
+        };
 
-          localStorage.setItem('toolSettings', JSON.stringify(toolSettings));
-        }
-        else {
-          localStorage.removeItem('toolSettings');
-        }
+        localStorage.setItem('toolSettings', JSON.stringify(toolSettings));
 
         var settings = {
           timeResolution: this.$.sketch.timeResolution,
@@ -914,7 +899,6 @@
           detectScreentone: this.$.sketch.$.data.detectScreentone,
           limitedInk: this.$.sketch.$.data.limitedInk,
           autosave: this.autosave,
-          autosaveTools: this.autosaveTools,
           keybindToggling: this.keybindToggling,
           backgroundType: this.backgroundType,
           renderType: this.$.sketch.renderType,
@@ -933,7 +917,6 @@
           this._setSetting("detectScreentone", settings);
           this._setSetting("limitedInk", settings);
           this._setSetting("autosave", settings);
-          this._setSetting("autosaveTools", settings);
           this._setSetting("keybindToggling", settings);
           this._setSetting("backgroundType", settings);
           this._setSetting("renderType", settings);
