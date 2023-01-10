@@ -545,7 +545,10 @@
               <hr>
               <h2>Appearance</h2>
               <paper-item class="settings-item dropdown">
-                  <div>Background</div>
+                  <paper-item-body two-line>
+                      <div>Background</div>
+                      <div secondary>Background of the app</div>
+                  </paper-item-body>
                   <paper-dropdown-menu
                     no-label-float>
                     <paper-listbox
@@ -556,15 +559,6 @@
                     </paper-listbox>
                   </paper-dropdown-menu>
               </paper-item>
-              <paper-item class="settings-item">
-                  <div>Hide swap button</div>
-                  <paper-toggle-button
-                      checked="{{hideSwap}}"
-                      noink></paper-toggle-button>
-              </paper-item>
-
-              <hr>
-              <h2>Rendering</h2>
               <paper-item class="settings-item dropdown">
                   <div>Rendering style</div>
                   <paper-dropdown-menu
@@ -577,6 +571,12 @@
                       <paper-item>Gallery-style</paper-item>
                     </paper-listbox>
                   </paper-dropdown-menu>
+              </paper-item>
+              <paper-item class="settings-item">
+                  <div>Hide swap button</div>
+                  <paper-toggle-button
+                      checked="{{hideSwap}}"
+                      noink></paper-toggle-button>
               </paper-item>
 
               <hr>
