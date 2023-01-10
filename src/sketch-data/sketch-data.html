@@ -186,7 +186,7 @@
       },
 
       draw: function(x, y) {
-        if(this.length > this.MAX_LENGTH && this.limitedInk) {
+        if(this.limitedInk && (this.length + 4 > this.MAX_LENGTH)) {
           return;
         }
 
@@ -265,10 +265,6 @@
       },
 
       fill: function(x, y, canvas, mode = "normal", modeSettings = {}) {
-        if(this.length >= this.MAX_LENGTH && this.limitedInk) {
-          return;
-        }
-
         this._canvasData = canvas.getContext('2d').getImageData(0,0, 800,600).data;
         if(!this._canvasData[this._maskIndex(x, y) * 4]) {
           return;
@@ -304,7 +300,9 @@
           this._queueLine(lx, rx, qy - 1, queue);
         }
 
+        modeSettings.limitedInk = this.limitedInk;
         [action.added, action.addedPoints] = this._fillPattern(maskLines, mode, modeSettings);
+
         this._doAction([action]);
         this.pushHistory([action]);
       },
@@ -359,10 +357,6 @@
       },
 
       tone: function(x, y, px, py, radius, spacing, offX, offY) {
-        if(this.length >= this.MAX_LENGTH && this.limitedInk) {
-          return;
-        }
-
         const rect = [[0, 0], [800, 600]];
 
         var action = {
@@ -372,20 +366,29 @@
           addedPoints: []
         }
 
-        // credits to noz for the original algorithm
+        let accumLength = this.length;
+
+        // credits to noz for the original screentoning algorithm
 
         // anchoring the loop to start at the nearest possible tone point at the top-left
         var sX = (x - radius) - ((x - offX - radius) % spacing);
         var sY = (y - radius) - ((y - offY - radius) % spacing);
         var eX = (x + radius);
         var eY = (y + radius);
-        for(var i = sX; i <= eX; i += spacing) {
-          for(var j = sY; j <= eY; j += spacing) {
+
+        xLoop: for(var i = sX; i <= eX; i += spacing) {
+          yLoop: for(var j = sY; j <= eY; j += spacing) {
+            let toneLength = 8 + (accumLength > 0);
+            if(this.limitedInk && (accumLength + toneLength > this.MAX_LENGTH)) {
+              break xLoop;
+            }
+
             if(this._within([i, j], rect)
               && this._insideCircle(x, y, i, j, radius)
               && !this.tonePoints.has(i + ":" + j)) {
                 action.added.push([i, j, i, j]);
                 action.addedPoints.push(i + ":" + j);
+                accumLength += toneLength;
             }
           }
         }
@@ -502,25 +505,39 @@
       _fillPattern: function(maskLines, type = "normal", settings = {}) {
         var lines = [];
         var tonePoints = [];
+        let accumLength = this.length;
 
         switch(type) {
           case "normal":
             for(let i in maskLines) {
+              let lineLength = 8 + (accumLength > 0);
+              if(settings.limitedInk && (accumLength + lineLength > this.MAX_LENGTH)) {
+                break;
+              }
+
               let line = maskLines[i].slice();
               line[2] = line[2] + 1;
               lines.push(line);
+              accumLength += lineLength;
             }
             break;
           case "tone":
-            for(let i in maskLines) {
+            lineLoop: for(let i in maskLines) {
               let line = maskLines[i];
               if((line[1] - settings.offY) % settings.spacing == 0) {
                 // shift left by offset, snap to spacing, then shift right by offset
                 let sX = Math.ceil((line[0] - settings.offX) / settings.spacing) * settings.spacing + settings.offX;
-                for(let x = sX; x <= line[2] + 1; x += settings.spacing) {
+
+                toneLoop: for(let x = sX; x <= line[2] + 1; x += settings.spacing) {
+                  let toneLength = 8 + (accumLength > 0);
+                  if(settings.limitedInk && (accumLength + toneLength > this.MAX_LENGTH)) {
+                    break lineLoop;
+                  }
+
                   // no need for tonePoints check as they're skipped by the fill mask anyway
                   lines.push([x, line[1], x, line[1]]);
                   tonePoints.push(`${x}:${line[1]}`);
+                  accumLength += toneLength;
                 }
               }
             }
