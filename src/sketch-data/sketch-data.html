@@ -364,7 +364,6 @@
         }
 
         const rect = [[0, 0], [800, 600]];
-        var linePoints = [];
 
         var action = {
           start: this.lines.length,
@@ -380,26 +379,23 @@
         var sY = (y - radius) - ((y - offY - radius) % spacing);
         var eX = (x + radius);
         var eY = (y + radius);
-        for (var i = sX; i <= eX; i += spacing) {
-            for (var j = sY; j <= eY; j += spacing) {
-                if (this._within([i, j], rect)
-                    && this._insideCircle(x, y, i, j, radius)
-                    && !this.tonePoints.has(i + ":" + j)) {
-                      var points = [i, j, i, j];
-                      linePoints.push(points);
-                      action.addedPoints.push(i + ":" + j);
-                }
+        for(var i = sX; i <= eX; i += spacing) {
+          for(var j = sY; j <= eY; j += spacing) {
+            if(this._within([i, j], rect)
+              && this._insideCircle(x, y, i, j, radius)
+              && !this.tonePoints.has(i + ":" + j)) {
+                action.added.push([i, j, i, j]);
+                action.addedPoints.push(i + ":" + j);
             }
+          }
         }
-
-        action.added.push(...linePoints);
 
         if(action.added.length > 0) {
           this._doAction([action]);
           this._action.push(action);
         }
 
-        return linePoints;
+        return action.added;
       },
 
       toneEnd: function() {
