@@ -303,8 +303,10 @@
         modeSettings.limitedInk = this.limitedInk;
         [action.added, action.addedPoints] = this._fillPattern(maskLines, mode, modeSettings);
 
-        this._doAction([action]);
-        this.pushHistory([action]);
+        if(action.added.length >= 1) {
+          this._doAction([action]);
+          this.pushHistory([action]);
+        }
       },
 
       moveStart: function() {
