@@ -3,6 +3,11 @@
 
 <dom-module id="sketch-data">
   <script>
+    const TonePattern = {
+      NORMAL: 0,
+      DIAGONAL: 1,
+    };
+
     Polymer({
       is: 'sketch-data',
 
@@ -358,8 +363,9 @@
         this._action = [];
       },
 
-      tone: function(x, y, px, py, radius, spacing, offX, offY) {
+      tone: function(x, y, px, py, options) {
         const rect = [[0, 0], [800, 600]];
+        const {pattern, radius, spacing, offX, offY} = options;
 
         var action = {
           start: this.lines.length,
@@ -387,6 +393,9 @@
 
             if(this._within([i, j], rect)
               && this._insideCircle(x, y, i, j, radius)
+              && (pattern == TonePattern.DIAGONAL
+                ? this._canDiagonalDot(i, j, offX, offY, spacing)
+                : true)
               && !this.tonePoints.has(i + ":" + j)) {
                 action.added.push([i, j, i, j]);
                 action.addedPoints.push(i + ":" + j);
@@ -505,6 +514,8 @@
       },
 
       _fillPattern: function(maskLines, type = "normal", settings = {}) {
+        const {limitedInk, tonePattern, offX, offY, spacing} = settings;
+
         var lines = [];
         var tonePoints = [];
         let accumLength = this.length;
@@ -513,7 +524,7 @@
           case "normal":
             for(let i in maskLines) {
               let lineLength = 8 + (accumLength > 0);
-              if(settings.limitedInk && (accumLength + lineLength > this.MAX_LENGTH)) {
+              if(limitedInk && (accumLength + lineLength > this.MAX_LENGTH)) {
                 break;
               }
 
@@ -526,14 +537,19 @@
           case "tone":
             lineLoop: for(let i in maskLines) {
               let line = maskLines[i];
-              if((line[1] - settings.offY) % settings.spacing == 0) {
+              if((line[1] - offY) % spacing == 0) {
                 // shift left by offset, snap to spacing, then shift right by offset
-                let sX = Math.ceil((line[0] - settings.offX) / settings.spacing) * settings.spacing + settings.offX;
+                let sX = Math.ceil((line[0] - offX) / spacing) * spacing + offX;
 
-                toneLoop: for(let x = sX; x <= line[2] + 1; x += settings.spacing) {
+                toneLoop: for(let x = sX; x <= line[2] + 1; x += spacing) {
                   let toneLength = 8 + (accumLength > 0);
-                  if(settings.limitedInk && (accumLength + toneLength > this.MAX_LENGTH)) {
+                  if(limitedInk && (accumLength + toneLength > this.MAX_LENGTH)) {
                     break lineLoop;
+                  }
+
+                  let canDiagonalDot = this._canDiagonalDot(x, line[1], offX, offY, spacing);
+                  if(tonePattern == TonePattern.DIAGONAL && !canDiagonalDot) {
+                    continue;
                   }
 
                   // no need for tonePoints check as they're skipped by the fill mask anyway
@@ -618,6 +634,12 @@
 
       _insideCircle: function(origin_x, origin_y, x, y, r) {
         return ((x - origin_x) * (x - origin_x) + (y - origin_y) * (y - origin_y) <= r * r)
+      },
+
+      _canDiagonalDot: function(x, y, offsetX, offsetY, spacing) {
+        let xOddEven = (x - offsetX) % (spacing*2);
+        let yOddEven = (y - offsetY) % (spacing*2);
+        return xOddEven == yOddEven;  // basically XOR
       },
 
       _maskIndex: function(x, y) {

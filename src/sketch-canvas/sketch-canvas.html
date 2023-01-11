@@ -149,6 +149,15 @@
           notify: true,
           value: false
         },
+        tonePattern: {
+          /* enum
+            0, normal, square-like pattern
+            1, diagonal-like pattern
+          */
+          type: Number,
+          notify: true,
+          value: 0,
+        },
         toneSpacing: {
           type: Number,
           notify: true,
@@ -503,6 +512,7 @@
       _fill(x, y) {
         if(this.fillScreentone) {
           this.$.data.fill(x, y, this.$.sketchCanvas, "tone", {
+            tonePattern: this.tonePattern,
             spacing: this.toneSpacing,
             offX: this.toneOffsetX,
             offY: this.toneOffsetY,
@@ -532,7 +542,13 @@
       },
 
       _tone(x, y, px, py) {
-        var tonePoints = this.$.data.tone(x, y, px, py, this.toneRadius, this.toneSpacing, this.toneOffsetX, this.toneOffsetY);
+        var tonePoints = this.$.data.tone(x, y, px, py, {
+          pattern: this.tonePattern,
+          radius: this.toneRadius,
+          spacing: this.toneSpacing,
+          offX: this.toneOffsetX,
+          offY: this.toneOffsetY,
+        });
         for(var p in tonePoints) {
           this._drawLine(tonePoints[p]);
         }

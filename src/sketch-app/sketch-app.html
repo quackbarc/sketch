@@ -233,6 +233,7 @@
               can-redo="{{canRedo}}"
               etch-mode="{{etchMode}}"
               line-step="{{lineStep}}"
+              tone-pattern="{{tonePattern}}"
               tone-radius="{{toneRadius}}"
               tone-spacing="{{toneSpacing}}"
               tone-offset-x="{{toneOffsetX}}"
@@ -350,6 +351,19 @@
                       noink></paper-toggle-button>
               </paper-item>
               <h2>Screentoning</h2>
+              <paper-item class="settings-item dropdown">
+                  <div>Pattern</div>
+                  <paper-dropdown-menu
+                    disabled="{{!fillScreentone}}"
+                    no-label-float>
+                    <paper-listbox
+                      class="dropdown-content"
+                      selected="{{tonePattern}}">
+                      <paper-item>Normal</paper-item>
+                      <paper-item>Diagonal</paper-item>
+                    </paper-listbox>
+                  </paper-dropdown-menu>
+              </paper-item>
               <paper-item class="settings-item slider">
                   <paper-item-body two-line>
                       <div>Spacing</div>
@@ -407,6 +421,18 @@
             toggles="{{!_isToning(tool)}}"></paper-icon-button>
           <div class="dropdown-content settings">
               <h2>Screentoning</h2>
+              <paper-item class="settings-item dropdown">
+                  <div>Pattern</div>
+                  <paper-dropdown-menu
+                    no-label-float>
+                    <paper-listbox
+                      class="dropdown-content"
+                      selected="{{tonePattern}}">
+                      <paper-item>Normal</paper-item>
+                      <paper-item>Diagonal</paper-item>
+                    </paper-listbox>
+                  </paper-dropdown-menu>
+              </paper-item>
               <div class="settings-double">
                   <paper-item class="settings-item slider">
                       <paper-item-body two-line>
@@ -888,6 +914,7 @@
           etchStep: this.$.sketch.lineStep,
           etchCursor: this.$.sketch.cursor,
           fillScreentone: this.$.sketch.fillScreentone,
+          tonePattern: this.$.sketch.tonePattern,
           toneOffsetX: this.$.sketch.toneOffsetX,
           toneOffsetY: this.$.sketch.toneOffsetY,
           toneRadius: this.$.sketch.toneRadius,
@@ -944,6 +971,7 @@
           this._setSetting("etchStep", toolSettings, this.$.sketch, "lineStep");
           this._setSetting("etchCursor", toolSettings, this.$.sketch, "cursor");
           this._setSetting("fillScreentone", toolSettings);
+          this._setSetting("tonePattern", toolSettings);
           this._setSetting("toneOffsetX", toolSettings);
           this._setSetting("toneOffsetY", toolSettings);
           this._setSetting("toneRadius", toolSettings);
