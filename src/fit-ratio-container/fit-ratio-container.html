@@ -38,7 +38,12 @@
       _ratio: 1,
 
       ready: function() {
-        window.screen.orientation.addEventListener("change", this._onIronResize.bind(this));
+        // Safari/WebKit doesn't support screen.orientation as of 16.2.
+        // The "resize" event (and therefore _onIronResize) gets fired for
+        // orientation changes instead.
+        if(window.screen.orientation) {
+          window.screen.orientation.addEventListener("change", this._onIronResize.bind(this));
+        }
       },
 
       _notifyAll: function(element) {
