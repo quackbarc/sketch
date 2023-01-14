@@ -552,9 +552,14 @@
                     continue;
                   }
 
-                  // no need for tonePoints check as they're skipped by the fill mask anyway
-                  lines.push([x, line[1], x, line[1]]);
-                  tonePoints.push(`${x}:${line[1]}`);
+                  var toneLine = [x, line[1], x, line[1]];
+                  var tone = `${x}:${line[1]}`;
+                  if(this.tonePoints.has(tone)) {
+                    continue;
+                  }
+
+                  lines.push(toneLine);
+                  tonePoints.push(tone);
                   accumLength += toneLength;
                 }
               }
