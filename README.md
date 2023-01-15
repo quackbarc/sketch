@@ -20,6 +20,12 @@ A fork of [dagwaging](https://github.com/dagwaging/sketch)'s Polymer client for 
 
 By default, the demo will be served to localhost.
 
+> **NOTE**: From what I've tried, serving it this way doesn't let other devices on a local network visit the app.
+> Serving with other HTTP server modules did the trick though; even something like
+> Node's [http-server](https://www.npmjs.com/package/http-server)
+> or Python's [http.server](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/set_up_a_local_testing_server#running_a_simple_local_http_server)
+> worked fine.
+
 ### Building the app
 
     polymer build
