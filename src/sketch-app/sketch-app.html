@@ -244,7 +244,6 @@
               time-resolution="{{timeResolution}}"
               animation-speed="{{animationSpeed}}"
               limited-ink="{{limitedInk}}"
-              detect-screentone="{{detectScreentone}}"
               render-type="{{renderType}}"
               on-tool-changed="_closeMenus"
               drawing="{{drawing}}"
@@ -562,12 +561,6 @@
                   <div>Restrict drawing past ink limit</div>
                   <paper-toggle-button
                       checked="{{limitedInk}}"
-                      noink></paper-toggle-button>
-              </paper-item>
-              <paper-item class="settings-item">
-                  <div>Automatically detect screentone of pastes</div>
-                  <paper-toggle-button
-                      checked="{{detectScreentone}}"
                       noink></paper-toggle-button>
               </paper-item>
 
@@ -926,7 +919,6 @@
         var settings = {
           timeResolution: this.$.sketch.timeResolution,
           animationSpeed: this.$.sketch.animationSpeed,
-          detectScreentone: this.$.sketch.$.data.detectScreentone,
           limitedInk: this.$.sketch.$.data.limitedInk,
           autosave: this.autosave,
           keybindToggling: this.keybindToggling,
@@ -945,7 +937,6 @@
         if(settings) {
           this._setSetting("timeResolution", settings);
           this._setSetting("animationSpeed", settings);
-          this._setSetting("detectScreentone", settings);
           this._setSetting("limitedInk", settings);
           this._setSetting("autosave", settings);
           this._setSetting("hideSwap", settings);

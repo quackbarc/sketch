@@ -39,8 +39,7 @@
         length="{{dataLength}}"
         can-undo="{{dataCanUndo}}"
         can-redo="{{dataCanRedo}}"
-        limited-ink="{{limitedInk}}"
-        detect-screentone="{{detectScreentone}}"></sketch-data>
+        limited-ink="{{limitedInk}}"></sketch-data>
   </template>
   <script>
   (function() {
@@ -191,10 +190,6 @@
 
         // bubblers
 
-        detectScreentone: {
-          type: Boolean,
-          notify: true
-        },
         limitedInk: {
           type: Boolean,
           notify: true
