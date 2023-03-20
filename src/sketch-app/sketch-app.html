@@ -104,6 +104,14 @@
         cursor: pointer;
       }
 
+      paper-item-body [secondary] {
+        white-space: normal;
+      }
+
+      paper-dropdown-menu paper-item {
+        max-width: 300px;
+      }
+
       .settings, .menu {
         font-family: 'Roboto', 'Noto', sans-serif;
         font-size: 16px;
@@ -129,7 +137,8 @@
 
       .settings .settings-item {
         display: flex;
-        min-width: 370px;
+        min-width: 400px;
+        max-width: 450px;
         padding: 2px 10px;
         align-items: center;
       }
@@ -171,7 +180,7 @@
       }
       .settings-double .settings-item.slider > paper-slider {
         flex: 1 0 auto;
-        width: auto;
+        width: 100px;
         max-width: 210px;
       }
       .settings .settings-double .settings-item:nth-Child(1) {
@@ -295,7 +304,10 @@
           <div class="dropdown-content settings">
               <h2>Eraser</h2>
               <paper-item class="settings-item">
-                  <div>Erase strokes</div>
+                  <paper-item-body two-line>
+                      <div>Erase strokes</div>
+                      <div secondary>Erases entire lines instead of line corners.</div>
+                  </paper-item-body>
                   <paper-toggle-button
                       checked="{{eraseStrokes}}"
                       noink></paper-toggle-button>
@@ -528,7 +540,7 @@
               <h2>General</h2>
               <paper-item class="settings-item slider">
                   <paper-item-body two-line>
-                      <div>Sample Rate</div>
+                      <div>Sample rate</div>
                       <div secondary>Input latency, in ms</div>
                   </paper-item-body>
                   <paper-slider
@@ -538,7 +550,7 @@
                       editable></paper-slider>
               </paper-item>
               <paper-item class="settings-item slider">
-                  <div>Animation speed</div>
+                  <div>Sketch animation speed</div>
                   <paper-slider
                       value="{{animationSpeed}}"
                       min="5"
@@ -546,30 +558,48 @@
                       editable></paper-slider>
               </paper-item>
               <paper-item class="settings-item">
-                  <div>Toggle tool settings with keybind</div>
+                  <paper-item-body two-line>
+                      <div>Toggle tool settings with keybind</div>
+                      <div secondary>
+                          Whether tool keybinds should open/close their
+                          respective tools' settings or not.
+                      </div>
+                  </paper-item-body>
                   <paper-toggle-button
                       checked="{{keybindToggling}}"
                       noink></paper-toggle-button>
               </paper-item>
               <paper-item class="settings-item">
-                  <div>Automatically save sketch and history</div>
+                  <paper-item-body two-line>
+                      <div>Automatically save sketch and history</div>
+                      <div secondary>
+                          Whether sketches and undo history should be autosaved
+                          and restored on a new tab, or not.
+                      </div>
+                  </paper-item-body>
                   <paper-toggle-button
                       checked="{{autosave}}"
                       noink></paper-toggle-button>
               </paper-item>
               <paper-item class="settings-item">
-                  <div>Restrict drawing past ink limit</div>
+                  <paper-item-body two-line>
+                      <div>Prevent drawing past ink limit</div>
+                      <div secondary>
+                        Note: Even if this is turned off, swapping will still
+                        clip the sketch to 100%.
+                      </div>
+                  </paper-item-body>
                   <paper-toggle-button
                       checked="{{limitedInk}}"
                       noink></paper-toggle-button>
               </paper-item>
 
               <hr>
-              <h2>Appearance</h2>
+              <h2>App appearance</h2>
               <paper-item class="settings-item dropdown">
                   <paper-item-body two-line>
                       <div>Background</div>
-                      <div secondary>Background of the app</div>
+                      <div secondary>Page background of the app</div>
                   </paper-item-body>
                   <paper-dropdown-menu
                     no-label-float>
@@ -582,20 +612,53 @@
                   </paper-dropdown-menu>
               </paper-item>
               <paper-item class="settings-item dropdown">
-                  <div>Rendering style</div>
+                  <paper-item-body two-line>
+                      <div>Rendering style</div>
+                      <div secondary>How sketches are rendered in the app</div>
+                  </paper-item-body>
                   <paper-dropdown-menu
+                    dynamic-align
                     no-label-float>
                     <paper-listbox
                       class="dropdown-content"
                       selected="{{renderType}}">
-                      <paper-item>Default</paper-item>
+                      <paper-item>
+                          <paper-item-body two-line>
+                              <div>Default</div>
+                              <div secondary>
+                                  Round line tips, round corner edges.
+                              </div>
+                          </paper-item-body>
+                      </paper-item>
+                      <paper-item>
+                          <paper-item-body two-line>
+                              <div>Gallery-style</div>
+                              <div secondary>
+                                  Hard line tips, round corner edges.
+                                  Similar to garyc.me's.
+                              </div>
+                          </paper-item-body>
+                      </paper-item>
+                      <paper-item>
+                          <paper-item-body two-line>
+                              <div>Gallery-style (spiky)</div>
+                              <div secondary>
+                                  Hard line tips, spiky corner edges.
+                                  Similar to garyc.me's before 2022.
+                              </div>
+                          </paper-item-body>
+                      </paper-item>
+                      <!-- <paper-item>Default</paper-item>
                       <paper-item>Gallery-style</paper-item>
-                      <paper-item>Gallery-style (old ver.)</paper-item>
+                      <paper-item>Gallery-style (spiky)</paper-item> -->
                     </paper-listbox>
                   </paper-dropdown-menu>
               </paper-item>
               <paper-item class="settings-item">
-                  <div>Hide swap button</div>
+                  <paper-item-body two-line>
+                      <div>Hide swap button</div>
+                      <div secondary>Note: Swapping can still be done with Ctrl+Enter.</div>
+                  </paper-item-body>
                   <paper-toggle-button
                       checked="{{hideSwap}}"
                       noink></paper-toggle-button>
@@ -606,7 +669,9 @@
               <paper-item class="settings-item">
                   <paper-item-body two-line>
                       <div>Etch-a-Sketch mode</div>
-                      <div secondary>Use the arrow keys to draw</div>
+                      <div secondary>
+                        Draws with the arrow keys instead of a mouse/pen.
+                      </div>
                   </paper-item-body>
                   <paper-toggle-button
                       checked="{{etchMode}}"
