@@ -166,7 +166,11 @@
           if(line.length == 4 && line[0] == line[2] && line[1] == line[3]) {
             var x = line[0];
             var y = line[1];
-            lines[i] = [x, y, x + 2, y + 2];
+            let toprightOffset = Math.max(
+              x - Math.max(x - 1, 0),
+              y - Math.max(y - 1, 0),
+            );
+            lines[i] = [x - toprightOffset, y - toprightOffset, x + 1, y + 1];
           }
         };
 
