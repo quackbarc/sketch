@@ -252,6 +252,7 @@
               erase-strokes="{{eraseStrokes}}"
               time-resolution="{{timeResolution}}"
               animation-speed="{{animationSpeed}}"
+              time-resolution-limited="{{timeResolutionLimited}}"
               limited-ink="{{limitedInk}}"
               render-type="{{renderType}}"
               on-tool-changed="_closeMenus"
@@ -591,6 +592,17 @@
                   </paper-item-body>
                   <paper-toggle-button
                       checked="{{limitedInk}}"
+                      noink></paper-toggle-button>
+              </paper-item>
+              <paper-item class="settings-item">
+                  <paper-item-body two-line>
+                      <div>Ignore sample rate on non-pen tools</div>
+                      <div secondary>
+                          Makes sample rate only affect the pen tool.
+                      </div>
+                  </paper-item-body>
+                  <paper-toggle-button
+                      checked="{{timeResolutionLimited}}"
                       noink></paper-toggle-button>
               </paper-item>
 
@@ -982,6 +994,7 @@
 
         var settings = {
           timeResolution: this.$.sketch.timeResolution,
+          timeResolutionLimited: this.$.sketch.timeResolutionLimited,
           animationSpeed: this.$.sketch.animationSpeed,
           limitedInk: this.$.sketch.$.data.limitedInk,
           autosave: this.autosave,
@@ -1000,6 +1013,7 @@
         var settings = JSON.parse(localStorage.getItem('settings'));
         if(settings) {
           this._setSetting("timeResolution", settings);
+          this._setSetting("timeResolutionLimited", settings);
           this._setSetting("animationSpeed", settings);
           this._setSetting("limitedInk", settings);
           this._setSetting("autosave", settings);

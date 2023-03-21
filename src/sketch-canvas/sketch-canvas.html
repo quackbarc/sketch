@@ -125,6 +125,11 @@
           notify: true,
           value: 20
         },
+        timeResolutionLimited: {
+          type: Boolean,
+          notify: true,
+          value: false
+        },
         animationSpeed: {
           // computed later as 10 ** (x/10 + 1)
           // might have to think of a better system for this sometime
@@ -379,7 +384,10 @@
           this._activeTool = pointerErasing ? 'eraser' : null;
           if(this._wasPressed) {
             if(wasInBounds) {
-              if(this.timeResolution != 0 && Math.floor(event.timeStamp / this.timeResolution) - Math.floor(this._lastEventTimeStamp / this.timeResolution) == 0) {
+              const obeyTimeResolution = this.timeResolutionLimited ? this.tool == "pen" : true;
+              if(obeyTimeResolution
+                && this.timeResolution != 0
+                && this._timeResolved(event.timeStamp) - this._timeResolved(this._lastEventTimeStamp) == 0) {
                 return;
               }
               this._action(tool).middle(x, y, this._lastX, this._lastY);
@@ -459,6 +467,10 @@
           x = Math.round(width * (x - bounds.left) / bounds.width);
           y = Math.round(height * (y - bounds.top) / bounds.height);
           return [x, y];
+      },
+
+      _timeResolved: function(n) {
+        return Math.floor(n / this.timeResolution);
       },
 
       _drawStart(x, y) {
