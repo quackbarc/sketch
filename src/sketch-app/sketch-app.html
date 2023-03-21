@@ -249,7 +249,7 @@
               tone-offset-y="{{toneOffsetY}}"
               fill-screentone="{{fillScreentone}}"
               eraser-radius="{{eraserRadius}}"
-              erase-strokes="{{eraseStrokes}}"
+              erase-strokes-setting="{{eraseStrokes}}"
               time-resolution="{{timeResolution}}"
               animation-speed="{{animationSpeed}}"
               time-resolution-limited="{{timeResolutionLimited}}"
@@ -307,7 +307,10 @@
               <paper-item class="settings-item">
                   <paper-item-body two-line>
                       <div>Erase strokes</div>
-                      <div secondary>Erases entire lines instead of line corners.</div>
+                      <div secondary>
+                        Erases entire lines instead of line corners. Holding
+                        down Shift while erasing also activates this.
+                      </div>
                   </paper-item-body>
                   <paper-toggle-button
                       checked="{{eraseStrokes}}"
@@ -871,6 +874,18 @@
 
           return true;
         });
+
+        function processExtraKeybinds(event) {
+          if(this.tool == "eraser") {
+            this.$.sketch.activeStrokeErasing = event.shiftKey;
+            return false;
+          }
+
+          return true;
+        }
+
+        window.addEventListener("keydown", processExtraKeybinds.bind(this));
+        window.addEventListener("keyup", processExtraKeybinds.bind(this));
       },
 
       attached: function() {

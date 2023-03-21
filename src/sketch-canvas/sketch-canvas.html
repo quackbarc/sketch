@@ -57,7 +57,9 @@
         this._canvas.strokeStyle = "black";
         this._canvas.lineWidth = 3;
         this._canvas.fillStyle = "black";
+
         this._activeTool = null;
+
         this._updateRendering();
         this._clear();
       },
@@ -149,6 +151,9 @@
           value: 0,
           observer: "_updateRendering"
         },
+
+        // tool settings
+
         fillScreentone: {
           type: Boolean,
           notify: true,
@@ -190,7 +195,15 @@
         },
         eraseStrokes: {
           type: Boolean,
+          computed: "_eraseStrokes(eraseStrokesSetting, activeStrokeErasing)"
+        },
+        eraseStrokesSetting: {
+          type: Boolean,
           notify: true,
+          value: false
+        },
+        activeStrokeErasing: {
+          type: Boolean,
           value: false
         },
 
@@ -652,6 +665,10 @@
 
       _tool(desiredTool, activeTool) {
         return activeTool ? activeTool : desiredTool;
+      },
+
+      _eraseStrokes(setting, active) {
+        return active || setting;
       }
     });
   })();
