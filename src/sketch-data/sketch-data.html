@@ -372,7 +372,7 @@
       tone: function(x, y, px, py, options) {
         const rect = [[0, 0], [800, 600]];
         const action = this._action[0];
-        const {pattern, radius, spacing, offX, offY} = options;
+        const {pattern, radius, size, spacing, offX, offY} = options;
 
         const tones = [];
         const tonepoints = [];
@@ -404,7 +404,7 @@
               && !this.tonePoints.has(tonepoint)) {
                 this.tonePoints.add(tonepoint);
                 tonepoints.push(tonepoint);
-                tones.push(...this._crungeTone(i, j));
+                tones.push(...this._crungeTone(i, j, size));
                 accumLength += toneLength;
             }
           }
@@ -554,7 +554,7 @@
       },
 
       _fillPattern: function(maskLines, type = "normal", settings = {}) {
-        const {limitedInk, tonePattern, offX, offY, spacing} = settings;
+        const {limitedInk, tonePattern, toneSize, offX, offY, spacing} = settings;
 
         var lines = [];
         var tonePoints = [];
@@ -597,7 +597,7 @@
                     continue;
                   }
 
-                  lines.push(...this._crungeTone(x, line[1]));
+                  lines.push(...this._crungeTone(x, line[1], toneSize));
                   tonePoints.push(tone);
                   accumLength += toneLength;
                 }
@@ -752,10 +752,11 @@
         }
       },
 
-      _crungeTone: function(x, y) {
+      _crungeTone: function(x, y, size = 1) {
         return CRUNGE_PATTERN.map(
           (line) => line.map(
             (coord, index) => {
+              coord = Math.round(coord * size);
               const isXCoord = index % 2 == 0;
               return isXCoord ? coord + x : coord + y;
             }

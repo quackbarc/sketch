@@ -279,6 +279,7 @@
               can-redo="{{canRedo}}"
               etch-mode="{{etchMode}}"
               line-step="{{lineStep}}"
+              tone-size="{{toneSize}}"
               tone-pattern="{{tonePattern}}"
               tone-radius="{{toneRadius}}"
               tone-spacing="{{toneSpacing}}"
@@ -445,6 +446,19 @@
                       max="40"
                       editable></paper-slider>
               </paper-item>
+              <paper-item class="settings-item slider">
+                  <paper-item-body two-line>
+                      <div>Size</div>
+                      <div secondary>Size of the Crun- I mean screentones</div>
+                  </paper-item-body>
+                  <paper-slider
+                      value="{{toneSize}}"
+                      disabled="{{!fillScreentone}}"
+                      min="0.5"
+                      max="3"
+                      step="0.1"
+                      editable></paper-slider>
+              </paper-item>
               <h2>Screentone Offset</h2>
               <div class="settings-double">
                   <paper-item class="settings-item slider">
@@ -502,6 +516,18 @@
                       <paper-item>Diagonal</paper-item>
                     </paper-listbox>
                   </paper-dropdown-menu>
+              </paper-item>
+              <paper-item class="settings-item slider">
+                  <paper-item-body two-line>
+                      <div>Size</div>
+                      <div secondary>Size of the Crun- I mean screentones</div>
+                  </paper-item-body>
+                  <paper-slider
+                      value="{{toneSize}}"
+                      min="0.5"
+                      max="3"
+                      step="0.1"
+                      editable></paper-slider>
               </paper-item>
               <div class="settings-double">
                   <paper-item class="settings-item slider">
