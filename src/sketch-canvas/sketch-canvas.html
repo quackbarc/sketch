@@ -84,6 +84,7 @@
         drawing: {
           type: Boolean,
           notify: true,
+          readOnly: true,
           value: false
         },
         playing: {
@@ -396,13 +397,13 @@
               var intersection = this.$.data._intersections([[x, y], [this._lastX, this._lastY]], [[0, 0], [800, 600]]);
               this._action(tool).start(...intersection[0]);
               this._action(tool).middle(x, y, ...intersection[0]);
-              this.drawing = true;
+              this._setDrawing(true);
             }
           }
           else {
             this.$.sketchCanvas.setPointerCapture(event.pointerId);
             this._action(tool).start(x, y);
-            this.drawing = true;
+            this._setDrawing(true);
           }
         }
         else {
@@ -416,7 +417,7 @@
               this._action(tool).middle(...intersection[0], this._lastX, this._lastY);
               this._action(tool).end(...intersection[0]);
             }
-            this.drawing = false;
+            this._setDrawing(false);
             this._pointerType = null;
             this._activeTool = null;
           }

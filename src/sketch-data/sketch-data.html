@@ -36,7 +36,8 @@
         },
         tonePoints: {
           type: Set,
-          value: new Set()
+          value: new Set(),
+          readOnly: true
         },
         length: {
           type: Number,
@@ -117,7 +118,7 @@
         var lines = data.length > 0 ? data.split(" ") : [];
         this._setLength(data.length);
         this._setLines(new Array(lines.length));
-        this.tonePoints = new Set();
+        this._setTonePoints(new Set());
 
         for(var i = 0; i < lines.length; i++) {
           var line = new Array(lines[i].length / 2 | 0);
@@ -350,7 +351,7 @@
             y = parseInt(y) + this._moveDist.y;
             action.addedPoints[i] = `${x}:${y}`;
           }
-          this.tonePoints = new Set(action.addedPoints);
+          this._setTonePoints(new Set(action.addedPoints));
 
           this.pushHistory(this._action);
         }
