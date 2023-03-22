@@ -1,5 +1,8 @@
+
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../sketch-history/sketch-history.html">
+
+<script src="sketches/crunge.js"></script>
 
 <dom-module id="sketch-data">
   <script>
@@ -386,7 +389,7 @@
 
         xLoop: for(var i = sX; i <= eX; i += spacing) {
           yLoop: for(var j = sY; j <= eY; j += spacing) {
-            let toneLength = 8 + (accumLength > 0);
+            const toneLength = CRUNGE_LENGTH + (accumLength > 0);
             if(this.limitedInk && (accumLength + toneLength > this.MAX_LENGTH)) {
               break xLoop;
             }
@@ -401,7 +404,7 @@
               && !this.tonePoints.has(tonepoint)) {
                 this.tonePoints.add(tonepoint);
                 tonepoints.push(tonepoint);
-                tones.push([i, j, i, j]);
+                tones.push(...this._crungeTone(i, j));
                 accumLength += toneLength;
             }
           }
@@ -579,7 +582,7 @@
                 let sX = Math.ceil((line[0] - offX) / spacing) * spacing + offX;
 
                 toneLoop: for(let x = sX; x <= line[2] + 1; x += spacing) {
-                  let toneLength = 8 + (accumLength > 0);
+                  let toneLength = CRUNGE_LENGTH + (accumLength > 0);
                   if(limitedInk && (accumLength + toneLength > this.MAX_LENGTH)) {
                     break lineLoop;
                   }
@@ -589,13 +592,12 @@
                     continue;
                   }
 
-                  var toneLine = [x, line[1], x, line[1]];
                   var tone = `${x}:${line[1]}`;
                   if(this.tonePoints.has(tone)) {
                     continue;
                   }
 
-                  lines.push(toneLine);
+                  lines.push(...this._crungeTone(x, line[1]));
                   tonePoints.push(tone);
                   accumLength += toneLength;
                 }
@@ -748,6 +750,17 @@
             added = true;
           }
         }
+      },
+
+      _crungeTone: function(x, y) {
+        return CRUNGE_PATTERN.map(
+          (line) => line.map(
+            (coord, index) => {
+              const isXCoord = index % 2 == 0;
+              return isXCoord ? coord + x : coord + y;
+            }
+          )
+        );
       }
     });
   </script>

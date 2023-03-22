@@ -545,9 +545,9 @@
         if(this.fillScreentone) {
           this.$.data.fill(x, y, this.$.sketchCanvas, "tone", {
             tonePattern: this.tonePattern,
-            spacing: this.toneSpacing,
-            offX: this.toneOffsetX,
-            offY: this.toneOffsetY,
+            spacing: this.toneSpacing * 8,
+            offX: this.toneOffsetX * 8,
+            offY: this.toneOffsetY * 8,
           });
         } else {
           this.$.data.fill(x, y, this.$.sketchCanvas, "normal");
@@ -576,10 +576,10 @@
       _tone(x, y, px, py) {
         var tonePoints = this.$.data.tone(x, y, px, py, {
           pattern: this.tonePattern,
-          radius: this.toneRadius,
-          spacing: this.toneSpacing,
-          offX: this.toneOffsetX,
-          offY: this.toneOffsetY,
+          radius: this.toneRadius * 8,
+          spacing: this.toneSpacing * 8,
+          offX: this.toneOffsetX * 8,
+          offY: this.toneOffsetY * 8,
         });
         for(var p in tonePoints) {
           this._drawLine(tonePoints[p]);
