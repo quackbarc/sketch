@@ -640,8 +640,8 @@
       },
 
       _canDiagonalDot: function(x, y, offsetX, offsetY, spacing) {
-        let xOddEven = (x - offsetX) % (spacing*2);
-        let yOddEven = (y - offsetY) % (spacing*2);
+        let xOddEven = Math.abs(x - offsetX) % (spacing*2);
+        let yOddEven = Math.abs(y - offsetY) % (spacing*2);
         return xOddEven == yOddEven;  // basically XNOR
       },
 
