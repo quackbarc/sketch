@@ -45,9 +45,15 @@
       }
 
       paper-toolbar .title {
-        user-select: none;  /* prevents selection when pressing down with a pen */
         pointer-events: auto; /* allows tooltips when hovered on */
         margin: 0;
+      }
+
+      paper-toolbar .title,
+      paper-toolbar paper-menu-button paper-icon-button {
+        /* prevents selection when pressing down with a pen */
+        -webkit-user-select: none;
+        user-select: none;
       }
 
       .title span {
