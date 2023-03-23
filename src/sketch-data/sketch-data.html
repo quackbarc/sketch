@@ -577,60 +577,86 @@
       _clip: function(lines) {
         const rect = [[0, 0], [800, 600]];
 
-        return lines.flatMap((ln) => {
-          var nlns = [];
-          let nln = [];
-          let lastPoint = null;
+        return lines.flatMap(
+          (line) => {
+            const newlines = [];
+            let current = [];
 
-          for(let i = 0; i < ln.length; i += 2) {
-            var point = ln.slice(i, i+2);
-
-            if(this._within(point, rect)) {
-              if(lastPoint === null || this._within(lastPoint, rect)) {
-                nln.push(point);
-              } else {
-                nln.push(...this._intersections([lastPoint, point], rect), point);
-              }
-            } else if(lastPoint && this._within(lastPoint, rect)) {
-              var ints = this._intersections([lastPoint, point], rect);
-              if(ints.length > 0) {
-                nln.push(...ints);
-              }
-              if(nln.flat()) {
-                nlns.push(nln.flat());
-                nln = [];
-              }
+            let lastpoint = line.slice(0, 2);
+            if(this._within(lastpoint, rect)) {
+              current.push(...lastpoint);
             }
 
-            lastPoint = point;
-          }
+            for(let i = 2; i < line.length; i += 2) {
+              const point = line.slice(i, i+2);
 
-          if(nln.length > 1) {
-            nlns.push(nln.flat());
-          }
+              if(this._within(point, rect)) {
+                if(this._within(lastpoint, rect)) {
+                  current.push(...point);
+                }
+                else {
+                  const enterints = this._intersections([lastpoint, point], rect);
+                  current.push(...enterints.flat(), ...point);
+                }
+              }
+              else if(this._within(lastpoint, rect)) {
+                const exitints = this._intersections([lastpoint, point], rect);
+                current.push(...exitints.flat());
 
-          return nlns;
-        });
+                if(current.length >= 1) {
+                  newlines.push(current);
+                  current = [];
+                }
+              }
+
+              lastpoint = point;
+            }
+
+            if(current.length >= 1) {
+              newlines.push(current);
+            }
+
+            return newlines;
+          }
+        );
       },
 
-      _intersections: function(line, r) {
-        let i = [];
-        let lr = line[0][0] <= line[1][0] ? 1 : 0;
-        let ud = line[0][1] <= line[1][1] ? 1 : 0;
+      _intersections: function(line, rect) {
+        const retpoints = [];
 
-        [[1 - lr, 0], [1 - ud, 1], [lr, 0], [ud, 1]].forEach(([n, flip]) => {
-          if(line[0][flip] < r[n][flip] != line[1][flip] < r[n][flip]) {
-            let p = [r[n][flip], line[0][1 - flip] + (line[1][1 - flip] - line[0][1 - flip]) * (r[n][flip] - line[0][flip]) / (line[1][flip] - line[0][flip])];
-            if(flip) {
-              p = p.reverse();
-            }
-            if(p[1 - flip] >= r[0][1 - flip] && p[1 - flip] < r[1][1 - flip]) {
-              i.push(p);
+        const [start, end] = line;
+        let lr = start[0] <= end[0] ? 1 : 0;
+        let ud = start[1] <= end[1] ? 1 : 0;
+
+        [
+          [1 - lr, 0], [1 - ud, 1], // entry tests
+          [lr, 0], [ud, 1] // exit tests
+        ].forEach(
+          ([rectindex, axis]) => {
+            const checkside = rect[rectindex];
+            const intersecting = start[axis] < checkside[axis] != end[axis] < checkside[axis];
+            if(intersecting) {
+              const other = 1 - axis;
+
+              let point = [
+                checkside[axis],
+                start[other] + (end[other] - start[other]) * (checkside[axis] - start[axis]) / (end[axis] - start[axis])
+              ];
+
+              const usingY = axis == 1;
+              if(usingY) {
+                point.reverse();
+              }
+
+              const newcoord = point[other];
+              if(newcoord >= rect[0][other] && newcoord <= rect[1][other]) {
+                retpoints.push(point);
+              }
             }
           }
-        });
+        );
 
-        return i;
+        return retpoints;
       },
 
       _within: function(point, rect) {
