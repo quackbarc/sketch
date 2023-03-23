@@ -608,6 +608,12 @@
                   current = [];
                 }
               }
+              else {
+                const enterexitints = this._intersections([lastpoint, point], rect);
+                if(enterexitints.length >= 1) {
+                  newlines.push(enterexitints.flat());
+                }
+              }
 
               lastpoint = point;
             }
