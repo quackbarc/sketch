@@ -655,7 +655,8 @@
               }
 
               const newcoord = point[other];
-              if(newcoord >= rect[0][other] && newcoord <= rect[1][other]) {
+              const isCorner = newcoord == checkside[other];
+              if(newcoord >= rect[0][other] && newcoord <= rect[1][other] && !(isCorner && usingY)) {
                 retpoints.push(point);
               }
             }
