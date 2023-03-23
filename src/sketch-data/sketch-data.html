@@ -595,9 +595,11 @@
               var ints = this._intersections([lastPoint, point], rect);
               if(ints.length > 0) {
                 nln.push(...ints);
-                nlns.push(nln.flat());
               }
-              nln = [];
+              if(nln.flat()) {
+                nlns.push(nln.flat());
+                nln = [];
+              }
             }
 
             lastPoint = point;
