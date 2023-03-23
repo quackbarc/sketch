@@ -354,18 +354,19 @@
       },
 
       toneStart: function() {
-        this._action = [];
+        this._action = [{
+          start: this.lines.length,
+          added: [],
+          removed: []
+        }];
       },
 
       tone: function(x, y, px, py, options) {
         const rect = [[0, 0], [800, 600]];
+        const action = this._action[0];
         const {pattern, radius, spacing, offX, offY} = options;
 
-        var action = {
-          start: this.lines.length,
-          added: [],
-          removed: []
-        }
+        const tones = [];
 
         let accumLength = this.length;
 
@@ -384,24 +385,28 @@
               break xLoop;
             }
 
+            const tonepoint = `${i}:${j}`;
+
             if(this._within([i, j], rect)
               && this._insideCircle(x, y, i, j, radius)
               && (pattern == TonePattern.DIAGONAL
                 ? this._canDiagonalDot(i, j, offX, offY, spacing)
                 : true)
-              && !this.tonePoints.has(i + ":" + j)) {
-                action.added.push([i, j, i, j]);
+              && !this.tonePoints.has(tonepoint)) {
+                this.tonePoints.add(tonepoint);
+                tones.push([i, j, i, j]);
                 accumLength += toneLength;
             }
           }
         }
 
-        if(action.added.length > 0) {
-          this._doAction([action]);
-          this._action.push(action);
+        if(tones.length >= 1) {
+          this._setLength(accumLength);
+          this.push("lines", ...tones);
+          action.added.push(...tones);
         }
 
-        return action.added;
+        return tones;
       },
 
       toneEnd: function() {
