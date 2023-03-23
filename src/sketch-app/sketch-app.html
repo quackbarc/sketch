@@ -989,7 +989,6 @@
         if(this.rememberTab) {
           var save = {
             data: this.$.sketch.data,
-            tonePoints: [...this.$.sketch.$.data.tonePoints],
             history: this.$.sketch.$.data.history,
             head: this.$.sketch.$.data.head
           };
@@ -1052,10 +1051,6 @@
           this._setSetting("data", save, this.$.sketch);
           this._setSetting("history", save, this.$.sketch.$.data);
           this._setSetting("head", save, this.$.sketch.$.data);
-
-          if(!save.tonePoints === undefined) {
-            this.$.sketch.$.data.tonePoints = new Set(save.tonePoints);
-          }
         }
 
         var toolSettings = JSON.parse(localStorage.getItem('toolSettings'));

@@ -114,7 +114,6 @@
 
       set data(data) {
         var oldLines = this.lines.slice();
-        var oldPoints = Array.from(this.tonePoints);
         var lines = data.length > 0 ? data.split(" ") : [];
         this._setLength(data.length);
         this._setLines(new Array(lines.length));
@@ -127,10 +126,10 @@
             line[j / 2] = parseInt(lines[i].substr(j, 2), 36);
           }
 
-          if(line.length == 4 && line[0] == line[2] && line[1] == line[3]) {
+          if(this._isDot(line)) {
             this.tonePoints.add(`${line[0]}:${line[1]}`);
           }
-          else if(line.length == 4 && line[0]+2 == line[2] && line[1]+2 == line[3]) {
+          else if(this._isGalleryDot(line)) {
             line = [line[0], line[1], line[0], line[1]];
             this.tonePoints.add(`${line[0]}:${line[1]}`);
           }
@@ -142,8 +141,6 @@
           start: 0,
           added: this.lines.slice(),
           removed: oldLines,
-          addedPoints: [...this.tonePoints],
-          removedPoints: oldPoints
         }];
 
         this.pushHistory(action);
@@ -157,7 +154,7 @@
           let line = lines[i];
           // offset dots for visibility on the gallery since the
           // canvas there uses a flat lineCap
-          if(line.length == 4 && line[0] == line[2] && line[1] == line[3]) {
+          if(this._isDot(line)) {
             var x = line[0];
             var y = line[1];
             let toprightOffset = Math.max(
@@ -202,6 +199,10 @@
         // lines with only 1 point should be dealt with in sketch-canvas
         // threshold is only such in case draw() rejects adding the extra point
         if(this.line.length > 2) {
+          if(this._isDot(this.line)) {
+            this.tonePoints.add(`${this.line[0]}:${this.line[1]}`);
+          }
+
           var action = {
             start: this.lines.length,
             added: [this.line.slice()],
@@ -246,10 +247,6 @@
                 }
               }
 
-              if(this.tonePoints.has(line[j] + ":" + line[j + 1])) {
-                action.removedPoints = [line[j] + ":" + line[j + 1]];
-              }
-
               this._doAction([action]);
               this._action.push(action);
               erased = true;
@@ -277,7 +274,6 @@
           start: this.lines.length,
           added: [],
           removed: [],
-          addedPoints: [],
         }
 
         // using typed array to save memory
@@ -304,7 +300,7 @@
         }
 
         modeSettings.limitedInk = this.limitedInk;
-        [action.added, action.addedPoints] = this._fillPattern(maskLines, mode, modeSettings);
+        action.added = this._fillPattern(maskLines, mode, modeSettings);
 
         if(action.added.length >= 1) {
           this._doAction([action]);
@@ -317,9 +313,7 @@
         this._action = [{
           start: 0,
           removed: this.lines.map(line => line.map(i => i)),
-          removedPoints: Array.from(this.tonePoints),
           added: this.lines.map(line => line.map(i => i)),
-          addedPoints: Array.from(this.tonePoints),
         }];
       },
 
@@ -341,18 +335,20 @@
       },
 
       moveEnd: function() {
+        if(this.tonePoints.size >= 1) {
+          const movedTonePoints = new Set();
+          for(const tone of this.tonePoints) {
+            let [x, y] = tone.split(":");
+            x = parseInt(x) + this._moveDist.x;
+            y = parseInt(y) + this._moveDist.y;
+            movedTonePoints.add(`${x}:${y}`);
+          }
+          this._setTonePoints(movedTonePoints);
+        }
+
         if(this.lines.length > 0) {
           const action = this._action[0];
           action.added = action.added.slice();
-
-          for(let i in action.addedPoints) {
-            let [x, y] = action.addedPoints[i].split(":");
-            x = parseInt(x) + this._moveDist.x;
-            y = parseInt(y) + this._moveDist.y;
-            action.addedPoints[i] = `${x}:${y}`;
-          }
-          this._setTonePoints(new Set(action.addedPoints));
-
           this.pushHistory(this._action);
         }
       },
@@ -368,8 +364,7 @@
         var action = {
           start: this.lines.length,
           added: [],
-          removed: [],
-          addedPoints: []
+          removed: []
         }
 
         let accumLength = this.length;
@@ -396,7 +391,6 @@
                 : true)
               && !this.tonePoints.has(i + ":" + j)) {
                 action.added.push([i, j, i, j]);
-                action.addedPoints.push(i + ":" + j);
                 accumLength += toneLength;
             }
           }
@@ -434,25 +428,17 @@
         for(var i in action) {
           Array.prototype.splice.apply(this.lines, [action[i].start, action[i].removed.length].concat(action[i].added));
 
-          for(var j in action[i].added) {
-            addedLength += action[i].added[j].length * 2 + 1;
-          }
-
-          for(var j in action[i].removed) {
-            removedLength += action[i].removed[j].length * 2 + 1;
-          }
-
-          if(action[i].addedPoints) {
-            for(var j in action[i].addedPoints) {
-              var point = action[i].addedPoints[j];
-              this.tonePoints.add(point);
+          for(const addedLine of action[i].added) {
+            addedLength += addedLine.length * 2 + 1;
+            if(this._isDot(addedLine)) {
+              this.tonePoints.add(`${addedLine[0]}:${addedLine[1]}`);
             }
           }
 
-          if(action[i].removedPoints) {
-            for(var j in action[i].removedPoints) {
-              var point = action[i].removedPoints[j];
-              this.tonePoints.delete(point);
+          for(const removedLine of action[i].removed) {
+            removedLength += removedLine.length * 2 + 1;
+            if(this._isDot(removedLine)) {
+              this.tonePoints.delete(`${removedLine[0]}:${removedLine[1]}`);
             }
           }
         }
@@ -477,25 +463,17 @@
         for(var i in actionR) {
           Array.prototype.splice.apply(this.lines, [actionR[i].start, actionR[i].added.length].concat(actionR[i].removed));
 
-          for(var j in actionR[i].added) {
-            addedLength += actionR[i].added[j].length * 2 + 1;
-          }
-
-          for(var j in actionR[i].removed) {
-            removedLength += actionR[i].removed[j].length * 2 + 1;
-          }
-
-          if(actionR[i].addedPoints) {
-            for(var j in actionR[i].addedPoints) {
-              var point = actionR[i].addedPoints[j];
-              this.tonePoints.delete(point);
+          for(const addedLine of actionR[i].added) {
+            addedLength += addedLine.length * 2 + 1;
+            if(this._isDot(addedLine)) {
+              this.tonePoints.delete(`${addedLine[0]}:${addedLine[1]}`);
             }
           }
 
-          if(actionR[i].removedPoints) {
-            for(var j in actionR[i].removedPoints) {
-              var point = actionR[i].removedPoints[j];
-              this.tonePoints.add(point);
+          for(const removedLine of actionR[i].removed) {
+            removedLength += removedLine.length * 2 + 1;
+            if(this._isDot(removedLine)) {
+              this.tonePoints.add(`${removedLine[0]}:${removedLine[1]}`);
             }
           }
         }
@@ -515,7 +493,6 @@
         const {limitedInk, tonePattern, offX, offY, spacing} = settings;
 
         var lines = [];
-        var tonePoints = [];
         let accumLength = this.length;
 
         switch(type) {
@@ -557,7 +534,6 @@
                   }
 
                   lines.push(toneLine);
-                  tonePoints.push(tone);
                   accumLength += toneLength;
                 }
               }
@@ -567,7 +543,7 @@
             throw new TypeError('Unknown fill pattern');
         }
 
-        return [lines, tonePoints];
+        return lines;
       },
 
       _pad: function(n, width) {
@@ -673,6 +649,14 @@
 
       _insideCircle: function(origin_x, origin_y, x, y, r) {
         return ((x - origin_x) * (x - origin_x) + (y - origin_y) * (y - origin_y) <= r * r)
+      },
+
+      _isDot: function(line) {
+        return line.length == 4 && line[0] == line[2] && line[1] == line[3];
+      },
+
+      _isGalleryDot: function(line) {
+        return line.length == 4 && line[0]+2 == line[2] && line[1]+2 == line[3];
       },
 
       _canDiagonalDot: function(x, y, offsetX, offsetY, spacing) {
