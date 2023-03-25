@@ -1043,7 +1043,6 @@
       _saveData: function() {
         if(this.rememberTab) {
           var save = {
-            data: this.$.sketch.data,
             history: this.$.sketch.$.data.history,
             head: this.$.sketch.$.data.head
           };
@@ -1103,9 +1102,9 @@
 
         var save = JSON.parse(localStorage.getItem('save' + this.tabID));
         if(save) {
-          this._setSetting("data", save, this.$.sketch);
           this._setSetting("history", save, this.$.sketch.$.data);
           this._setSetting("head", save, this.$.sketch.$.data);
+          this.$.sketch.refreshLines();
         }
 
         var toolSettings = JSON.parse(localStorage.getItem('toolSettings'));

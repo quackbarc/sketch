@@ -178,7 +178,7 @@
 
       _moveDist: null,
 
-      // Public functions
+      // Public functions, tool-related
 
       drawStart: function() {
         this.line = [];
@@ -413,6 +413,35 @@
         if(this._action.length > 0) {
           this.pushHistory(this._action);
         }
+      },
+
+      // Other public functions
+
+      /**
+       * Regenerates sketch data by traversing the undo history.
+       */
+      refreshLines: function() {
+        const newlines = [];
+        for(let i = 0; i < this.head; i++) {
+          const actions = this.history[i];
+          for(const action of actions) {
+            newlines.splice(action.start, action.removed.length, ...action.added);
+          }
+        }
+
+        let newlength = 0;
+        let newtonepoints = new Set();
+        for(let index in newlines) {
+          const line = newlines[index];
+          if(this._isDot(line)) {
+            newtonepoints.add(`${line[0]}:${line[1]}`);
+          }
+          newlength += (line.length * 2) + (index > 0);
+        }
+
+        this._setLength(newlength);
+        this._setLines(newlines);
+        this._setTonePoints(newtonepoints);
       },
 
       // Private functions
