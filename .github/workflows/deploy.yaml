@@ -4,8 +4,7 @@ name: deploy-to-gh
 on:
   push:
     branches:
-      - experimental
-      - workflows
+      - stable
 
 defaults:
   run:
