@@ -3,6 +3,9 @@
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/iron-a11y-keys/iron-a11y-keys.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/marked-element/marked-element.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
 <link rel="import" href="../../bower_components/paper-toggle-button/paper-toggle-button.html">
 <link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
 <link rel="import" href="../../bower_components/paper-progress/paper-progress.html">
@@ -193,6 +196,34 @@
         padding-right: 0px;
       }
 
+      /* paper-dialog */
+
+      paper-dialog {
+        font-size: 16px;
+        line-height: 1.2em;
+      }
+
+      paper-dialog h2 {
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        font-size: 24px;
+      }
+
+      paper-dialog .markdown-html h3 {
+        margin: 1em 0px 0.5em;
+      }
+
+      paper-dialog .markdown-html table {
+        border-spacing: 1em 0.5em;
+      }
+
+      paper-dialog .markdown-html code {
+        background-color: #0001;
+        padding: 2px 5px;
+        border: 2px solid #0003;
+        border-radius: 5px;
+      }
+
       /* for hideStats */
 
       .title {
@@ -272,6 +303,19 @@
           disabled="{{_swapDisabled(sketchDisabled, loading, ink)}}"
           on-tap="_swap"></paper-fab>
     </div>
+
+    <paper-dialog id="dialogKeybind" with-backdrop>
+        <h2>Keyboard shortcuts</h2>
+        <paper-dialog-scrollable>
+            <marked-element>
+                <div class="markdown-html"></div>
+                <script type="text/markdown" src="./keybinds.md"></script>
+            </marked-element>
+        </paper-dialog-scrollable>
+        <div class="buttons">
+            <paper-button dialog-confirm autofocus>Close</paper-button>
+        </div>
+    </paper-dialog>
 
     <paper-toolbar id="toolbar">
       <paper-progress
@@ -888,6 +932,15 @@
           return true;
         });
 
+        function processExtraKeybinds(event) {
+          if((event.ctrlKey || event.metaKey) && (event.key == "/") && (!event.altKey && !event.shiftKey)) {
+            this._toggleKeybindMenu();
+            return false;
+          }
+
+          return true;
+        }
+
         function processPersistentKeybinds(event) {
           if(this.tool == "eraser") {
             this.$.sketch.activeStrokeErasing = event.shiftKey;
@@ -897,6 +950,7 @@
           return true;
         }
 
+        window.addEventListener("keydown", processExtraKeybinds.bind(this));
         window.addEventListener("keydown", processPersistentKeybinds.bind(this));
         window.addEventListener("keyup", processPersistentKeybinds.bind(this));
       },
@@ -1362,6 +1416,10 @@
 
         // guess i gotta call this manually
         this.$.container._onIronResize();
+      },
+
+      _toggleKeybindMenu: function() {
+        this.$.dialogKeybind.toggle();
       },
 
       _alert: async function(message) {
