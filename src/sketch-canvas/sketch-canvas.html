@@ -64,6 +64,7 @@
         this._canvas.fillStyle = "black";
 
         this._activeTool = null;
+        this._bounds = this.getBoundingClientRect();
 
         this._updateRendering();
         this._clear();
