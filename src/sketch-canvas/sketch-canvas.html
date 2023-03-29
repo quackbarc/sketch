@@ -514,9 +514,9 @@
       },
 
       _scaleCoordinates: function(bounds, x, y, width, height) {
-          x = Math.round(width * (x - bounds.left) / bounds.width);
-          y = Math.round(height * (y - bounds.top) / bounds.height);
-          return [x, y];
+        x = Math.round(width * (x - bounds.left) / bounds.width);
+        y = Math.round(height * (y - bounds.top) / bounds.height);
+        return [x, y];
       },
 
       _timeResolved: function(n) {
