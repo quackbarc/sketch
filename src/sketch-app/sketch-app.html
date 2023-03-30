@@ -569,7 +569,7 @@
               <h2>Actions</h2>
               <template is="dom-if" if="[[!playing]]">
                   <paper-icon-item
-                      disabled="{{!ink}}"
+                      disabled="[[!ink]]"
                       class="button-item"
                       on-tap="_play">
                           <iron-icon item-icon icon="av:play-arrow"></iron-icon>
