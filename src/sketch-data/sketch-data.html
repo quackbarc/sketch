@@ -410,7 +410,8 @@
       },
 
       toneEnd: function() {
-        if(this._action.length > 0) {
+        const tones = this._action[0].added;
+        if(tones.length >= 1) {
           this.pushHistory(this._action);
         }
       },
