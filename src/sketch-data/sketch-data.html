@@ -313,6 +313,8 @@
           this._doAction([action]);
           this.pushHistory([action]);
         }
+
+        return action.added;
       },
 
       moveStart: function() {

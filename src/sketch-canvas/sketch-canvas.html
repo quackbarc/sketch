@@ -157,6 +157,10 @@
           value: 0,
           observer: "_updateRendering"
         },
+        crunged: {
+          type: Boolean,
+          value: false
+        },
 
         // tool settings
 
@@ -548,13 +552,17 @@
 
       _fill(x, y) {
         if(this.fillScreentone) {
-          this.$.data.fill(x, y, this.$.sketchCanvas, "tone", {
+          const fillLines = this.$.data.fill(x, y, this.$.sketchCanvas, "tone", {
             tonePattern: this.tonePattern,
             toneSize: this.toneSize,
             spacing: this.toneSpacing * 8,
             offX: this.toneOffsetX * 8,
             offY: this.toneOffsetY * 8,
           });
+
+          if(fillLines.length >= 1) {
+            this.crunged = true;
+          }
         } else {
           this.$.data.fill(x, y, this.$.sketchCanvas, "normal");
         }
@@ -588,6 +596,11 @@
           offY: this.toneOffsetY * 8,
           size: this.toneSize,
         });
+
+        if(tonePoints.length >= 1) {
+          this.crunged = true;
+        }
+
         for(var p in tonePoints) {
           this._drawLine(tonePoints[p]);
         }

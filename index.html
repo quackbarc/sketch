@@ -13,10 +13,15 @@
     <link rel="import" href="src/sketch-app/sketch-app.html">
     <link rel="icon" href="favicon.ico">
     <style is="custom-style">
+      :root, body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+      }
+
       :root {
         @apply(--layout-fit);
         position: fixed;
-        margin: 0;
 
         --primary-color: #980706;
         //--light-primary-color: var(--paper-red-500);
@@ -30,8 +35,24 @@
         --paper-slider-input: {width: 80px};
       }
 
+      .background-light {
+        background-color: #fff;
+      }
       .background-dark {
         background-color: #222;
+      }
+
+      /* crunge background */
+
+      body {
+        background-size: cover;
+        background-position: center;
+      }
+      .background-light.crunged {
+        background-image: url("assets/crunge_background_light.png");
+      }
+      .background-dark.crunged {
+        background-image: url("assets/crunge_background_dark.png");
       }
     </style>
 
@@ -42,6 +63,7 @@
       document.addEventListener("DOMContentLoaded", function() {
         // apply preferred background early on
         let settings = localStorage.getItem("settings") || "{}";
+
         let backgroundType = JSON.parse(settings).backgroundType || 0;
         switch(backgroundType) {
           case 1:
@@ -51,6 +73,11 @@
           default:
             document.body.classList.add("background-light");
             break;
+        }
+
+        let crunged = JSON.parse(settings).crunged || false;
+        if(crunged) {
+          document.body.classList.add("crunged");
         }
       });
     </script>

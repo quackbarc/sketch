@@ -1105,6 +1105,7 @@
           hideSwap: this.hideSwap,
           backgroundType: this.backgroundType,
           renderType: this.$.sketch.renderType,
+          crunged: this.$.sketch.crunged,
         };
 
         localStorage.setItem('settings', JSON.stringify(settings));
@@ -1124,6 +1125,7 @@
           this._setSetting("keybindToggling", settings);
           this._setSetting("backgroundType", settings);
           this._setSetting("renderType", settings);
+          this._setSetting("crunged", settings, this.$.sketch);
         }
 
         var save = JSON.parse(localStorage.getItem('save' + this.tabID));
