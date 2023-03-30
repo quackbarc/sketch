@@ -114,6 +114,7 @@
 
       set data(data) {
         var oldLines = this.lines.slice();
+        var oldPoints = Array.from(this.tonePoints);
         var lines = data.length > 0 ? data.split(" ") : [];
         this._setLength(data.length);
         this._setLines(new Array(lines.length));
@@ -141,6 +142,8 @@
           start: 0,
           added: this.lines.slice(),
           removed: oldLines,
+          addedPoints: [...this.tonePoints],
+          removedPoints: oldPoints
         }];
 
         this.pushHistory(action);
@@ -199,15 +202,18 @@
         // lines with only 1 point should be dealt with in sketch-canvas
         // threshold is only such in case draw() rejects adding the extra point
         if(this.line.length > 2) {
-          if(this._isDot(this.line)) {
-            this.tonePoints.add(`${this.line[0]}:${this.line[1]}`);
-          }
-
           var action = {
             start: this.lines.length,
             added: [this.line.slice()],
             removed: []
           };
+
+          if(this._isDot(this.line)) {
+            const tonepoint = `${this.line[0]}:${this.line[1]}`;
+            this.tonePoints.add(tonepoint);
+            action.addedPoints = [tonepoint];
+          }
+
           this.push('lines', this.line);
           this.pushHistory([action]);
         }
@@ -247,6 +253,10 @@
                 }
               }
 
+              if(this.tonePoints.has(line[j] + ":" + line[j + 1])) {
+                action.removedPoints = [line[j] + ":" + line[j + 1]];
+              }
+
               this._doAction([action]);
               this._action.push(action);
               erased = true;
@@ -274,6 +284,7 @@
           start: this.lines.length,
           added: [],
           removed: [],
+          addedPoints: [],
         }
 
         // using typed array to save memory
@@ -300,7 +311,7 @@
         }
 
         modeSettings.limitedInk = this.limitedInk;
-        action.added = this._fillPattern(maskLines, mode, modeSettings);
+        [action.added, action.addedPoints] = this._fillPattern(maskLines, mode, modeSettings);
 
         if(action.added.length >= 1) {
           this._doAction([action]);
@@ -313,7 +324,9 @@
         this._action = [{
           start: 0,
           removed: this.lines.map(line => line.map(i => i)),
+          removedPoints: Array.from(this.tonePoints),
           added: this.lines.map(line => line.map(i => i)),
+          addedPoints: Array.from(this.tonePoints),
         }];
       },
 
@@ -335,20 +348,18 @@
       },
 
       moveEnd: function() {
-        if(this.tonePoints.size >= 1) {
-          const movedTonePoints = new Set();
-          for(const tone of this.tonePoints) {
-            let [x, y] = tone.split(":");
-            x = parseInt(x) + this._moveDist.x;
-            y = parseInt(y) + this._moveDist.y;
-            movedTonePoints.add(`${x}:${y}`);
-          }
-          this._setTonePoints(movedTonePoints);
-        }
-
         if(this.lines.length > 0) {
           const action = this._action[0];
           action.added = action.added.slice();
+
+          for(let i in action.addedPoints) {
+            let [x, y] = action.addedPoints[i].split(":");
+            x = parseInt(x) + this._moveDist.x;
+            y = parseInt(y) + this._moveDist.y;
+            action.addedPoints[i] = `${x}:${y}`;
+          }
+          this._setTonePoints(new Set(action.addedPoints));
+
           this.pushHistory(this._action);
         }
       },
@@ -357,7 +368,8 @@
         this._action = [{
           start: this.lines.length,
           added: [],
-          removed: []
+          removed: [],
+          addedPoints: []
         }];
       },
 
@@ -367,6 +379,7 @@
         const {pattern, radius, spacing, offX, offY} = options;
 
         const tones = [];
+        const tonepoints = [];
 
         let accumLength = this.length;
 
@@ -394,6 +407,7 @@
                 : true)
               && !this.tonePoints.has(tonepoint)) {
                 this.tonePoints.add(tonepoint);
+                tonepoints.push(tonepoint);
                 tones.push([i, j, i, j]);
                 accumLength += toneLength;
             }
@@ -404,6 +418,7 @@
           this._setLength(accumLength);
           this.push("lines", ...tones);
           action.added.push(...tones);
+          action.addedPoints.push(...tonepoints);
         }
 
         return tones;
@@ -423,20 +438,22 @@
        */
       refreshLines: function() {
         const newlines = [];
+        const newtonepoints = new Set();
         for(let i = 0; i < this.head; i++) {
           const actions = this.history[i];
           for(const action of actions) {
+            const addedPoints = action.addedPoints || [];
+            const removedPoints = action.removedPoints || [];
+            addedPoints.forEach((tonepoint) => newtonepoints.add(tonepoint));
+            removedPoints.forEach((tonepoint) => newtonepoints.delete(tonepoint));
+
             newlines.splice(action.start, action.removed.length, ...action.added);
           }
         }
 
         let newlength = 0;
-        let newtonepoints = new Set();
         for(let index in newlines) {
           const line = newlines[index];
-          if(this._isDot(line)) {
-            newtonepoints.add(`${line[0]}:${line[1]}`);
-          }
           newlength += (line.length * 2) + (index > 0);
         }
 
@@ -463,17 +480,25 @@
         for(var i in action) {
           Array.prototype.splice.apply(this.lines, [action[i].start, action[i].removed.length].concat(action[i].added));
 
-          for(const addedLine of action[i].added) {
-            addedLength += addedLine.length * 2 + 1;
-            if(this._isDot(addedLine)) {
-              this.tonePoints.add(`${addedLine[0]}:${addedLine[1]}`);
+          for(var j in action[i].added) {
+            addedLength += action[i].added[j].length * 2 + 1;
+          }
+
+          for(var j in action[i].removed) {
+            removedLength += action[i].removed[j].length * 2 + 1;
+          }
+
+          if(action[i].addedPoints) {
+            for(var j in action[i].addedPoints) {
+              var point = action[i].addedPoints[j];
+              this.tonePoints.add(point);
             }
           }
 
-          for(const removedLine of action[i].removed) {
-            removedLength += removedLine.length * 2 + 1;
-            if(this._isDot(removedLine)) {
-              this.tonePoints.delete(`${removedLine[0]}:${removedLine[1]}`);
+          if(action[i].removedPoints) {
+            for(var j in action[i].removedPoints) {
+              var point = action[i].removedPoints[j];
+              this.tonePoints.delete(point);
             }
           }
         }
@@ -498,17 +523,25 @@
         for(var i in actionR) {
           Array.prototype.splice.apply(this.lines, [actionR[i].start, actionR[i].added.length].concat(actionR[i].removed));
 
-          for(const addedLine of actionR[i].added) {
-            addedLength += addedLine.length * 2 + 1;
-            if(this._isDot(addedLine)) {
-              this.tonePoints.delete(`${addedLine[0]}:${addedLine[1]}`);
+          for(var j in actionR[i].added) {
+            addedLength += actionR[i].added[j].length * 2 + 1;
+          }
+
+          for(var j in actionR[i].removed) {
+            removedLength += actionR[i].removed[j].length * 2 + 1;
+          }
+
+          if(actionR[i].addedPoints) {
+            for(var j in actionR[i].addedPoints) {
+              var point = actionR[i].addedPoints[j];
+              this.tonePoints.delete(point);
             }
           }
 
-          for(const removedLine of actionR[i].removed) {
-            removedLength += removedLine.length * 2 + 1;
-            if(this._isDot(removedLine)) {
-              this.tonePoints.add(`${removedLine[0]}:${removedLine[1]}`);
+          if(actionR[i].removedPoints) {
+            for(var j in actionR[i].removedPoints) {
+              var point = actionR[i].removedPoints[j];
+              this.tonePoints.add(point);
             }
           }
         }
@@ -528,6 +561,7 @@
         const {limitedInk, tonePattern, offX, offY, spacing} = settings;
 
         var lines = [];
+        var tonePoints = [];
         let accumLength = this.length;
 
         switch(type) {
@@ -569,6 +603,7 @@
                   }
 
                   lines.push(toneLine);
+                  tonePoints.push(tone);
                   accumLength += toneLength;
                 }
               }
@@ -578,7 +613,7 @@
             throw new TypeError('Unknown fill pattern');
         }
 
-        return lines;
+        return [lines, tonePoints];
       },
 
       _pad: function(n, width) {
