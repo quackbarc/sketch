@@ -22,6 +22,7 @@
 <link rel="import" href="../../bower_components/iron-icons/av-icons.html">
 <link rel="import" href="../../bower_components/iron-icons/editor-icons.html">
 <link rel="import" href="../mdi/mdi.html">
+<link rel="import" href="../mdi/crunge.html">
 <link rel="import" href="../fit-ratio-container/fit-ratio-container.html">
 <link rel="import" href="../sketch-canvas/sketch-canvas.html">
 <link rel="import" href="../sketch-api/sketch-api.html">
@@ -74,6 +75,10 @@
         position: absolute;
         bottom: 16px;
         right: 16px;
+        --paper-fab-iron-icon: {
+          height: 32px;
+          width: 32px;
+        }
       }
 
       fit-ratio-container {
@@ -299,7 +304,7 @@
       </fit-ratio-container>
       <paper-fab
           title="{{localize('swap')}}"
-          icon="send"
+          icon="[[_swapIcon(crunged)]]"
           hidden="{{hideSwap}}"
           disabled="{{_swapDisabled(sketchDisabled, loading, ink)}}"
           on-tap="_swap"></paper-fab>
@@ -1025,6 +1030,17 @@
           value: true
         },
 
+        /**
+         * Whether the client should be Crunge-themed or not.
+         *
+         * Intentionally separate from the one in sketch-canvas, as this only gets
+         * assigned `true` on page load (if the one in sketch-canvas was ever `true`).
+         */
+        crunged: {
+          type: Boolean,
+          value: false,
+        },
+
         // visual
 
         flooredInk: {
@@ -1039,6 +1055,10 @@
       _sleepPromise: null,
 
       // Private methods
+
+      _swapIcon: function(crunged) {
+        return crunged ? "crunge:crunge" : "send";
+      },
 
       _swapDisabled: function(sketchDisabled, loading, ink) {
         return sketchDisabled || loading || ink <= 0;
@@ -1126,6 +1146,7 @@
           this._setSetting("backgroundType", settings);
           this._setSetting("renderType", settings);
           this._setSetting("crunged", settings, this.$.sketch);
+          this._setSetting("crunged", settings, this);
         }
 
         var save = JSON.parse(localStorage.getItem('save' + this.tabID));
