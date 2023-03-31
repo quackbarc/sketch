@@ -3,6 +3,7 @@
 <link rel="import" href="../sketch-history/sketch-history.html">
 
 <script src="sketches/crunge.js"></script>
+<script src="sketches/whale.js"></script>
 
 <dom-module id="sketch-data">
   <script>
@@ -429,6 +430,30 @@
         }
       },
 
+      whale: function() {
+        const lines1 = this.lines.filter((line) => line.length > 0); // i'm pretty paranoid
+        const lines2 = WHALE_SKETCH;
+
+        if(lines1.length == 0) {
+          return;
+        }
+
+        const dicedLines1 = this._diceLines(lines1, lines2);
+        const dicedLines2 = this._diceLines(lines2, lines1);
+        const eqLines1 = this._dicePoints(dicedLines1, dicedLines2);
+        const eqLines2 = this._dicePoints(dicedLines2, dicedLines1);
+
+        const actions = [{
+          start: 0,
+          added: eqLines2.slice(),
+          removed: this.lines.slice(),
+          removedPoints: Array.from(this.tonePoints)
+        }];
+        this.pushHistory(actions);
+
+        return [eqLines1, eqLines2];
+      },
+
       // Other public functions
 
       /**
@@ -458,6 +483,31 @@
         this._setLength(newlength);
         this._setLines(newlines);
         this._setTonePoints(newtonepoints);
+      },
+
+      /**
+       * Returns the data length of a given array of lines.
+       *
+       * @param Array lines   The line array in question.
+       */
+      getLength: function(lines) {
+        return lines.reduce((acc, line, index) => acc + (line.length * 2) + (index > 0), 0);
+      },
+
+      /**
+       * Transitions between two given arrays of lines (assuming they're both the same length).
+       *
+       * @param Array lines1    The initial line array of the morph.
+       * @param Array lines2    The final line array of the morph.
+       * @param Number phase    A percentage showing how far the lines should be from `lines1` to `lines2`.
+       */
+      morph: function(lines1, lines2, phase) {
+        return lines1.map((line, lindex) => {
+          return line.map((point1, pindex) => {
+            const point2 = lines2[lindex][pindex];
+            return point1 + ((point2 - point1) * phase);
+          });
+        });
       },
 
       // Private functions
@@ -754,6 +804,8 @@
         }
       },
 
+      // April Fools'-related methods
+
       _crungeTone: function(x, y, size = 1) {
         return CRUNGE_PATTERN.map(
           (line) => line.map(
@@ -763,6 +815,67 @@
               return isXCoord ? coord + x : coord + y;
             }
           )
+        );
+      },
+
+      /**
+       * Splits an array of lines into the same amount of lines as another array of lines.
+       * If the array of lines already has the same amount of, or more lines than the other,
+       * a copy of the same array would be returned.
+       *
+       * @param Array linesThis   The line array to split.
+       * @param Array linesOther  The line array to check against.
+       */
+      _diceLines: function(linesThis, linesOther) {
+        const count = linesOther.length - linesThis.length;
+
+        let linesEqualized = linesThis.slice();
+        for(let i = 0; i < count; i++) {
+          const slicei = Math.floor(Math.random() * linesEqualized.length);
+          const sliceline = linesEqualized[slicei];
+          let sliceat = Math.ceil((sliceline.length / 2) / 2) * 2;
+
+          const slices = sliceline.length == 4
+            ? [sliceline.slice(0, 4), sliceline.slice(0, 4)]
+            : [sliceline.slice(0, sliceat), sliceline.slice(sliceat - 2)];
+
+          linesEqualized.splice(slicei, 1, ...slices);
+        }
+
+        return linesEqualized;
+      },
+
+      /**
+       * Extends all lines of a line array to be the same length as all lines of another.
+       * Both line arrays must be have the same amount of lines, so it's best that both
+       * line arrays are passed through _diceLines first before using this method.
+       *
+       * If a line in the line array has the same amount of, or more than a corresponding
+       * line in the other array, a copy of the same line would be returned.
+       *
+       * @param Array linesThis   The line array to extend.
+       * @param Array linesOther  The line array to check against.
+       **/
+      _dicePoints: function(linesThis, linesOther) {
+        return linesThis.map(
+          (line, index) => {
+            const delta = linesOther[index].length - linesThis[index].length;
+
+            let lineEqualized = line.slice();
+            for(let i = 0; i < delta; i += 2) {
+              const slicei = Math.floor(Math.random() * ((lineEqualized.length / 2) - 1));
+              const sliceat = slicei * 2;
+
+              const [x1, y1, x2, y2] = lineEqualized.slice(sliceat, sliceat + 4);
+              const middlecoord = [
+                (x2 + x1) / 2,
+                (y2 + y1) / 2
+              ];
+              lineEqualized.splice(sliceat + 2, 0, ...middlecoord);
+            }
+
+            return lineEqualized;
+          }
         );
       }
     });

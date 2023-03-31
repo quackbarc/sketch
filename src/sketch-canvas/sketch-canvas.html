@@ -269,6 +269,14 @@
 
       _pointerType: null,
 
+      _morphLinesFrom: null,
+
+      _morphLinesTo: null,
+
+      _morphInkRange: null,
+
+      _morphStartTimestamp: null,
+
       // Public methods
 
       play: function() {
@@ -299,6 +307,19 @@
           this.$.data.redo();
           this._render();
         }
+      },
+
+      whale: function(event) {
+        const [from, to] = this.$.data.whale();
+        this._morphLinesFrom = from;
+        this._morphLinesTo = to;
+        this._morphInkRange = [
+          this.$.data.length,
+          this.$.data.getLength(to),
+        ];
+
+        this._morphStartTimestamp = null;
+        requestAnimationFrame(this._animateMorph.bind(this));
       },
 
       refreshLines: function() {
@@ -680,6 +701,33 @@
         else {
           this._setPlaying(false);
         }
+      },
+
+      _animateMorph(timestamp) {
+        if(this._morphStartTimestamp == null) {
+          this._morphStartTimestamp = timestamp;
+          this.fire("morph-start");
+        }
+
+        const frameCount = 120;
+        const frame = (timestamp - this._morphStartTimestamp) / 20; // 50fps
+        const morphFactor = Math.min(frame / frameCount, 1);
+
+        const morphedlines = this.$.data.morph(this._morphLinesFrom, this._morphLinesTo, morphFactor);
+        this.$.data._setLines(morphedlines.slice());
+        this._render();
+
+        const [lengthFrom, lengthTo] = this._morphInkRange;
+        const lengthFactor = Math.min(frame / frameCount, 1);
+        const length = lengthFrom + ((lengthTo - lengthFrom) * lengthFactor);
+        this.$.data._setLength(length);
+
+        if(morphFactor >= 1) {
+          this.fire("morph-finish");
+          return;
+        }
+
+        window.requestAnimationFrame(this._animateMorph.bind(this));
       },
 
       _render() {

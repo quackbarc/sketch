@@ -950,6 +950,8 @@
       listeners: {
         'app-resources-loaded': '_hideStats',
         'alert': '_onAlert',
+        'morph-start': '_onMorphStart',
+        'morph-finish': '_onMorphFinish',
       },
 
       ready: function() {
@@ -1221,6 +1223,15 @@
         this._alert(message.detail);
       },
 
+      _onMorphStart: function() {
+        this.undoDisabled = true;
+        this.sketchDisabled = true;
+      },
+
+      _onMorphFinish: function() {
+        this.$.api.swap(this.$.sketch.$.data.swapData);
+      },
+
       // Event handlers for buttons
 
       _play: function(e) {
@@ -1243,7 +1254,7 @@
       },
 
       _whale: function() {
-        // dummy
+        this.$.sketch.whale();
       },
 
       _undo: function() {
