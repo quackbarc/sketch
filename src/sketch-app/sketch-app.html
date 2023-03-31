@@ -95,10 +95,23 @@
         top: 0;
       }
 
+      paper-icon-button[src] {
+        --paper-icon-button: {
+          width: 48px;
+          height: 48px;
+          /* These are supposed to fix the icon squashing in small screens
+           * but alas, there's no real mixin for the inner <iron-icon> to fix that. */
+          --iron-icon-width: auto;
+          --iron-icon-height: auto;
+        }
+      }
       paper-icon-button[toggles]:not([active]),
       paper-icon-button[disabled],
       paper-menu-button[disabled] {
         color: #3c0101;
+      }
+      paper-icon-button[src][disabled] {
+        filter: grayscale();
       }
 
       paper-menu-button {
@@ -588,6 +601,11 @@
               </div>
           </div>
       </paper-menu-button>
+      <paper-icon-button
+          title="{{localize('whale')}}"
+          src="../../assets/whale_icon.png"
+          disabled="{{_whaleDisabled(sketchDisabled, ink)}}"
+          on-tap="_whale"></paper-icon-button>
       <paper-menu-button
           id="settingsButton"
           dynamic-align
@@ -1085,6 +1103,10 @@
         return loading || !enabled;
       },
 
+      _whaleDisabled: function(sketchDisabled, ink) {
+        return sketchDisabled || ink < 0.01;
+      },
+
       _rememberTab: function(autosave, sketchDisabled, ink) {
         return autosave && !sketchDisabled && ink > 0;
       },
@@ -1218,6 +1240,10 @@
           this.sketchDisabled = true;
           this.undoDisabled = true;
         }
+      },
+
+      _whale: function() {
+        // dummy
       },
 
       _undo: function() {
