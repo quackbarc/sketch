@@ -419,13 +419,16 @@
               <paper-item class="settings-item">
                   <paper-item-body two-line>
                       <div>Screentone</div>
-                      <div secondary>Fills regions with screentone instead of solid black.</div>
+                      <div secondary>
+                          Fills regions with [[_crungeOr(crunged, "screentone", "The Feline™")]]
+                          instead of solid black.
+                      </div>
                   </paper-item-body>
                   <paper-toggle-button
                       checked="{{fillScreentone}}"
                       noink></paper-toggle-button>
               </paper-item>
-              <h2>Screentoning</h2>
+              <h2>[[_crungeOr(crunged, "Screentoning", "Screenmoewing")]]</h2>
               <paper-item class="settings-item dropdown">
                   <div>Pattern</div>
                   <paper-dropdown-menu
@@ -464,7 +467,7 @@
                       step="0.1"
                       editable></paper-slider>
               </paper-item>
-              <h2>Screentone Offset</h2>
+              <h2>[[_crungeOr(crunged, "Screentone", "Screenmoew")]] Offset</h2>
               <div class="settings-double">
                   <paper-item class="settings-item slider">
                       <paper-item-body two-line>
@@ -509,7 +512,7 @@
             active="{{_isToning(tool)}}"
             toggles="{{!_isToning(tool)}}"></paper-icon-button>
           <div class="dropdown-content settings">
-              <h2>Screentoning</h2>
+              <h2>[[_crungeOr(crunged, "Screentoning", "Screenmoewing")]]</h2>
               <paper-item class="settings-item dropdown">
                   <div>Pattern</div>
                   <paper-dropdown-menu
@@ -558,7 +561,7 @@
                           editable></paper-slider>
                   </paper-item>
               </div>
-              <h2>Screentone Offset</h2>
+              <h2>[[_crungeOr(crunged, "Screentone", "Screenmoew")]] Offset</h2>
               <div class="settings-double">
                   <paper-item class="settings-item slider">
                       <paper-item-body two-line>
@@ -1175,12 +1178,16 @@
       // Event handlers for API and ajax
 
       _onSwapWaiting: function() {
-        this._alert('waiting for other sketch...');
+        this._alert(this.crunged ? 'moew...' : 'waiting for other sketch...');
       },
 
       _onSwapFailed: function(e) {
         this.sketchDisabled = false;
-        this._alert(e.detail.swap ? 'failed to swap' : 'failed to fetch');
+        this._alert(
+          this.crunged
+            ? 'failed to moew...'
+            : (e.detail.swap ? 'failed to swap' : 'failed to fetch')
+        );
       },
 
       _onGet: function(data) {
@@ -1442,6 +1449,10 @@
 
       _flooredInk: function(ink) {
         return Math.floor(ink*100) / 100;
+      },
+
+      _crungeOr: function(crunged, normalText, crungedText) {
+        return crunged ? crungedText : normalText;
       },
 
       _hideStats: function() {
