@@ -50,5 +50,6 @@ jobs:
           cd build/es6-bundled
           git config --local user.name "GitHub Actions"
           git config --local user.email "actions@github.com"
-          git commit -m "deploy from %GITHUB_SHA%" -a
+          git add .
+          git commit -m "deploy from %GITHUB_SHA%"
           git push origin gh-pages
