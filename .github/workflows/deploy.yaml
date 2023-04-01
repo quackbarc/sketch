@@ -14,10 +14,10 @@ jobs:
   build:
     runs-on: windows-latest
     steps:
-      - name: Checkout experimental branch
+      - name: Checkout stable branch
         uses: actions/checkout@v3
         with:
-          ref: experimental
+          ref: stable
           fetch-depth: 0
 
       - name: Create gh-pages worktree
