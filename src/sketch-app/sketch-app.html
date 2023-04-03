@@ -777,7 +777,7 @@
           disabled="{{loading}}"
           on-tap="_peek"></paper-icon-button>
       <paper-icon-button
-          title="{{localize('viewGallery')}}"
+          title="{{_viewGalleryTitle(localize, peekID)}}"
           icon="view-module"
           on-tap="_viewGallery"></paper-icon-button>
       <paper-menu-button
@@ -974,6 +974,10 @@
           type: Boolean,
           computed: "_rememberTab(autosave, sketchDisabled, ink)"
         },
+        peekID: {
+          type: Number,
+          value: null,
+        },
 
         // settings
 
@@ -1135,7 +1139,8 @@
       },
 
       _onGet: function(data) {
-        this.$.sketch.data = data.detail;
+        this.peekID = data.detail.id;
+        this.$.sketch.data = data.detail.data;
         this.$.sketch.play();
       },
 
@@ -1168,6 +1173,7 @@
         if(this.sketchDisabled) {
           this.$.sketch.stop();
           this.sketchDisabled = false;
+          this.peekID = null;
           this.$.sketch.undo();
           this.$.sketch.$.data.history = this.$.sketch.$.data.history.slice(0, -1);
         }
@@ -1223,6 +1229,7 @@
         }
         this.sketchDisabled = false;
         this.undoDisabled = false;
+        this.peekID = null;
       },
 
       _peek: function() {
@@ -1233,10 +1240,17 @@
         this.$.api.peek();
         this.sketchDisabled = true;
         this.undoDisabled = false;
+        this.peekID = null;
       },
 
       _viewGallery: function() {
-        window.open("https://garyc.me/sketch/gallery.php");
+        const baseURL = "https://garyc.me/sketch/gallery.php";
+        if(this.peekID) {
+          const url = `${baseURL}#${this.peekID}`;
+          window.open(url);
+        } else {
+          window.open(baseURL);
+        }
       },
 
       _save: function() {
@@ -1288,6 +1302,7 @@
 
             this.$.sketch.stop();
             this.$.sketch.data = text;
+            this.peekID = null;
             this.sketchDisabled = false;
             this._alert('pasted from clipboard');
           })
@@ -1393,6 +1408,12 @@
 
       _flooredInk: function(ink) {
         return Math.floor(ink*100) / 100;
+      },
+
+      _viewGalleryTitle: function(localize, peekID) {
+        return peekID
+          ? this.localize("viewSketchOnGallery", "id", peekID)
+          : this.localize("viewGallery");
       },
 
       _hideStats: function() {

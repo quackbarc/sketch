@@ -149,6 +149,7 @@
 
       _onGet: function(event) {
         var data = event.detail.response;
+        var id = this.$.getRequest.params.id;
 
         if(data == "wait") {
           if(!this._waiting) {
@@ -159,7 +160,7 @@
         }
         else {
           this._waiting = false;
-          this.fire('get', data);
+          this.fire('get', {data: data, id: id});
           this._setLoading(false);
         }
       },
