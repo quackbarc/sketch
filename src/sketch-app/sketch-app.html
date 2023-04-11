@@ -665,6 +665,12 @@
                       checked="{{timeResolutionLimited}}"
                       noink></paper-toggle-button>
               </paper-item>
+              <paper-icon-item
+                  class="button-item"
+                  on-tap="_openKeybindMenu">
+                  <iron-icon item-icon icon="font-download"></iron-icon>
+                  <div>Open keyboard shortcuts menu</div>
+              </paper-icon-item>
 
               <hr>
               <h2>App appearance</h2>
@@ -1433,6 +1439,10 @@
 
         // guess i gotta call this manually
         this.$.container._onIronResize();
+      },
+
+      _openKeybindMenu: function() {
+        this.$.dialogKeybind.open();
       },
 
       _toggleKeybindMenu: function() {
