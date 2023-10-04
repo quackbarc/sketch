@@ -101,6 +101,13 @@
           readOnly: true,
           value: false
         },
+        flipped: {
+          type: Boolean,
+          notify: true,
+          readOnly: true,
+          value: false,
+          observer: '_onFlippedChanged',
+        },
         desiredTool: {
           type: String,
           value: 'pen'
@@ -292,6 +299,12 @@
         }
       },
 
+      flip: function() {
+        if(!this.disabled) {
+          this._setFlipped(!this.flipped);
+        }
+      },
+
       refreshLines: function() {
         this.$.data.refreshLines();
         this._render();
@@ -340,6 +353,22 @@
         }
 
         this._lastTool = this.tool;
+      },
+
+      _onFlippedChanged(event) {
+        if(!this._readied) {
+          return;
+        }
+
+        const transform = this.flipped ? {a: -1, e: 800} : {};
+        this._canvas.setTransform(transform);
+        this._canvas2.setTransform(transform);
+        this._render();
+        if(this.drawing) {
+          // Keep rendering a line that's being drawn while flipping.
+          // It's kinda fun to look at.
+          this._drawLine(this.$.data.line);
+        }
       },
 
       _updateRendering: function(event) {
@@ -392,7 +421,7 @@
 
         var tool = pointerErasing ? "eraser" : this.tool;
         var point = this._scaleCoordinates(this._bounds, event.clientX, event.clientY, 800, 600);
-        var x = point[0];
+        var x = this.flipped ? 800 - point[0] : point[0];
         var y = point[1];
 
         var moved = !(this._lastX == x && this._lastY == y);

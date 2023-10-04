@@ -23,6 +23,14 @@
 
 ---
 
+### View
+
+| Keybind          | Description      |
+|:-----------------|:-----------------|
+| `H` or `↓`      | Flips the canvas horizontally. |
+
+---
+
 ### General
 
 | Keybind          | Description      |

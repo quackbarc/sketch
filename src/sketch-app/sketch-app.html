@@ -74,6 +74,14 @@
         position: absolute;
         bottom: 16px;
         right: 16px;
+        /**
+         * paper-fab disables pointer events when the element's disabled.
+         * That's not very good if you want something like a cool tooltip on it.
+         */
+        --paper-fab-disabled: {
+          pointer-events: auto !important;
+          cursor: not-allowed;
+        };
       }
 
       fit-ratio-container {
@@ -294,13 +302,14 @@
               render-type="{{renderType}}"
               on-tool-changed="_closeMenus"
               drawing="{{drawing}}"
+              flipped="{{sketchFlipped}}"
               disabled="{{sketchDisabled}}"></sketch-canvas>
       </fit-ratio-container>
       <paper-fab
-          title="{{localize('swap')}}"
+          title="{{_swapTitle(localize, sketchFlipped)}}"
           icon="send"
           hidden="{{hideSwap}}"
-          disabled="{{_swapDisabled(sketchDisabled, loading, ink)}}"
+          disabled="{{_swapDisabled(sketchDisabled, sketchFlipped, loading, ink)}}"
           on-tap="_swap"></paper-fab>
     </div>
 
@@ -873,6 +882,10 @@
         on-keys-pressed="_changeSize"></iron-a11y-keys>
     <iron-a11y-keys
         target="[[target]]"
+        keys="down h"
+        on-keys-pressed="_flip"></iron-a11y-keys>
+    <iron-a11y-keys
+        target="[[target]]"
         keys="tab"
         on-keys-pressed="_hideUI"></iron-a11y-keys>
 
@@ -1024,8 +1037,8 @@
 
       // Private methods
 
-      _swapDisabled: function(sketchDisabled, loading, ink) {
-        return sketchDisabled || loading || ink <= 0;
+      _swapDisabled: function(sketchDisabled, sketchFlipped, loading, ink) {
+        return sketchDisabled || sketchFlipped || loading || ink <= 0;
         /* ink might be affected by the negative ink bug but i'm not
            sure if that's still around after the eraser fix */
       },
@@ -1167,8 +1180,14 @@
       },
 
       _swap: function() {
-        var swapDisabled = this._swapDisabled(this.sketchDisabled, this.loading, this.ink);
+        if(this.sketchFlipped) {
+          this._alert("the canvas is currently flipped");
+          return;
+        }
+
+        var swapDisabled = this._swapDisabled(this.sketchDisabled, this.sketchFlipped, this.loading, this.ink);
         if(!swapDisabled && !this.drawing) {
+          this.$.sketch._setFlipped(false);
           this.$.api.swap(this.$.sketch.$.data.swapData);
           this.sketchDisabled = true;
           this.undoDisabled = true;
@@ -1236,6 +1255,10 @@
         this.sketchDisabled = false;
         this.undoDisabled = false;
         this.peekID = null;
+      },
+
+      _flip: function() {
+        this.$.sketch.flip();
       },
 
       _peek: function() {
@@ -1414,6 +1437,11 @@
 
       _flooredInk: function(ink) {
         return Math.floor(ink*100) / 100;
+      },
+
+      _swapTitle: function(localize, sketchFlipped) {
+        console.log(this);
+        return sketchFlipped ? "The canvas is currently flipped." : this.localize("swap");
       },
 
       _viewGalleryTitle: function(localize, peekID) {
