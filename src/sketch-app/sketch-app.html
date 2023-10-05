@@ -21,6 +21,7 @@
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/iron-icons/av-icons.html">
 <link rel="import" href="../../bower_components/iron-icons/editor-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/image-icons.html">
 <link rel="import" href="../mdi/mdi.html">
 <link rel="import" href="../fit-ratio-container/fit-ratio-container.html">
 <link rel="import" href="../sketch-canvas/sketch-canvas.html">
@@ -576,6 +577,12 @@
               icon="settings"></paper-icon-button>
           <div class="dropdown-content settings">
               <h2>Actions</h2>
+              <paper-icon-item
+                  class="button-item"
+                  on-tap="_flip">
+                      <iron-icon item-icon icon="image:flip"></iron-icon>
+                      <div>Flip canvas horizontally</div>
+              </paper-icon-item>
               <template is="dom-if" if="[[!playing]]">
                   <paper-icon-item
                       disabled="[[!ink]]"
@@ -1258,6 +1265,10 @@
       },
 
       _flip: function() {
+        if(this.$.settingsButton.opened) {
+          this.$.settingsButton.close();
+        }
+
         this.$.sketch.flip();
       },
 
