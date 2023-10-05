@@ -692,6 +692,25 @@
               <h2>App appearance</h2>
               <paper-item class="settings-item dropdown">
                   <paper-item-body two-line>
+                      <div>Gallery</div>
+                      <div secondary>
+                        The gallery that the View Gallery button would open up.
+                      </div>
+                  </paper-item-body>
+                  <paper-dropdown-menu
+                    dynamic-align
+                    no-label-float>
+                    <paper-listbox
+                      class="dropdown-content"
+                      selected="{{gallerySource}}"
+                      attr-for-selected="value">
+                      <paper-item value="garyc.me">garyc.me</paper-item>
+                      <paper-item value="noz.rip">noz.rip</paper-item>
+                    </paper-listbox>
+                  </paper-dropdown-menu>
+              </paper-item>
+              <paper-item class="settings-item dropdown">
+                  <paper-item-body two-line>
                       <div>Background</div>
                       <div secondary>Page background of the app</div>
                   </paper-item-body>
@@ -1028,6 +1047,10 @@
           type: Boolean,
           value: true
         },
+        gallerySource: {
+          type: String,
+          value: "garyc.me",
+        },
 
         // visual
 
@@ -1107,6 +1130,7 @@
           autosave: this.autosave,
           keybindToggling: this.keybindToggling,
           hideSwap: this.hideSwap,
+          gallerySource: this.gallerySource,
           backgroundType: this.backgroundType,
           renderType: this.$.sketch.renderType,
         };
@@ -1126,6 +1150,7 @@
           this._setSetting("autosave", settings);
           this._setSetting("hideSwap", settings);
           this._setSetting("keybindToggling", settings);
+          this._setSetting("gallerySource", settings);
           this._setSetting("backgroundType", settings);
           this._setSetting("renderType", settings);
         }
@@ -1284,7 +1309,17 @@
       },
 
       _viewGallery: function() {
-        const baseURL = "https://garyc.me/sketch/gallery.php";
+        let baseURL;
+        switch(this.gallerySource) {
+          case "noz.rip":
+            baseURL = `https://noz.rip/sketch/gallery.php`;
+            break;
+          case "garyc.me":
+          default:
+            baseURL = `https://garyc.me/sketch/gallery.php`;
+            break;
+        }
+
         if(this.peekID) {
           const url = `${baseURL}#${this.peekID}`;
           window.open(url);
