@@ -245,6 +245,10 @@
 
       _canvas: null,
 
+      _rendering: false,
+
+      _keepRendering: false,
+
       _playProgressLines: 0,
 
       _playProgressPoints: 0,
@@ -691,7 +695,26 @@
         }
       },
 
-      _render() {
+      async _render() {
+        this._keepRendering = true;
+        if(!this._rendering) {
+          // This while loop acts as a debounce;
+          // subsequent _render calls would set _keepRendering to true and
+          // re-render the canvas once it's done painting.
+          while(this._keepRendering) {
+            this._keepRendering = false;
+            this._rendering = true;
+            this._renderInner();
+
+            // Give the canvas some time to do the render.
+            await new Promise((res, rej) => window.requestAnimationFrame(res));
+          }
+
+          this._rendering = false;
+        }
+      },
+
+      _renderInner() {
         this._clear();
 
         for(var i in this.$.data.lines) {
