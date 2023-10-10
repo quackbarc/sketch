@@ -266,7 +266,10 @@
 
       fill: function(x, y, canvas, mode = "normal", modeSettings = {}) {
         this._canvasData = canvas.getContext('2d').getImageData(0,0, 800,600).data;
-        if(!this._canvasData[this._maskIndex(x, y) * 4]) {
+
+        const outOfBounds = !this._within([x, y], [[0, 0], [800, 600]]);
+        const alreadyFilled = !this._canvasData[this._maskIndex(x, y) * 4];
+        if(outOfBounds || alreadyFilled) {
           return;
         }
 
