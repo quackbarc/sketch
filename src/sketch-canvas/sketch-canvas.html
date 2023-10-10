@@ -437,25 +437,17 @@
           return;
         }
 
-        if(isInBounds && pressed) {
+        if(pressed) {
           this._pointerType = this._pointerType == null ? event.pointerType : this._pointerType;
           this._activeTool = pointerErasing ? 'eraser' : null;
           if(this._wasPressed) {
-            if(wasInBounds) {
-              const obeyTimeResolution = this.timeResolutionLimited ? this.tool == "pen" : true;
-              if(obeyTimeResolution
-                && this.timeResolution != 0
-                && this._timeResolved(event.timeStamp) - this._timeResolved(this._lastEventTimeStamp) == 0) {
-                return;
-              }
-              this._action(tool).middle(x, y, this._lastX, this._lastY);
+            const obeyTimeResolution = this.timeResolutionLimited ? this.tool == "pen" : true;
+            if(obeyTimeResolution
+              && this.timeResolution != 0
+              && this._timeResolved(event.timeStamp) - this._timeResolved(this._lastEventTimeStamp) == 0) {
+              return;
             }
-            else {
-              var intersection = this.$.data._intersections([[x, y], [this._lastX, this._lastY]], [[0, 0], [800, 600]]);
-              this._action(tool).start(...intersection[0]);
-              this._action(tool).middle(x, y, ...intersection[0]);
-              this._setDrawing(true);
-            }
+            this._action(tool).middle(x, y, this._lastX, this._lastY);
           }
           else {
             this.$.sketchCanvas.setPointerCapture(event.pointerId);
@@ -463,21 +455,12 @@
             this._setDrawing(true);
           }
         }
-        else {
-          if(wasInBounds && this._wasPressed) {
-            if(isInBounds) {
-              this._action(tool).end(x, y);
-              this.$.sketchCanvas.releasePointerCapture(event.pointerId);
-            }
-            else {
-              var intersection = this.$.data._intersections([[x, y], [this._lastX, this._lastY]], [[0, 0], [800, 600]]);
-              this._action(tool).middle(...intersection[0], this._lastX, this._lastY);
-              this._action(tool).end(...intersection[0]);
-            }
-            this._setDrawing(false);
-            this._pointerType = null;
-            this._activeTool = null;
-          }
+        else if(this._wasPressed) {
+          this._pointerType = null;
+          this._activeTool = null;
+          this.$.sketchCanvas.releasePointerCapture(event.pointerId);
+          this._action(tool).end(x, y);
+          this._setDrawing(false);
         }
 
         this._lastEventTimeStamp = event.timeStamp;
