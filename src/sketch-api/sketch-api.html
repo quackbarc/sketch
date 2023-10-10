@@ -74,6 +74,8 @@
 
       _waiting: false,
 
+      _swapErroredOnce: false,
+
       // Public functions
 
       peek: function() {
@@ -168,6 +170,16 @@
       _onSwap: function(event) {
         var id = parseInt(event.detail.response);
 
+        // On empty swaps (or maybe some other faulty form errors), garyc.me
+        // sends a -1 as a "bad request" response.
+        // This clashes with the cooldown syntax, so we'd make sure it's the
+        // "bad request" response if we get it the second time around.
+        if(id == -1 && this._swapErroredOnce) {
+          this._swapErroredOnce = false;
+          this._onError(event);
+          return;
+        }
+
         if(id < 0) {
           setTimeout(this.$.swapRequest.generateRequest.bind(this.$.swapRequest), (1 - id) * 1000);
         }
@@ -176,6 +188,8 @@
           this.$.getRequest.params = { id: id || "" };
           this.$.getRequest.generateRequest();
         }
+
+        this._swapErroredOnce = id == -1;
       },
 
       _onGetStats: function(event) {
