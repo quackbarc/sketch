@@ -146,6 +146,11 @@
           notify: true,
           value: false
         },
+        ignoreTouch: {
+          type: Boolean,
+          notify: true,
+          value: false,
+        },
         animationSpeed: {
           // computed later as 10 ** (x/10 + 1)
           // might have to think of a better system for this sometime
@@ -417,6 +422,10 @@
 
         // thanks firefox
         if(this._pointerType != null && this._pointerType != event.pointerType) {
+          return;
+        }
+
+        if(this.ignoreTouch && event.pointerType == "touch") {
           return;
         }
 

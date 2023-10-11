@@ -296,6 +296,7 @@
               fill-screentone="{{fillScreentone}}"
               eraser-radius="{{eraserRadius}}"
               erase-strokes-setting="{{eraseStrokes}}"
+              ignore-touch="{{sketchIgnoreTouch}}"
               time-resolution="{{timeResolution}}"
               animation-speed="{{animationSpeed}}"
               time-resolution-limited="{{timeResolutionLimited}}"
@@ -679,6 +680,17 @@
                   </paper-item-body>
                   <paper-toggle-button
                       checked="{{timeResolutionLimited}}"
+                      noink></paper-toggle-button>
+              </paper-item>
+              <paper-item class="settings-item">
+                  <paper-item-body two-line>
+                      <div>Ignore touch inputs</div>
+                      <div secondary>
+                          Useful for tablet users using EMR styluses.
+                      </div>
+                  </paper-item-body>
+                  <paper-toggle-button
+                      checked="{{sketchIgnoreTouch}}"
                       noink></paper-toggle-button>
               </paper-item>
               <paper-icon-item
@@ -1127,6 +1139,7 @@
           timeResolutionLimited: this.$.sketch.timeResolutionLimited,
           animationSpeed: this.$.sketch.animationSpeed,
           limitedInk: this.$.sketch.$.data.limitedInk,
+          ignoreTouch: this.$.sketch.ignoreTouch,
           autosave: this.autosave,
           keybindToggling: this.keybindToggling,
           hideSwap: this.hideSwap,
@@ -1147,6 +1160,7 @@
           this._setSetting("timeResolutionLimited", settings);
           this._setSetting("animationSpeed", settings);
           this._setSetting("limitedInk", settings);
+          this._setSetting("ignoreTouch", settings, this.$.sketch);
           this._setSetting("autosave", settings);
           this._setSetting("hideSwap", settings);
           this._setSetting("keybindToggling", settings);
