@@ -588,7 +588,12 @@
                   class="button-item"
                   on-tap="_flip">
                       <iron-icon item-icon icon="image:flip"></iron-icon>
-                      <div>Flip canvas horizontally</div>
+                      <paper-item-body two-line>
+                          <div>Flip canvas horizontally</div>
+                          <div secondary>
+                              Sketches can't be swapped while the canvas is flipped.
+                          </div>
+                      </paper-item-body>
               </paper-icon-item>
               <template is="dom-if" if="[[!playing]]">
                   <paper-icon-item
