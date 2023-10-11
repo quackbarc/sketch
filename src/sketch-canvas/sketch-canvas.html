@@ -77,7 +77,6 @@
 
       listeners: {
         'iron-resize': '_onIronResize',
-        'tool-changed': '_onToolChange',
       },
 
       // Public properties
@@ -116,7 +115,8 @@
           type: String,
           notify: true,
           readOnly: true,
-          computed: '_tool(desiredTool, _activeTool)'
+          computed: '_tool(desiredTool, _activeTool)',
+          observer: '_onToolChanged'
         },
         disabled: {
           type: Boolean,
@@ -355,7 +355,7 @@
         }
       },
 
-      _onToolChange(event) {
+      _onToolChanged(event) {
         if(this.drawing && !this.disabled) {
           this._action(this._lastTool).end(this._lastX, this._lastY);
           this._action(this.tool).start(this._lastX, this._lastY);
