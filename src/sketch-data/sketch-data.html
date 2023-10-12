@@ -270,7 +270,7 @@
         const outOfBounds = !this._within([x, y], [[0, 0], [800, 600]]);
         const alreadyFilled = !this._canvasData[this._maskIndex(x, y) * 4];
         if(outOfBounds || alreadyFilled) {
-          return;
+          return [];
         }
 
         var action = {
@@ -309,6 +309,8 @@
           this._doAction([action]);
           this.pushHistory([action]);
         }
+
+        return action.added.slice();
       },
 
       moveStart: function() {

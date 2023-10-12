@@ -567,17 +567,21 @@
       },
 
       _fill(x, y) {
+        let fillLines;
         if(this.fillScreentone) {
-          this.$.data.fill(x, y, this.$.sketchCanvas, "tone", {
+          fillLines = this.$.data.fill(x, y, this.$.sketchCanvas, "tone", {
             tonePattern: this.tonePattern,
             spacing: this.toneSpacing,
             offX: this.toneOffsetX,
             offY: this.toneOffsetY,
           });
         } else {
-          this.$.data.fill(x, y, this.$.sketchCanvas, "normal");
+          fillLines = this.$.data.fill(x, y, this.$.sketchCanvas, "normal");
         }
-        this._render();
+
+        for(const line of fillLines) {
+          this._drawLine(line);
+        }
       },
 
       _moveStart() {
