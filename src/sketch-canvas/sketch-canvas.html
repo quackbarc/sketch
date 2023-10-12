@@ -376,7 +376,7 @@
         if(this.drawing) {
           // Keep rendering a line that's being drawn while flipping.
           // It's kinda fun to look at.
-          this._drawLine(this.$.data.line);
+          this.$.data.currentLines.forEach((line) => this._drawLine(line));
         }
       },
 
@@ -531,15 +531,17 @@
 
       _draw(x, y, px, py) {
         this._canvas.drawImage(this._canvas2.canvas, 0, 0, 800, 600);
-        this.$.data.draw(x, y);
-        if(this.$.data.line.length >= 4) {
-          this._drawLine(this.$.data.line);
-        }
+        this.$.data.draw(x, y, px, py);
+        this.$.data.currentLines.forEach((line) => this._drawLine(line));
       },
 
       _drawEnd(x, y) {
-        // transforms single dots into lines
-        if(this.$.data.line.length == 2) {
+        // Transform single dots into lines.
+        // Checking the last line instead of any other line was a bit
+        // of an arbitrary choice; even the first line would've worked.
+        const lastLine = this.$.data.currentLines.at(-1);
+        const lastLineIsDot = lastLine.length == 2;
+        if(lastLineIsDot) {
           this._draw(x, y, x, y);
         }
 

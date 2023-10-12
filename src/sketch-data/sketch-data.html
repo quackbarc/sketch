@@ -23,7 +23,7 @@
       // Public properties
 
       properties: {
-        line: {
+        currentLines: {
           type: Array,
           value: [],
           notify: true
@@ -181,38 +181,66 @@
       // Public functions, tool-related
 
       drawStart: function() {
-        this.line = [];
+        this.currentLines = [[]];
         this._setLength(this.length + (this.lines.length == 0 ? 0 : 1));
       },
 
-      draw: function(x, y) {
+      draw: function(x, y, px, py) {
         if(this.limitedInk && (this.length + 4 > this.MAX_LENGTH)) {
           return;
         }
 
-        this.line.push(x, y);
+        let currentLine = this.currentLines.at(-1);
+        const rect = [[0, 0], [800, 600]];
+        const outOfBounds = !this._within([px, py], rect) && !this._within([x, y], rect);
+        const exitingBounds = this._within([px, py], rect) && !this._within([x, y], rect);
+        const enteringBounds = !this._within([px, py], rect) && this._within([x, y], rect);
+
+        if(outOfBounds) {
+          return [];
+        }
+        else if(exitingBounds) {
+          const [clipped] = this._clip([[px, py, x, y]]);
+          const [cx, cy] = clipped.slice(2);
+          currentLine.push(cx, cy);
+        }
+        else if(enteringBounds) {
+          this.currentLines.push([]);
+          currentLine = this.currentLines.at(-1);
+
+          const [clipped] = this._clip([[px, py, x, y]]);
+          currentLine.push(...clipped);
+          this._setLength(this.length + 5);  // 5 = space + extra point
+        }
+        else {
+          currentLine.push(x, y);
+        }
+
         this._setLength(this.length + 4);
-        return this.line.slice(this.line.length - 4, this.line.length);
+        return currentLine.slice(currentLine.length - 4, currentLine.length);
       },
 
       drawEnd: function() {
         // lines with only 1 point should be dealt with in sketch-canvas
         // threshold is only such in case draw() rejects adding the extra point
-        if(this.line.length > 2) {
-          if(this._isDot(this.line)) {
-            this.tonePoints.add(`${this.line[0]}:${this.line[1]}`);
+        const currentLine = this.currentLines.at(-1);
+        if(currentLine.length > 2) {
+          for(const line of this.currentLines) {
+            if(this._isDot(line)) {
+              this.tonePoints.add(`${line[0]}:${line[1]}`);
+            }
           }
 
           var action = {
             start: this.lines.length,
-            added: [this.line.slice()],
+            added: this.currentLines.slice(),
             removed: []
           };
-          this.push('lines', this.line);
+          this.push('lines', ...this.currentLines);
           this.pushHistory([action]);
         }
         else {
-          this._setLength(this.length - (this.line.length * 2) - (this.lines.length == 0 ? 0 : 1));
+          this._setLength(this.length - (currentLine.length * 2) - (this.lines.length == 0 ? 0 : 1));
         }
       },
 
