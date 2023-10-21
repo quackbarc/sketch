@@ -307,6 +307,10 @@
           removed: [],
         }
 
+        // filling algorithm taken straight from the span-filling section
+        // of Wikipedia:
+        // https://en.wikipedia.org/wiki/Flood_fill#Span_filling
+
         // using typed array to save memory
         let mask = new Uint8Array(800*600);
         let queue = [[x, y]];
@@ -317,17 +321,26 @@
             continue;
           }
 
-          for(var lx = qx; this._fillable(lx - 1, qy); lx--) {
-            mask[this._maskIndex(lx - 1, qy)] = 1;
+          // Scan our left and right until we reach the first unfillable pixel.
+          // rx would've scanned [qx, qy] again, had it not been for the +1 on
+          // its init
+          for(var lx = qx; this._fillable(lx, qy); lx--) {
+            mask[this._maskIndex(lx, qy)] = 1;
           }
-          for(var rx = qx; this._fillable(rx, qy); rx++) {
+          for(var rx = qx + 1; this._fillable(rx, qy); rx++) {
             mask[this._maskIndex(rx, qy)] = 1;
           }
-          rx--;
 
+          // Reduce until the first fillable pixel.
+          // Queuing on the first unfillable would've caused chaos.
+          lx += 1;
+          rx -= 1;
+          // Queue lines above and below our scanline
+          queue.push(...this._scanLineForPoints(lx, rx, qy + 1));
+          queue.push(...this._scanLineForPoints(lx, rx, qy - 1));
+
+          // Push the line.
           maskLines.push([lx, qy, rx, qy]);
-          this._queueLine(lx, rx, qy + 1, queue);
-          this._queueLine(lx, rx, qy - 1, queue);
         }
 
         modeSettings.limitedInk = this.limitedInk;
@@ -564,20 +577,26 @@
         let accumLength = this.length;
 
         switch(type) {
-          case "normal":
-            for(let i in maskLines) {
+          case "normal": {
+            for(let line of maskLines) {
               let lineLength = 8 + (accumLength > 0);
               if(limitedInk && (accumLength + lineLength > this.MAX_LENGTH)) {
                 break;
               }
 
-              let line = maskLines[i].slice();
-              line[2] = line[2] + 1;
+              // Extend fill lines by 1px.
+              // Lines are drawn as vectors, not pixel-by-pixel,
+              // so they'd be drawn 1px shorter than expected.
+              // That missing pixel would've been [line[2], line[3]].
+              line = line.slice();
+              line[2] = Math.min(line[2] + 1, 800);
+
               lines.push(line);
               accumLength += lineLength;
             }
             break;
-          case "tone":
+          }
+          case "tone": {
             lineLoop: for(let i in maskLines) {
               let line = maskLines[i];
               if((line[1] - offY) % spacing == 0) {
@@ -607,8 +626,10 @@
               }
             }
             break;
-          default:
+          }
+          default: {
             throw new TypeError('Unknown fill pattern');
+          }
         }
 
         return lines;
@@ -711,6 +732,17 @@
         return retpoints;
       },
 
+      /**
+       * Checks whether a point is within a given rectangle.
+       *
+       * @param {[number, number]} point
+       *    A two-tuple representing the point.
+       * @param {[[number, number], [number, number]]} rect
+       *    Two two-tuple points that represent the rectangle's top-left and
+       *    bottom-right corners.
+       *    Both of these points are inclusive.
+       * @returns {boolean}
+       */
       _within: function(point, rect) {
         return point[0] >= rect[0][0] && point[0] <= rect[1][0] && point[1] >= rect[0][1] && point[1] <= rect[1][1];
       },
@@ -734,25 +766,53 @@
       },
 
       _maskIndex: function(x, y) {
+        // Clamp x to the canvas' width boundary.
+        // This is particularly useful for checking x=800, since the canvas
+        // data's X can only go up to 799.
+        x = Math.min(x, 799);
         return y * 800 + x;
       },
 
+      /**
+       * Returns whether a pixel is fillable on the canvas or not.
+       * Fillable here means any pixel that isn't pure black.
+       *
+       * @param {number} x  The x-coordinate of the pixel.
+       * @param {number} y  The y-coordinate of the pixel.
+       * @returns {boolean}
+       */
       _fillable: function(x, y) {
-        // using a smaller rect since _within is inclusive
-        return this._within([x, y], [[0, 0], [799, 599]]) && this._canvasData[this._maskIndex(x, y) * 4];
+        const rect = [[0, 0], [800, 600]];
+        const within = this._within([x, y], rect);
+        const fillable = this._canvasData[this._maskIndex(x, y) * 4] > 0;
+        return within && fillable;
       },
 
-      _queueLine: function(lx, rx, y, stack) {
+
+      /**
+       * Iterates through a line and returns any potential points for the flood fill
+       * queue.
+       *
+       * @param {number} lx
+       * @param {number} rx
+       * @param {number} y
+       * @returns {number[][]}
+       */
+      _scanLineForPoints: function(lx, rx, y) {
+        const points = [];
         let added = false;
-        for(let x = lx; x < rx; x++) {
+
+        for(let x = lx; x <= rx; x++) {
           if(!this._fillable(x, y)) {
             added = false;
           }
           else if(!added) {
-            stack.push([x, y]);
+            points.push([x, y]);
             added = true;
           }
         }
+
+        return points;
       }
     });
   </script>
