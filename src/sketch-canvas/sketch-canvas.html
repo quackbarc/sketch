@@ -593,6 +593,7 @@
         let fillLines;
         if(this.fillScreentone) {
           fillLines = this.$.data.fill(x, y, this.$.sketchCanvas, "tone", {
+            angle: 0,
             tonePattern: this.tonePattern,
             spacing: this.toneSpacing,
             offX: this.toneOffsetX,
