@@ -309,6 +309,8 @@
               can-redo="{{canRedo}}"
               etch-mode="{{etchMode}}"
               line-step="{{lineStep}}"
+              fill-angle="{{fillAngle}}"
+              fill-spacing="{{fillSpacing}}"
               tone-pattern="{{tonePattern}}"
               tone-radius="{{toneRadius}}"
               tone-spacing="{{toneSpacing}}"
@@ -451,11 +453,36 @@
                       checked="{{fillScreentone}}"
                       noink></paper-toggle-button>
               </paper-item>
+              <template is="dom-if" if="[[!fillScreentone]]">
+              <paper-item class="settings-item slider">
+                  <paper-item-body two-line>
+                      <div>Angle</div>
+                      <div secondary>Angle of the fill lines, in degrees</div>
+                  </paper-item-body>
+                  <paper-slider
+                      value="{{fillAngle}}"
+                      min="-90"
+                      max="90"
+                      step="45"
+                      editable></paper-slider>
+              </paper-item>
+              <paper-item class="settings-item slider">
+                  <paper-item-body two-line>
+                      <div>Spacing</div>
+                      <div secondary>Space between fill lines, in px</div>
+                  </paper-item-body>
+                  <paper-slider
+                      value="{{fillSpacing}}"
+                      min="1"
+                      max="20"
+                      editable></paper-slider>
+              </paper-item>
+              </template>
+              <template is="dom-if" if="[[fillScreentone]]">
               <h2>Screentoning</h2>
               <paper-item class="settings-item dropdown">
                   <div>Pattern</div>
                   <paper-dropdown-menu
-                    disabled="{{!fillScreentone}}"
                     no-label-float>
                     <paper-listbox
                       class="dropdown-content"
@@ -472,7 +499,6 @@
                   </paper-item-body>
                   <paper-slider
                       value="{{toneSpacing}}"
-                      disabled="{{!fillScreentone}}"
                       min="2"
                       max="40"
                       editable></paper-slider>
@@ -486,7 +512,6 @@
                       </paper-item-body>
                       <paper-slider
                           value="{{toneOffsetX}}"
-                          disabled="{{!fillScreentone}}"
                           min="-20"
                           max="20"
                           editable></paper-slider>
@@ -498,11 +523,11 @@
                       </paper-item-body>
                       <paper-slider
                           value="{{toneOffsetY}}"
-                          disabled="{{!fillScreentone}}"
                           min="-20"
                           max="20"
                           editable></paper-slider>
                   </paper-item>
+              </template>
               </div>
           </div>
       </paper-menu-button>
@@ -1180,6 +1205,8 @@
           eraseStrokes: this.$.sketch.eraseStrokes,
           etchStep: this.$.sketch.lineStep,
           etchCursor: this.$.sketch.etchCursor,
+          fillAngle: this.$.sketch.fillAngle,
+          fillSpacing: this.$.sketch.fillSpacing,
           fillScreentone: this.$.sketch.fillScreentone,
           tonePattern: this.$.sketch.tonePattern,
           toneOffsetX: this.$.sketch.toneOffsetX,
@@ -1241,6 +1268,8 @@
           this._setSetting("eraseStrokes", toolSettings);
           this._setSetting("etchStep", toolSettings, this.$.sketch, "lineStep");
           this._setSetting("etchCursor", toolSettings, this.$.sketch);
+          this._setSetting("fillAngle", toolSettings);
+          this._setSetting("fillSpacing", toolSettings);
           this._setSetting("fillScreentone", toolSettings);
           this._setSetting("tonePattern", toolSettings);
           this._setSetting("toneOffsetX", toolSettings);

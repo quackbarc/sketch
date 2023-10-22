@@ -328,7 +328,7 @@
         // Using the span filling algorithm, but with custom angle support
         // https://en.wikipedia.org/wiki/Flood_fill#Span_filling
 
-        const slope = 2;
+        const slope = this._degreesToSlope(modeSettings.angle);
         const xInclined = -1 <= slope && slope <= 1;
         const vertical = Math.abs(slope) == Infinity;
         const xinc = xInclined ? 1 : (vertical ? 0 : (1 / slope));
@@ -644,8 +644,6 @@
       },
 
       _fillPattern: function(slope, maskLines, type = "normal", settings = {}) {
-        const {limitedInk, tonePattern, offX, offY, spacing} = settings;
-
         const rect = [[0, 0], [800, 600]];
         const xInclined = -1 <= slope && slope <= 1;
         const vertical = Math.abs(slope) == Infinity;
@@ -657,15 +655,14 @@
 
         switch(type) {
           case "normal": {
+            const {limitedInk, spacing} = settings;
+
             for(let line of maskLines) {
               let lineLength = 8 + (accumLength > 0);
               if(limitedInk && (accumLength + lineLength > this.MAX_LENGTH)) {
                 break;
               }
 
-              const spacing = 5;
-
-              // Spacing test
               const [x1, y1, x2, y2] = line;
               const xInclined = -1 <= slope && slope <= 1;
               let intercept;
@@ -702,6 +699,8 @@
             break;
           }
           case "tone": {
+            const {limitedInk, tonePattern, offX, offY, spacing} = settings;
+
             lineLoop: for(let i in maskLines) {
               let line = maskLines[i];
               if((line[1] - offY) % spacing == 0) {
@@ -837,6 +836,33 @@
         return retpoints;
       },
 
+      // Private number methods
+
+      /**
+       * Converts angle degrees into a y/x slope ratio.
+       *
+       * For reference:
+       *   - 0 degrees gives a slope of 0.
+       *   - 45 degrees gives a slope of 1.
+       *   - 90 degrees gives a slope of Infinity.
+       *   - -90 degrees gives a slope of -Infinity.
+       *   - -45 degrees gives a slope of -1, etc.
+       *
+       * @param {number} degrees The degrees of the angle.
+       * @returns {number} Its y/x slope ratio.
+       */
+      _degreesToSlope: function(degrees) {
+        const radians = (degrees * Math.PI) / 180;
+        const slopeRaw = Math.tan(radians);
+        // Floating point error compensation
+        const slope = Math.abs(slopeRaw) > 100  // only true for 89.42deg onwards; good enough
+            ? Math.sign(slopeRaw) * Infinity
+            : (Math.round(slopeRaw * 100000) / 100000);
+        return slope;
+      },
+
+      // Private boolean methods
+
       /**
        * Checks whether a point is within a given rectangle.
        *
@@ -869,6 +895,8 @@
         let yOddEven = Math.abs(y - offsetY) % (spacing*2);
         return xOddEven == yOddEven;  // basically XNOR
       },
+
+      // Private filling methods
 
       _maskIndex: function(x, y) {
         return Math.floor(y) * 801 + Math.floor(x);

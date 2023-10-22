@@ -179,6 +179,16 @@
 
         // tool settings
 
+        fillAngle: {
+          type: Number,
+          notify: true,
+          value: 0
+        },
+        fillSpacing: {
+          type: Number,
+          notify: true,
+          value: 1
+        },
         fillScreentone: {
           type: Boolean,
           notify: true,
@@ -589,7 +599,10 @@
             offY: this.toneOffsetY,
           });
         } else {
-          fillLines = this.$.data.fill(x, y, this.$.sketchCanvas, "normal");
+          fillLines = this.$.data.fill(x, y, this.$.sketchCanvas, "normal", {
+            angle: this.fillAngle,
+            spacing: this.fillSpacing,
+          });
         }
 
         for(const line of fillLines) {
