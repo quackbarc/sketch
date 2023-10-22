@@ -321,50 +321,67 @@
           return [];
         }
 
-        var action = {
+        const action = {
           start: this.lines.length,
           added: [],
           removed: [],
         }
 
-        // filling algorithm taken straight from the span-filling section
-        // of Wikipedia:
+        // Using the span filling algorithm, but with custom angle support
         // https://en.wikipedia.org/wiki/Flood_fill#Span_filling
 
+        const slope = 2;
+        const xInclined = -1 <= slope && slope <= 1;
+        const vertical = Math.abs(slope) == Infinity;
+        const xinc = xInclined ? 1 : (vertical ? 0 : (1 / slope));
+        const yinc = xInclined ? slope : 1;
+
         // using typed array to save memory
-        let mask = new Uint8Array(800*600);
-        let queue = [[x, y]];
-        let maskLines = [];
+        const mask = new Uint8Array(800*600);
+        const maskLines = [];
+        const queue = [[x, y]];
         while(queue.length > 0) {
+          /** @type {number[]} */
           const [qx, qy] = queue.shift();
+
           if(mask[this._maskIndex(qx, qy)]) {
             continue;
           }
 
+          let lx = qx;
+          let ly = qy;
+          let rx = qx;
+          let ry = qy;
+
           // Scan our left and right until we reach the first unfillable pixel.
-          // rx would've scanned [qx, qy] again, had it not been for the +1 on
-          // its init
-          for(var lx = qx; this._fillable(lx, qy); lx--) {
-            mask[this._maskIndex(lx, qy)] = 1;
+          for(; this._fillable(lx, ly); lx -= xinc, ly -= yinc) {
+            mask[this._maskIndex(lx, ly)] = 1;
           }
-          for(var rx = qx + 1; this._fillable(rx, qy); rx++) {
-            mask[this._maskIndex(rx, qy)] = 1;
+          for(; this._fillable(rx, ry); rx += xinc, ry += yinc) {
+            mask[this._maskIndex(rx, ry)] = 1;
           }
 
           // Reduce until the first fillable pixel.
           // Queuing on the first unfillable would've caused chaos.
-          lx += 1;
-          rx -= 1;
+          lx += xinc;
+          ly += yinc;
+          rx -= xinc;
+          ry -= yinc;
           // Queue lines above and below our scanline
-          queue.push(...this._scanLineForPoints(lx, rx, qy + 1));
-          queue.push(...this._scanLineForPoints(lx, rx, qy - 1));
+          if(xInclined) {
+            queue.push(...this._scanLineForPoints(slope, lx, ly - 1, rx, ry - 1));
+            queue.push(...this._scanLineForPoints(slope, lx, ly + 1, rx, ry + 1));
+          } else {
+            queue.push(...this._scanLineForPoints(slope, lx - 1, ly, rx - 1, ry));
+            queue.push(...this._scanLineForPoints(slope, lx + 1, ly, rx + 1, ry));
+          }
 
           // Push the line.
-          maskLines.push([lx, qy, rx, qy]);
+          maskLines.push([lx, ly, rx, ry]);
         }
 
         modeSettings.limitedInk = this.limitedInk;
-        action.added = this._fillPattern(maskLines, mode, modeSettings);
+        action.added = this._fillPattern(slope, maskLines, mode, modeSettings);
 
         if(action.added.length >= 1) {
           this._doAction([action]);
@@ -627,8 +644,14 @@
         }
       },
 
-      _fillPattern: function(maskLines, type = "normal", settings = {}) {
+      _fillPattern: function(slope, maskLines, type = "normal", settings = {}) {
         const {limitedInk, tonePattern, offX, offY, spacing} = settings;
+
+        const rect = [[0, 0], [800, 600]];
+        const xInclined = -1 <= slope && slope <= 1;
+        const vertical = Math.abs(slope) == Infinity;
+        const xinc = xInclined ? 1 : (vertical ? 0 : (1 / slope));
+        const yinc = xInclined ? slope : 1;
 
         var lines = [];
         let accumLength = this.length;
@@ -646,7 +669,12 @@
               // so they'd be drawn 1px shorter than expected.
               // That missing pixel would've been [line[2], line[3]].
               line = line.slice();
-              line[2] = Math.min(line[2] + 1, 800);
+              const extX = line[2] + xinc;
+              const extY = line[3] + yinc;
+              if(this._within([extX, extY], rect)) {
+                line[2] = extX;
+                line[3] = extY;
+              }
 
               lines.push(line);
               accumLength += lineLength;
@@ -827,7 +855,7 @@
         // This is particularly useful for checking x=800, since the canvas
         // data's X can only go up to 799.
         x = Math.min(x, 799);
-        return y * 800 + x;
+        return Math.floor(y) * 800 + Math.floor(x);
       },
 
       /**
@@ -845,28 +873,43 @@
         return within && fillable;
       },
 
-
       /**
        * Iterates through a line and returns any potential points for the flood fill
        * queue.
        *
+       * @param {number} slope
        * @param {number} lx
+       * @param {number} ly
        * @param {number} rx
-       * @param {number} y
+       * @param {number} ry
        * @returns {number[][]}
        */
-      _scanLineForPoints: function(lx, rx, y) {
+      _scanLineForPoints: function(slope, lx, ly, rx, ry) {
         const points = [];
         let added = false;
 
-        for(let x = lx; x <= rx; x++) {
-          if(!this._fillable(x, y)) {
-            added = false;
-          }
-          else if(!added) {
-            points.push([x, y]);
-            added = true;
-          }
+        const xInclined = -1 <= slope && slope <= 1;
+        const vertical = Math.abs(slope) == Infinity;
+        const xinc = xInclined ? 1 : (vertical ? 0 : (1 / slope));
+        const yinc = xInclined ? slope : 1;
+
+        // Condition out of for loop statement just because it's easier
+        // to read.
+        for(let x = lx, y = ly;; (x += xinc, y += yinc)) {
+            const withinLine = xInclined ? x <= rx : y <= ry;
+            const fillable = this._fillable(x, y);
+
+            if(!withinLine) {
+                break;
+            }
+
+            if(fillable && !added) {
+                points.push([x, y]);
+                added = true;
+            }
+            else if(!fillable) {
+                added = false;
+            }
         }
 
         return points;
