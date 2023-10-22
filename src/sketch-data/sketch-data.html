@@ -315,9 +315,7 @@
       fill: function(x, y, canvas, mode = "normal", modeSettings = {}) {
         this._canvasData = canvas.getContext('2d').getImageData(0,0, 800,600).data;
 
-        const outOfBounds = !this._within([x, y], [[0, 0], [800, 600]]);
-        const alreadyFilled = !this._canvasData[this._maskIndex(x, y) * 4];
-        if(outOfBounds || alreadyFilled) {
+        if(!this._fillable(x, y)) {
           return [];
         }
 
@@ -337,7 +335,8 @@
         const yinc = xInclined ? slope : 1;
 
         // using typed array to save memory
-        const mask = new Uint8Array(800*600);
+        // extend mask dimensions by 1px to support axes x=800 and y=600
+        const mask = new Uint8Array(801*601);
         const maskLines = [];
         const queue = [[x, y]];
         while(queue.length > 0) {
@@ -664,6 +663,27 @@
                 break;
               }
 
+              const spacing = 5;
+
+              // Spacing test
+              const [x1, y1, x2, y2] = line;
+              const xInclined = -1 <= slope && slope <= 1;
+              let intercept;
+              if(slope == Infinity) {
+                  intercept = x1;
+              } else if(slope == 0) {
+                  intercept = y1;
+              } else if(xInclined) {
+                  intercept = (y1 - slope*x1);
+              } else {
+                  intercept = (x1 - y1/slope);
+              }
+              const modulo = (Math.round(intercept) % spacing + spacing) % spacing;
+
+              if(modulo > 0) {
+                continue;
+              }
+
               // Extend fill lines by 1px.
               // Lines are drawn as vectors, not pixel-by-pixel,
               // so they'd be drawn 1px shorter than expected.
@@ -851,10 +871,15 @@
       },
 
       _maskIndex: function(x, y) {
-        // Clamp x to the canvas' width boundary.
-        // This is particularly useful for checking x=800, since the canvas
-        // data's X can only go up to 799.
-        x = Math.min(x, 799);
+        return Math.floor(y) * 801 + Math.floor(x);
+      },
+
+      _canvasIndex: function(x, y) {
+        // Clamp coordinates to canvas data boundaries;
+        // this is particularly useful for x=800 and y=600.
+        // Probably not the best solution ever?
+        x = Math.min(x, 800 - 1);
+        y = Math.min(y, 600 - 1);
         return Math.floor(y) * 800 + Math.floor(x);
       },
 
@@ -869,7 +894,7 @@
       _fillable: function(x, y) {
         const rect = [[0, 0], [800, 600]];
         const within = this._within([x, y], rect);
-        const fillable = this._canvasData[this._maskIndex(x, y) * 4] > 0;
+        const fillable = this._canvasData[this._canvasIndex(x, y) * 4] > 0;
         return within && fillable;
       },
 
