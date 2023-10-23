@@ -60,7 +60,14 @@
         canvas2.height = this.$.sketchCanvas.height;
         this._canvas2 = canvas2.getContext("2d", {alpha: false});
 
-        this._canvas = this.$.sketchCanvas.getContext("2d", {alpha: false});
+        this._canvas = this.$.sketchCanvas.getContext("2d", {
+          alpha: false,
+          // This should force hardware-accelerated rendering whenever available;
+          // If this was left unspecified, Chromium would've eventually switched
+          // to software rendering if enough `.getImageData()` calls were made.
+          // And its software rendering looks terrible, especially for fills.
+          willReadFrequently: false,
+        });
         this._canvas.strokeStyle = "black";
         this._canvas.lineWidth = 3;
         this._canvas.fillStyle = "black";
