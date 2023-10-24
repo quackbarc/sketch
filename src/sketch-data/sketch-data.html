@@ -201,8 +201,13 @@
         }
         else if(exitingBounds) {
           const [clipped] = this._clip([[px, py, x, y]]);
-          const [cx, cy] = clipped.slice(2);
-          currentLine.push(cx, cy);
+          // Add the [x, y] end of the clip.
+          // If [px, py] was smack on the canvas boundaries,
+          // the clip would've just been [[px, py]]; no [x, y] end.
+          if(clipped.length >= 4) {
+            const [cx, cy] = clipped.slice(2);
+            currentLine.push(cx, cy);
+          }
         }
         else if(enteringBounds) {
           this.currentLines.push([]);
