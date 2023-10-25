@@ -315,7 +315,7 @@
       </fit-ratio-container>
       <paper-fab
           title="{{_swapTitle(localize, sketchFlipped)}}"
-          icon="send"
+          icon="{{_swapIcon(sketchFlipped)}}"
           hidden="{{hideSwap}}"
           disabled="{{_swapDisabled(sketchDisabled, sketchFlipped, loading, ink)}}"
           on-tap="_swap"></paper-fab>
@@ -1509,6 +1509,13 @@
 
       _flooredInk: function(ink) {
         return Math.floor(ink*100) / 100;
+      },
+
+      _swapIcon: function(sketchFlipped) {
+        if(sketchFlipped) {
+          return "image:flip";
+        }
+        return "send";
       },
 
       _swapTitle: function(localize, sketchFlipped) {
