@@ -147,11 +147,11 @@
       },
 
       get swapData() {
-        var oldLines = JSON.parse(JSON.stringify(this.lines));
-        var lines = this.lines;
+        const oldLines = this.lines;
+        const newLines = JSON.parse(JSON.stringify(this.lines));
 
-        for(var i = 0; i < lines.length; i++) {
-          let line = lines[i];
+        for(var i = 0; i < newLines.length; i++) {
+          let line = newLines[i];
           // offset dots for visibility on the gallery since the
           // canvas there uses a flat lineCap
           if(this._isDot(line)) {
@@ -161,7 +161,7 @@
               x - Math.max(x - 1, 0),
               y - Math.max(y - 1, 0),
             );
-            lines[i] = [x - toprightOffset, y - toprightOffset, x + 1, y + 1];
+            newLines[i] = [x - toprightOffset, y - toprightOffset, x + 1, y + 1];
           }
         };
 
