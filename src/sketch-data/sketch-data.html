@@ -59,6 +59,10 @@
           notify: true,
           value: true
         },
+        flipSwappedData: {
+          type: Boolean,
+          value: false
+        },
       },
 
       get data() {
@@ -162,6 +166,12 @@
               y - Math.max(y - 1, 0),
             );
             newLines[i] = [x - toprightOffset, y - toprightOffset, x + 1, y + 1];
+          }
+
+          if(this.flipSwappedData) {
+            for(let j = 0; j < line.length; j += 2) {
+              line[j] = 800 - line[j];
+            }
           }
         };
 

@@ -329,10 +329,10 @@
               disabled="{{sketchDisabled}}"></sketch-canvas>
       </fit-ratio-container>
       <paper-fab
-          title="{{_swapTitle(localize, sketchFlipped)}}"
+          title="{{_swapTitle(localize, sketchFlipped, allowFlippedSwaps)}}"
           icon="{{_swapIcon(sketchFlipped)}}"
           hidden="{{hideSwap}}"
-          disabled="{{_swapDisabled(sketchDisabled, sketchFlipped, loading, ink)}}"
+          disabled="{{swapDisabled}}"
           on-tap="_swap"></paper-fab>
     </div>
 
@@ -603,12 +603,17 @@
                   class="button-item"
                   on-tap="_flip">
                       <iron-icon item-icon icon="image:flip"></iron-icon>
+                      <template is="dom-if" if="[[allowFlippedSwaps]]">
+                          <div>Flip canvas horizontally</div>
+                      </template>
+                      <template is="dom-if" if="[[!allowFlippedSwaps]]">
                       <paper-item-body two-line>
                           <div>Flip canvas horizontally</div>
                           <div secondary>
                               Sketches can't be swapped while the canvas is flipped.
                           </div>
                       </paper-item-body>
+                      </template>
               </paper-icon-item>
               <template is="dom-if" if="[[!playing]]">
                   <paper-icon-item
@@ -683,6 +688,18 @@
                   </paper-item-body>
                   <paper-toggle-button
                       checked="{{autosave}}"
+                      noink></paper-toggle-button>
+              </paper-item>
+              <paper-item class="settings-item">
+                  <paper-item-body two-line>
+                      <div>Allow swapping for flipped sketches</div>
+                      <div secondary>
+                          Whether the swap button should be enabled when the
+                          canvas is flipped, or not.
+                      </div>
+                  </paper-item-body>
+                  <paper-toggle-button
+                      checked="{{allowFlippedSwaps}}"
                       noink></paper-toggle-button>
               </paper-item>
               <paper-item class="settings-item">
@@ -1062,6 +1079,10 @@
           type: Boolean,
           computed: "_rememberTab(autosave, sketchDisabled, ink)"
         },
+        swapDisabled: {
+          type: Boolean,
+          computed: "_swapDisabled(sketchDisabled, sketchFlipped, allowFlippedSwaps, loading, ink)"
+        },
         peekID: {
           type: Number,
           value: null,
@@ -1094,6 +1115,10 @@
           type: String,
           value: "garyc.me",
         },
+        allowFlippedSwaps: {
+          type: Boolean,
+          value: false,
+        },
 
         // visual
 
@@ -1110,8 +1135,8 @@
 
       // Private methods
 
-      _swapDisabled: function(sketchDisabled, sketchFlipped, loading, ink) {
-        return sketchDisabled || sketchFlipped || loading || ink <= 0;
+      _swapDisabled: function(sketchDisabled, sketchFlipped, allowFlipped, loading, ink) {
+        return sketchDisabled || (!allowFlipped && sketchFlipped) || loading || ink <= 0;
         /* ink might be affected by the negative ink bug but i'm not
            sure if that's still around after the eraser fix */
       },
@@ -1175,6 +1200,7 @@
           keybindToggling: this.keybindToggling,
           hideSwap: this.hideSwap,
           gallerySource: this.gallerySource,
+          allowFlippedSwaps: this.allowFlippedSwaps,
           backgroundType: this.backgroundType,
           renderType: this.$.sketch.renderType,
         };
@@ -1196,6 +1222,7 @@
           this._setSetting("hideSwap", settings);
           this._setSetting("keybindToggling", settings);
           this._setSetting("gallerySource", settings);
+          this._setSetting("allowFlippedSwaps", settings);
           this._setSetting("backgroundType", settings);
           this._setSetting("renderType", settings);
         }
@@ -1257,14 +1284,14 @@
       },
 
       _swap: function() {
-        if(this.sketchFlipped) {
-          this._alert("the canvas is currently flipped");
+        if(this.sketchFlipped && !this.allowFlippedSwaps) {
+          this._alert("can't swap; canvas is currently flipped");
           return;
         }
 
-        var swapDisabled = this._swapDisabled(this.sketchDisabled, this.sketchFlipped, this.loading, this.ink);
-        if(!swapDisabled && !this.drawing) {
-          this.$.sketch._setFlipped(false);
+        if(!this.swapDisabled && !this.drawing) {
+          const flip = this.sketchFlipped && this.allowFlippedSwaps;
+          this.$.sketch.$.data.flipSwappedData = flip;
           this.$.api.swap(this.$.sketch.$.data.swapData);
           this.sketchDisabled = true;
           this.undoDisabled = true;
@@ -1559,8 +1586,13 @@
         return "send";
       },
 
-      _swapTitle: function(localize, sketchFlipped) {
-        return sketchFlipped ? "The canvas is currently flipped." : this.localize("swap");
+      _swapTitle: function(localize, sketchFlipped, allowFlipped) {
+        if(sketchFlipped) {
+          return allowFlipped
+            ? this.localize("swapFlipped")
+            : this.localize("swapDisabledFlipped");
+        }
+        return this.localize("swap");
       },
 
       _viewGalleryTitle: function(localize, peekID) {
