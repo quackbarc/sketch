@@ -1330,7 +1330,12 @@
         this.peekID = null;
       },
 
-      _flip: function() {
+      _flip: function(event) {
+        const pressingDown = event.type == "keys-pressed" && event.detail.key == "down";
+        if(pressingDown && this.$.sketch.etchMode) {
+          return;
+        }
+
         if(this.$.settingsButton.opened) {
           this.$.settingsButton.close();
         }
