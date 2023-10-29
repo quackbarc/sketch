@@ -137,7 +137,7 @@
         },
         cursor: {
           type: String,
-          computed: '_cursor(tool, eraserRadius, toneRadius)',
+          computed: '_cursor(disabled, tool, eraserRadius, toneRadius)',
           observer: '_onCursorChanged',
         },
 
@@ -743,7 +743,11 @@
         return active || setting;
       },
 
-      _cursor: function(tool, eraserRadius, toneRadius) {
+      _cursor: function(disabled, tool, eraserRadius, toneRadius) {
+        if(disabled) {
+          return "crosshair";
+        }
+
         const canvasRatio = (
           this.$.sketchCanvas.clientWidth
           / this.$.sketchCanvas.width
