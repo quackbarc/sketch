@@ -8,9 +8,11 @@
   <template>
     <style>
       :host {
+        --cursor: crosshair;
+
         @apply(--shadow-elevation-4dp);
         display: block;
-        cursor: crosshair;
+        cursor: var(--cursor);
         touch-action: none;
 
         -webkit-user-select: none;
@@ -132,6 +134,11 @@
           type: Boolean,
           notify: true,
           computed: '_canEdit(dataCanRedo, disabled)'
+        },
+        cursor: {
+          type: String,
+          computed: '_cursor(tool, eraserRadius, toneRadius)',
+          observer: '_onCursorChanged',
         },
 
         // settings
@@ -362,6 +369,10 @@
         }
 
         this._lastTool = this.tool;
+      },
+
+      _onCursorChanged(event) {
+        this.updateStyles({"--cursor": this.cursor});
       },
 
       _onFlippedChanged(event) {
@@ -730,7 +741,47 @@
 
       _eraseStrokes(setting, active) {
         return active || setting;
-      }
+      },
+
+      _cursor: function(tool, eraserRadius, toneRadius) {
+        const canvasRatio = (
+          this.$.sketchCanvas.clientWidth
+          / this.$.sketchCanvas.width
+          * window.devicePixelRatio
+        );
+        switch(tool) {
+          case "eraser":
+            return this._getRadiusCursorURI(Math.round(eraserRadius * canvasRatio));
+          case "screentone":
+            return this._getRadiusCursorURI(Math.round(toneRadius * canvasRatio));
+          case "move":
+            return "move";
+          default:
+            return "crosshair";
+        }
+      },
+
+      _getRadiusCursorURI: function(radius) {
+        const svgRadius = (radius + 2);  // +2 is the stroke width
+        const svgSize = (radius + 2) * 2;
+        const svg = [
+          `<svg`,
+            `xmlns="http://www.w3.org/2000/svg"`,
+            `viewBox="0 0 ${svgSize} ${svgSize}"`,
+            `width="${svgSize}"`,
+            `height="${svgSize}">`,
+              `<circle`,
+                `cx="${svgRadius}"`,
+                `cy="${svgRadius}"`,
+                `r="${radius}"`,
+                `stroke="gray"`,
+                `stroke-width="2"`,
+                `fill-opacity="0"/>`,
+          `</svg>`,
+        ].join(" ");
+
+        return `url('data:image/svg+xml,${svg}') ${svgRadius} ${svgRadius}, crosshair`;
+      },
     });
   })();
   </script>

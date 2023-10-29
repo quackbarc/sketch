@@ -1150,7 +1150,7 @@
           eraserRadius: this.$.sketch.eraserRadius,
           eraseStrokes: this.$.sketch.eraseStrokes,
           etchStep: this.$.sketch.lineStep,
-          etchCursor: this.$.sketch.cursor,
+          etchCursor: this.$.sketch.etchCursor,
           fillScreentone: this.$.sketch.fillScreentone,
           tonePattern: this.$.sketch.tonePattern,
           toneOffsetX: this.$.sketch.toneOffsetX,
@@ -1209,7 +1209,7 @@
           this._setSetting("eraserRadius", toolSettings);
           this._setSetting("eraseStrokes", toolSettings);
           this._setSetting("etchStep", toolSettings, this.$.sketch, "lineStep");
-          this._setSetting("etchCursor", toolSettings, this.$.sketch, "cursor");
+          this._setSetting("etchCursor", toolSettings, this.$.sketch);
           this._setSetting("fillScreentone", toolSettings);
           this._setSetting("tonePattern", toolSettings);
           this._setSetting("toneOffsetX", toolSettings);

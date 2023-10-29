@@ -15,7 +15,7 @@
         value: 5
       },
 
-      cursor: {
+      etchCursor: {
         type: Object,
         value: {x: 400, y: 300}
       }
@@ -68,24 +68,24 @@
 
     _etchDrawStart: function() {
       let res = Math.max(this.timeResolution, 5);
-      this._drawStart(this.cursor.x, this.cursor.y);
+      this._drawStart(this.etchCursor.x, this.etchCursor.y);
       this._interval = setInterval(this._etchDraw.bind(this), res);
     },
 
     _etchDrawEnd: function() {
-      this._drawEnd(this.cursor.x, this.cursor.y);
+      this._drawEnd(this.etchCursor.x, this.etchCursor.y);
       clearInterval(this._interval);
     },
 
     _etchDraw: function() {
-      var lastX = x = this.cursor.x;
-      var lastY = y = this.cursor.y;
+      var lastX = x = this.etchCursor.x;
+      var lastY = y = this.etchCursor.y;
       x += this.lineStep * this._deltaX;
       y += this.lineStep * this._deltaY;
-      this.cursor.x = Math.min(800, Math.max(0, x));
-      this.cursor.y = Math.min(600, Math.max(0, y));
-      if(!(this.cursor.x == lastX && this.cursor.y == lastY)) {
-        this._draw(this.cursor.x, this.cursor.y, lastX, lastY);
+      this.etchCursor.x = Math.min(800, Math.max(0, x));
+      this.etchCursor.y = Math.min(600, Math.max(0, y));
+      if(!(this.etchCursor.x == lastX && this.etchCursor.y == lastY)) {
+        this._draw(this.etchCursor.x, this.etchCursor.y, lastX, lastY);
       }
     }
   }
