@@ -20,6 +20,7 @@
 | `Delete`         | Clears the canvas. |
 | `Ctrl`+`Z`       | Undoes an action. |
 | `Ctrl`+`Y`       | Redoes the last action. |
+| `↑` `↓` `←` `→`  | Moves the sketch by 1 pixel (move). |
 
 ---
 

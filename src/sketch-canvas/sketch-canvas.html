@@ -610,6 +610,11 @@
         this.$.data.moveEnd();
       },
 
+      _miniMove(dx, dy) {
+        this.$.data.miniMove(dx, dy);
+        this._render();
+      },
+
       _toneStart(x, y) {
         this.$.data.toneStart();
         this._tone(x, y, x, y);

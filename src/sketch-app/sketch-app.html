@@ -953,6 +953,10 @@
         target="[[target]]"
         keys="tab"
         on-keys-pressed="_hideUI"></iron-a11y-keys>
+    <iron-a11y-keys
+        target="[[target]]"
+        keys="up down left right"
+        on-keys-pressed="_arrowKeys"></iron-a11y-keys>
 
     <iron-a11y-keys
         target="[[target]]"
@@ -1332,7 +1336,10 @@
 
       _flip: function(event) {
         const pressingDown = event.type == "keys-pressed" && event.detail.key == "down";
-        if(pressingDown && this.$.sketch.etchMode) {
+        if(pressingDown && (this.$.sketch.etchMode || this._isMoving(this.tool))) {
+          return;
+        }
+        if(this.sketchDisabled) {
           return;
         }
 
@@ -1457,6 +1464,20 @@
 
         if(newValue) {
           this._alert(`${tool} size: ${newValue}`);
+        }
+      },
+
+      _arrowKeys: function() {
+        if(!this.sketchDisabled && this._isMoving(this.tool)) {
+          let [dx, dy] = [0, 0];
+          switch(event.detail.key) {
+            case "up": dy -= 1; break;
+            case "down": dy += 1; break;
+            case "left": dx -= 1; break;
+            case "right": dx += 1; break;
+          }
+
+          this.$.sketch._miniMove(dx, dy);
         }
       },
 
@@ -1603,7 +1624,7 @@
       },
 
       _etchEvent: function(event) {
-        if(this.etchMode && !this.sketchDisabled) {
+        if(this.etchMode && !this.sketchDisabled && !this._isMoving(this.tool)) {
           this.$.sketch.etchEvent(event.detail.keyboardEvent);
         };
       },

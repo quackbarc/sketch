@@ -178,6 +178,10 @@
 
       _moveDist: null,
 
+      _miniMoveTimestamp: 0,
+
+      _miniMoveAction: null,
+
       // Public functions, tool-related
 
       drawStart: function() {
@@ -401,7 +405,44 @@
           const action = this._action[0];
           action.added = action.added.slice();
           this.pushHistory(this._action);
+
+          // Just in case we do mini-moves after this main move
+          this._miniMoveTimestamp = performance.now();
+          this._miniMoveAction = this._action;
         }
+      },
+
+      miniMove: function(dx, dy) {
+        let action;
+        const timestamp = performance.now();
+        const headAction = this.history[this.head - 1];
+        const sameHeadAction = this.history.length >= 1 && headAction == this._miniMoveAction;
+        const sameTimestampWindow = timestamp - this._miniMoveTimestamp < 2000;
+        if(sameHeadAction && sameTimestampWindow) {
+          action = headAction;
+        }
+        else {
+          action = [{
+            start: 0,
+            added: [],
+            removed: this.lines.slice(),
+          }];
+          this.pushHistory(action);
+        }
+
+        const movedLines = this.lines.map((line) => {
+          const moved = line.slice();
+          for(let i = 0; i < line.length; i += 2) {
+            moved[i] += dx;
+            moved[i+1] += dy;
+          }
+          return moved;
+        });
+
+        action[0].added = movedLines;
+        this._doAction(action);
+        this._miniMoveTimestamp = timestamp;
+        this._miniMoveAction = action;
       },
 
       toneStart: function() {
