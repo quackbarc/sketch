@@ -114,6 +114,17 @@
       paper-menu-button {
         padding: 0;
       }
+      paper-toolbar paper-menu-button {
+        /**
+         * Give scrollbar control to .settings, not the dropdown's
+         * stock content <div>.
+         * This only applies for vertical control; I don't think I can handle
+         * horizontal control very well.
+         */
+        --paper-menu-button-content: {
+          overflow-y: hidden !important;
+        };
+      }
 
       paper-item,
       paper-icon-item {
