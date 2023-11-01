@@ -440,6 +440,10 @@
       },
 
       miniMove: function(dx, dy) {
+        if(this.lines.length == 0) {
+          return;
+        }
+
         let action;
         const timestamp = performance.now();
         const headAction = this.history[this.head - 1];
