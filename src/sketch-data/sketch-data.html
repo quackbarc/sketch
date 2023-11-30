@@ -790,14 +790,23 @@
                 current.push(...exitints.flat());
 
                 if(current.length >= 1) {
+                  if(current.length == 2) {
+                    current.push(...current);
+                  }
                   newlines.push(current);
                   current = [];
                 }
               }
               else {
                 const enterexitints = this._intersections([lastpoint, point], rect);
-                if(enterexitints.length >= 1) {
-                  newlines.push(enterexitints.flat());
+                current.push(...enterexitints.flat());
+
+                if(current.length >= 1) {
+                  if(current.length == 2) {
+                    current.push(...current);
+                  }
+                  newlines.push(current);
+                  current = [];
                 }
               }
 
@@ -805,6 +814,9 @@
             }
 
             if(current.length >= 1) {
+              if(current.length == 2) {
+                current.push(...current);
+              }
               newlines.push(current);
             }
 
