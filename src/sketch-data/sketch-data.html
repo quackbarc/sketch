@@ -826,7 +826,16 @@
         ].forEach(
           ([rectindex, axis]) => {
             const checkside = rect[rectindex];
-            const intersecting = start[axis] < checkside[axis] != end[axis] < checkside[axis];
+
+            // Intersection check:
+            // The line would be considered intersecting with the rect only if:
+            // - start > check && end < check
+            // - start < check && end > check
+            // They don't intersect if they're both the same sign (i.e. same side)
+            // or one of them is equal (i.e. right on top of the rect bounds).
+            const startside = Math.sign(checkside[axis] - start[axis]);
+            const endside = Math.sign(checkside[axis] - end[axis]);
+            const intersecting = startside + endside == 0;
             if(intersecting) {
               const other = 1 - axis;
 
