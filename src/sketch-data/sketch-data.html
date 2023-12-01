@@ -152,7 +152,7 @@
 
       get swapData() {
         const oldLines = this.lines;
-        const newLines = JSON.parse(JSON.stringify(this.lines));
+        const newLines = this.lines.map(line => line.slice());
 
         for(var i = 0; i < newLines.length; i++) {
           let line = newLines[i];
