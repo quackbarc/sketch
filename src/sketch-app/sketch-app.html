@@ -1497,6 +1497,10 @@
           return;
         }
 
+        // Shrink spaces of any length or kind into single-spaces.
+        // This should prevent entirely blank lines and terrible NaNs from
+        // non-0x20 spaces.
+        text = text.replace(/\s+/g, ' ');
         // Trim JavaScript string affixes
         text = text.replace(/^[ '"]+|[ '"]+$/g, '');
 
