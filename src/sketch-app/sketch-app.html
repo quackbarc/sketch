@@ -1515,7 +1515,7 @@
       _changeSize: function(e) {
         e.preventDefault();
         var v = e.detail.key == '[' ? -1 : 1;
-        var tool = this.$.sketch.desiredTool;
+        var tool = this.$.sketch.tool;
         var newValue, changedValue;
 
         switch(tool) {
