@@ -1051,6 +1051,11 @@
         window.addEventListener('freeze', this._saveData.bind(this), {capture: true});
         window.addEventListener("resize", this._hideStats.bind(this));
 
+        // Firefox... https://developer.mozilla.org/en-US/docs/Web/API/Clipboard_API#browser_compatibility
+        if(!navigator.clipboard.readText) {
+          window.addEventListener('paste', (e) => {this._pasteText(e.clipboardData.getData("text"))});
+        }
+
         // Prevent Chrome from capturing CTRL+S
         window.addEventListener('keydown', function(event) {
           if((event.ctrlKey || event.metaKey) && !event.altKey && (event.key == 's' || event.key == 'S')) {
@@ -1467,31 +1472,17 @@
         }
       },
 
-      _paste: function() {
+      _paste: function(e) {
         if(!navigator.clipboard.readText) {
-          return this._alert('unable to read clipboard');
-        }
-
-        if(this.drawing) {
-          return;
+          if(e.type === "keys-pressed") {
+            return; // handled by fallback
+          } else {
+            return this._alert('unable to read clipboard');
+          }
         }
 
         navigator.clipboard.readText()
-          .then(text => {
-            text = text.replace(/^[ '"]+|[ '"]+$/g, '');
-
-            const pattern = /^[\s0-9a-zA-Z]*$/;
-            var isValidData = pattern.test(text);
-            if(!isValidData) {
-              return this._alert('invalid clipboard input');
-            };
-
-            this.$.sketch.stop();
-            this.$.sketch.data = text;
-            this.peekID = null;
-            this.sketchDisabled = false;
-            this._alert('pasted from clipboard');
-          })
+          .then(text => this._pasteText(text))
           .catch(error => {
             if(error instanceof DOMException) {
               this._alert('no permission to read clipboard');
@@ -1499,6 +1490,26 @@
               throw error;
             }
           });
+      },
+
+      _pasteText: function(text) {
+        if(this.drawing) {
+          return;
+        }
+
+        text = text.replace(/^[ '"]+|[ '"]+$/g, '');
+
+        const pattern = /^[\s0-9a-zA-Z]*$/;
+        var isValidData = pattern.test(text);
+        if(!isValidData) {
+          return this._alert('invalid clipboard input');
+        };
+
+        this.$.sketch.stop();
+        this.$.sketch.data = text;
+        this.peekID = null;
+        this.sketchDisabled = false;
+        this._alert('pasted from clipboard');
       },
 
       _changeSize: function(e) {

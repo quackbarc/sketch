@@ -5,6 +5,9 @@
       "preset": "es6-bundled"
     }
   ],
+  "lint": {
+    "rules": ["polymer-1"]
+  },
   "extraDependencies": [
     "assets/*",
     "src/sketch-app/*.md",
