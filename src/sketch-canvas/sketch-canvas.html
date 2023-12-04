@@ -493,11 +493,12 @@
           }
         }
         else if(this._wasPressed) {
-          this._pointerType = null;
-          this._activeTool = null;
           this.$.sketchCanvas.releasePointerCapture(event.pointerId);
           this._action(tool).end(x, y);
           this._setDrawing(false);
+
+          this._pointerType = null;
+          this._activeTool = null;
         }
 
         this._lastEventTimeStamp = event.timeStamp;
