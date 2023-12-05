@@ -161,11 +161,11 @@
           if(this._isDot(line)) {
             var x = line[0];
             var y = line[1];
-            let toprightOffset = Math.max(
+            let topleftOffset = Math.max(
               x - Math.max(x - 1, 0),
               y - Math.max(y - 1, 0),
             );
-            newLines[i] = [x - toprightOffset, y - toprightOffset, x + 1, y + 1];
+            newLines[i] = [x - topleftOffset, y - topleftOffset, x + 1, y + 1];
           }
 
           if(this.flipSwappedData) {
