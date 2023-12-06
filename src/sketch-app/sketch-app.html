@@ -667,10 +667,21 @@
                       <div>Copy sketch data</div>
               </paper-icon-item>
               <paper-icon-item
+                  disabled="[[_clipboardReadTextDisabled]]"
                   class="button-item"
                   on-tap="_paste">
                       <iron-icon item-icon icon="content-paste"></iron-icon>
-                      <div>Paste sketch data</div>
+                      <template is="dom-if" if="[[!_clipboardReadTextDisabled]]">
+                          <div>Paste sketch data</div>
+                      </template>
+                      <template is="dom-if" if="[[_clipboardReadTextDisabled]]">
+                      <paper-item-body two-line>
+                          <div>Paste sketch data</div>
+                          <div secondary>
+                              Pasting on Firefox can only be done with Ctrl+V.
+                          </div>
+                      </paper-item-body>
+                      </template>
               </paper-icon-item>
 
               <hr>
@@ -1088,6 +1099,8 @@
         window.addEventListener("keydown", processExtraKeybinds.bind(this));
         window.addEventListener("keydown", processPersistentKeybinds.bind(this));
         window.addEventListener("keyup", processPersistentKeybinds.bind(this));
+
+        this._clipboardReadTextDisabled = !navigator.clipboard.readText;
       },
 
       attached: function() {
@@ -1165,6 +1178,8 @@
       // Private properties
 
       _sleepPromise: null,
+
+      _clipboardReadTextDisabled: false,
 
       // Private methods
 
