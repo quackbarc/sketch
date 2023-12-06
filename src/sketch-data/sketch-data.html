@@ -313,7 +313,10 @@
       },
 
       fill: function(x, y, canvas, mode = "normal", modeSettings = {}) {
-        this._canvasData = canvas.getContext('2d').getImageData(0,0, 800,600).data;
+        const ctx = canvas.getContext('2d');
+        const transform = ctx.getTransform();
+        this._canvasData = ctx.getImageData(0,0, 800,600).data;
+        this._canvasFlipped = transform.e == 800 && transform.a == -1;
 
         if(!this._fillable(x, y)) {
           return [];
@@ -946,6 +949,9 @@
         // Probably not the best solution ever?
         x = Math.min(x, 800 - 1);
         y = Math.min(y, 600 - 1);
+
+        x = this._canvasFlipped ? (800 - x) : x;
+
         return Math.floor(y) * 800 + Math.floor(x);
       },
 
