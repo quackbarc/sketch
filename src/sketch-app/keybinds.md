@@ -40,7 +40,7 @@
 | `Ctrl`+`S`       | Saves the sketch (as a PNG). |
 | `Ctrl`+`Enter`   | Swaps the sketch. |
 | `Ctrl`+`C`       | Copies sketch data onto the clipboard. |
-| `Ctrl`+`V`       | Pastes sketch data from the clipboard\*. |
-| `Ctrl`+`Alt`+`C` | Copies the sketch onto the clipboard as an image. |
+| `Ctrl`+`V`       | Pastes sketch data from the clipboard. |
+| `Ctrl`+`Alt`+`C` | Copies the sketch onto the clipboard as an image.\* |
 
 \* Doesn't work on Firefox.
