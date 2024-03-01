@@ -1067,7 +1067,8 @@
         window.addEventListener("resize", this._hideStats.bind(this));
 
         // Firefox... https://developer.mozilla.org/en-US/docs/Web/API/Clipboard_API#browser_compatibility
-        if(!navigator.clipboard.readText) {
+        const clipboardReadTextDisabled = !(navigator.clipboard && navigator.clipboard.readText);
+        if(clipboardReadTextDisabled) {
           window.addEventListener('paste', (e) => {this._pasteText(e.clipboardData.getData("text"))});
         }
 
@@ -1103,7 +1104,7 @@
         window.addEventListener("keydown", processPersistentKeybinds.bind(this));
         window.addEventListener("keyup", processPersistentKeybinds.bind(this));
 
-        this._clipboardReadTextDisabled = !navigator.clipboard.readText;
+        this._clipboardReadTextDisabled = clipboardReadTextDisabled;
       },
 
       attached: function() {
@@ -1472,15 +1473,20 @@
       },
 
       _copyImage: function() {
-        if(!window.ClipboardItem) {
+        if(!navigator.clipboard || !window.ClipboardItem) {
           return this._alert('unable to copy image onto clipboard');
         }
+
         this.$.sketch.copyCanvas();
         this._alert('copied image to clipboard');
       },
 
       _copy: function() {
         if(!this.sketchDisabled) {
+          if(!navigator.clipboard) {
+            return this._alert('unable to copy to clipboard');
+          }
+
           var data = this.$.sketch.data;
           navigator.clipboard.writeText(data);
           if(data) {
@@ -1492,6 +1498,10 @@
       },
 
       _paste: function(e) {
+        if(!navigator.clipboard) {
+          return this._alert('unable to read clipboard');
+        }
+
         if(!navigator.clipboard.readText) {
           if(e.type === "keys-pressed") {
             return; // handled by fallback
