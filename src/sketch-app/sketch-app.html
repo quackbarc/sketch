@@ -248,7 +248,14 @@
       }
 
       paper-dialog .markdown-html table {
+        width: 100%;
+        max-width: 600px;
+        table-layout: fixed;
         border-spacing: 1em 0.5em;
+      }
+
+      paper-dialog .markdown-html table th:nth-child(1) {
+        width: 30%;
       }
 
       paper-dialog .markdown-html code {
