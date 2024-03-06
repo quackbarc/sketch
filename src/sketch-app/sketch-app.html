@@ -1325,9 +1325,15 @@
       },
 
       _onGet: function(data) {
+        if(this.$.sketch.flipped) {
+          this.$.sketch.flip();
+        }
+
         this.peekID = data.detail.id;
         this.$.sketch.data = data.detail.data;
-        this.$.sketch.play();
+
+        // Start playing the animation once the flip gets rendered.
+        window.requestAnimationFrame(() => this.$.sketch.play());
       },
 
       _onAlert: function(message) {
