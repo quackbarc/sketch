@@ -42,10 +42,7 @@
         this.tabID = parseInt(sessionStorage.getItem('tabID'));
       }
       else {
-        this.tabID = 0;
-        while(tabs[this.tabID]) {
-          this.tabID++;
-        }
+        this.tabID = this._getUnusedID();
       }
 
       tabs[this.tabID] = true;
@@ -83,6 +80,33 @@
         localStorage.setItem("tabs", JSON.stringify(tabs));
       }
     },
+
+    /**
+     * Returns either the ID of an unopened save, or the ID of a new save.
+     *
+     * @returns {number}
+     */
+    _getUnusedID: function() {
+      const savedIDs = Object.keys(localStorage)
+        .map((k) => k.match(/^save(?<id>\d+)$/))
+        .filter((m) => m)
+        .sort((am, bm) => parseInt(am.groups.id) - parseInt(bm.groups.id))
+        .map((m) => parseInt(m.groups.id));
+      const tabs = JSON.parse(localStorage.getItem("tabs"));
+
+      for(const savedID of savedIDs.slice().reverse()) {
+        if(tabs[savedID]) {
+          continue;
+        }
+        return savedID;
+      }
+
+      let newID = 0;
+      while(tabs[newID]) {
+        newID++;
+      }
+      return newID;
+    }
   };
 </script>
 
