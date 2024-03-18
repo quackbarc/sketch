@@ -36,22 +36,21 @@
     },
 
     _trackTabOpen: function() {
+      var tabs = JSON.parse(localStorage.getItem('tabs') || "{}");
+
       if(sessionStorage.getItem('tabID')) {
         this.tabID = parseInt(sessionStorage.getItem('tabID'));
       }
-
-      if(!this.tabID) {
-        var tabs = JSON.parse(localStorage.getItem('tabs') || "{}");
-
+      else {
         this.tabID = 0;
         while(tabs[this.tabID]) {
           this.tabID++;
         }
-
-        tabs[this.tabID] = true;
-        localStorage.setItem('tabs', JSON.stringify(tabs));
-        sessionStorage.setItem('tabID', this.tabID);
       }
+
+      tabs[this.tabID] = true;
+      localStorage.setItem('tabs', JSON.stringify(tabs));
+      sessionStorage.setItem('tabID', this.tabID);
     },
 
     _trackTabClose: function() {
