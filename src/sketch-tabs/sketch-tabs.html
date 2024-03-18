@@ -36,7 +36,9 @@
     },
 
     _trackTabOpen: function() {
-      this.tabID = sessionStorage.getItem('tabID');
+      if(sessionStorage.getItem('tabID')) {
+        this.tabID = parseInt(sessionStorage.getItem('tabID'));
+      }
 
       if(!this.tabID) {
         var tabs = JSON.parse(localStorage.getItem('tabs') || "{}");
