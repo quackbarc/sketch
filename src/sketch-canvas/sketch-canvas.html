@@ -54,11 +54,18 @@
       is: 'sketch-canvas',
 
       ready: function() {
-        // create backup canvas to quickly rebuild already-drawn lines
-        const canvas2 = document.createElement("canvas");
-        canvas2.width = this.$.sketchCanvas.width;
-        canvas2.height = this.$.sketchCanvas.height;
-        this._canvas2 = canvas2.getContext("2d", {alpha: false});
+        // Set up backup canvas to quickly rebuild already-drawn lines while drawing
+        if(window.OffscreenCanvas) {
+          const {width, height} = this.$.sketchCanvas;
+          const canvas2 = new OffscreenCanvas(width, height);
+          this._canvas2 = canvas2.getContext("2d", {alpha: false});
+        }
+        else {
+          const canvas2 = document.createElement("canvas");
+          canvas2.width = this.$.sketchCanvas.width;
+          canvas2.height = this.$.sketchCanvas.height;
+          this._canvas2 = canvas2.getContext("2d", {alpha: false});
+        }
 
         this._canvas = this.$.sketchCanvas.getContext("2d", {
           alpha: false,
@@ -273,6 +280,8 @@
       // Private properties
 
       _canvas: null,
+
+      _canvas2: null,
 
       _rendering: false,
 
