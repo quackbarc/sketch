@@ -1066,28 +1066,25 @@
           e._changeValue = Polymer.IronRangeBehavior._changeValue;
         });
 
-        setInterval(this._saveData.bind(this), 10000);
-
-        this._restoreData();
-        window.addEventListener('pagehide', this._saveData.bind(this));
-        window.addEventListener('freeze', this._saveData.bind(this), {capture: true});
-        window.addEventListener("resize", this._hideStats.bind(this));
-
         // Firefox... https://developer.mozilla.org/en-US/docs/Web/API/Clipboard_API#browser_compatibility
         const clipboardReadTextDisabled = !(navigator.clipboard && navigator.clipboard.readText);
         if(clipboardReadTextDisabled) {
           window.addEventListener('paste', (e) => {this._pasteText(e.clipboardData.getData("text"))});
         }
 
+        this._clipboardReadTextDisabled = clipboardReadTextDisabled;
+
         // Prevent Chrome from capturing CTRL+S
-        window.addEventListener('keydown', function(event) {
-          if((event.ctrlKey || event.metaKey) && !event.altKey && (event.key == 's' || event.key == 'S')) {
+        function preventSaving(event) {
+          const ctrlKey = (event.ctrlKey || event.metaKey) && !event.altKey;
+          const key = event.key.toLowerCase();
+          if(ctrlKey && key == "s") {
             event.preventDefault();
             return false;
           }
 
           return true;
-        });
+        }
 
         function processExtraKeybinds(event) {
           if((event.ctrlKey || event.metaKey) && (event.key == "/") && (!event.altKey && !event.shiftKey)) {
@@ -1107,11 +1104,16 @@
           return true;
         }
 
+        this._restoreData();
+        window.addEventListener('pagehide', this._saveData.bind(this));
+        window.addEventListener('freeze', this._saveData.bind(this), {capture: true});
+        window.addEventListener("resize", this._hideStats.bind(this));
+        setInterval(this._saveData.bind(this), 10000);
+
+        window.addEventListener("keydown", preventSaving.bind(this));
         window.addEventListener("keydown", processExtraKeybinds.bind(this));
         window.addEventListener("keydown", processPersistentKeybinds.bind(this));
         window.addEventListener("keyup", processPersistentKeybinds.bind(this));
-
-        this._clipboardReadTextDisabled = clipboardReadTextDisabled;
       },
 
       attached: function() {
