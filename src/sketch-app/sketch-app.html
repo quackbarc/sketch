@@ -43,35 +43,6 @@
         position: relative;
       }
 
-      #toolbar.alertOnly paper-icon-button,
-      #toolbar.alertOnly paper-menu-button,
-      #toolbar.alertOnly .title > *:not(#alert) {
-        display: none;
-      }
-
-      paper-toolbar .title {
-        pointer-events: auto; /* allows tooltips when hovered on */
-        margin: 0;
-      }
-
-      paper-toolbar .title,
-      paper-toolbar paper-menu-button paper-icon-button {
-        /* prevents selection when pressing down with a pen */
-        -webkit-user-select: none;
-        user-select: none;
-      }
-
-      .title span {
-        margin: 0px 8px;
-        font-size: 20px;
-        font-family: "Jost", "Roboto", "Noto", sans-serif;
-        line-height: normal;
-      }
-
-      .title .stats {
-        display: inline-block;
-      }
-
       paper-fab {
         position: absolute;
         bottom: 16px;
@@ -102,8 +73,44 @@
         height: 100%;
       }
 
+      /* Toolbar styles */
+
       paper-toolbar paper-progress.fit {
         top: 0;
+      }
+
+      /* prevents selection when pressing down with a pen */
+      paper-toolbar .title,
+      paper-toolbar paper-menu-button paper-icon-button {
+        -webkit-user-select: none;
+        user-select: none;
+      }
+
+      paper-toolbar .title {
+        pointer-events: auto; /* allows tooltips when hovered on */
+        margin: 0;
+      }
+      .title span {
+        margin: 0px 8px;
+        font-size: 20px;
+        font-family: "Jost", "Roboto", "Noto", sans-serif;
+        line-height: normal;
+      }
+      .title .stats {
+        display: inline-block;
+      }
+
+      /* for hideStats */
+
+      .title {
+        display: flex;
+      }
+      .title .stats {
+        margin-left: auto;
+      }
+      .title .stats span {
+        /* really dumb workaround */
+        margin-left: 3px;
       }
 
       paper-icon-button[toggles]:not([active]),
@@ -127,6 +134,18 @@
         };
       }
 
+      #toolbar.alertOnly paper-icon-button,
+      #toolbar.alertOnly paper-menu-button,
+      #toolbar.alertOnly .title > *:not(#alert) {
+        display: none;
+      }
+
+      /* Settings styles */
+
+      paper-dropdown-menu paper-item {
+        max-width: 300px;
+      }
+
       paper-item,
       paper-icon-item {
         --paper-item-min-height: 40px;
@@ -135,17 +154,12 @@
       paper-icon-item {
         --paper-item-icon-width: 40px;
       }
-
       paper-icon-item.button-item {
         cursor: pointer;
       }
 
       paper-item-body [secondary] {
         white-space: normal;
-      }
-
-      paper-dropdown-menu paper-item {
-        max-width: 300px;
       }
 
       .settings, .menu {
@@ -265,20 +279,8 @@
         border-radius: 5px;
       }
 
-      /* for hideStats */
-
-      .title {
-        display: flex;
-      }
-      .title .stats {
-        margin-left: auto;
-      }
-      .title .stats span {
-        /* really dumb workaround */
-        margin-left: 3px;
-      }
-
       /* paper-menu-button sizing fix */
+
       #toolbar paper-menu-button {
         box-sizing: border-box;
         width: 40px;
