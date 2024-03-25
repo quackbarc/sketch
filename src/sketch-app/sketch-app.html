@@ -36,6 +36,10 @@
         @apply(--layout-vertical);
         --paper-slider-height: 4px;
         --paper-item-body-two-line-min-height: 56px;
+
+        /* Prevents tablet pens and iOS Safari from selecting anything it sees */
+        -webkit-user-select: none;
+        user-select: none;
       }
 
       .content {
@@ -77,13 +81,6 @@
 
       paper-toolbar paper-progress.fit {
         top: 0;
-      }
-
-      /* prevents selection when pressing down with a pen */
-      paper-toolbar .title,
-      paper-toolbar paper-menu-button paper-icon-button {
-        -webkit-user-select: none;
-        user-select: none;
       }
 
       paper-toolbar .title {
@@ -169,6 +166,13 @@
         padding: 8px;
         max-height: 300px;
         width: min-content;
+
+        /**
+         * Re-allow selections from tablet pens and iOS Safari.
+         * It's text, so why not?
+         */
+        --webkit-user-select: text;
+        user-select: text;
       }
 
       .settings {
