@@ -1,15 +1,27 @@
 <script>
+  const KEEP_ALIVE_INTERVAL = 30_000;
+  // TIMEOUT breakdown:
+  // Chrome's 60-second throttling for setInterval() calls
+  // (https://developer.chrome.com/blog/timer-throttling-in-chrome-88/),
+  // plus the interval, and a 10s grace period for good measure.
+  const KEEP_ALIVE_TIMEOUT = 70_000 + KEEP_ALIVE_INTERVAL;
+
   window.Sketch = window.Sketch || {};
   Sketch.TabBehavior = {
     created: function() {
+        this._removeUnopenedTabs();
         this._trackTabOpen();
         window.addEventListener('beforeunload', this._trackTabClose.bind(this));
         window.addEventListener('pageshow', (event) => {
           // Restore tab state if we came back from the back/forward cache
           if(event.persisted) {
+            this._removeUnopenedTabs();
             this._trackTabOpen();
           }
         });
+
+        setInterval(this._keepSessionAlive.bind(this), KEEP_ALIVE_INTERVAL);
+        this._keepSessionAlive();
     },
 
     properties: {
@@ -53,7 +65,23 @@
       // new tabs would steal the tabID anyways so might as well purge it away on exit
       sessionStorage.removeItem('tabID');
       localStorage.setItem('tabs', JSON.stringify(tabs));
-    }
+    },
+
+    _keepSessionAlive: function() {
+      const currentTimestamp = Date.now();
+      localStorage.setItem("tabSessionTimestamp", JSON.stringify(currentTimestamp));
+    },
+
+    _removeUnopenedTabs: function() {
+      const currentTimestamp = Date.now();
+      const storedTimestamp = JSON.parse(localStorage.getItem("tabSessionTimestamp"));
+
+      const init = storedTimestamp === null;
+      if(init || (currentTimestamp - storedTimestamp >= KEEP_ALIVE_TIMEOUT)) {
+        const tabs = {};
+        localStorage.setItem("tabs", JSON.stringify(tabs));
+      }
+    },
   };
 </script>
 
