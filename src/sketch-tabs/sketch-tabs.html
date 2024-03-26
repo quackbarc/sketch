@@ -3,7 +3,7 @@
   Sketch.TabBehavior = {
     created: function() {
         this._trackTabOpen();
-        window.addEventListener('pagehide', this._trackTabClose.bind(this));
+        window.addEventListener('beforeunload', this._trackTabClose.bind(this));
         window.addEventListener('freeze', this._trackTabClose.bind(this), {capture: true});
         window.addEventListener('resume', this._trackTabOpen.bind(this), {capture: true});
     },

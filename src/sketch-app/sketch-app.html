@@ -1111,7 +1111,7 @@
         }
 
         this._restoreData();
-        window.addEventListener('pagehide', this._saveData.bind(this));
+        window.addEventListener('beforeunload', this._saveData.bind(this));
         window.addEventListener('freeze', this._saveData.bind(this), {capture: true});
         window.addEventListener("resize", this._hideStats.bind(this));
         setInterval(this._saveData.bind(this), 10000);
