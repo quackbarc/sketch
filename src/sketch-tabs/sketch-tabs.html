@@ -38,7 +38,12 @@
     _trackTabOpen: function() {
       var tabs = JSON.parse(localStorage.getItem('tabs') || "{}");
 
-      if(sessionStorage.getItem('tabID')) {
+      const isTabDuplicate =
+        sessionStorage.getItem("tabID")
+        && !sessionStorage.getItem("dontDuplicate")
+        && ("wasDiscarded" in document ? !document.wasDiscarded : true);  // <-- for Chrome; Page Lifecycle API
+
+      if(sessionStorage.getItem('tabID') && !isTabDuplicate) {
         this.tabID = parseInt(sessionStorage.getItem('tabID'));
       }
       else {
@@ -48,6 +53,7 @@
       tabs[this.tabID] = true;
       localStorage.setItem('tabs', JSON.stringify(tabs));
       sessionStorage.setItem('tabID', this.tabID);
+      sessionStorage.removeItem('dontDuplicate');
     },
 
     _trackTabClose: function() {
@@ -61,6 +67,7 @@
         sessionStorage.removeItem('tabID');
       }
 
+      sessionStorage.setItem("dontDuplicate", "true");
       localStorage.setItem('tabs', JSON.stringify(tabs));
     },
 
