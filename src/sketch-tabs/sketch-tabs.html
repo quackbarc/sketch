@@ -58,10 +58,9 @@
       }
       else {
         delete tabs[this.tabID];
+        sessionStorage.removeItem('tabID');
       }
 
-      // new tabs would steal the tabID anyways so might as well purge it away on exit
-      sessionStorage.removeItem('tabID');
       localStorage.setItem('tabs', JSON.stringify(tabs));
     },
 
