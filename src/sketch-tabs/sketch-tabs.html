@@ -4,8 +4,12 @@
     created: function() {
         this._trackTabOpen();
         window.addEventListener('beforeunload', this._trackTabClose.bind(this));
-        window.addEventListener('freeze', this._trackTabClose.bind(this), {capture: true});
-        window.addEventListener('resume', this._trackTabOpen.bind(this), {capture: true});
+        window.addEventListener('pageshow', (event) => {
+          // Restore tab state if we came back from the back/forward cache
+          if(event.persisted) {
+            this._trackTabOpen();
+          }
+        });
     },
 
     properties: {
