@@ -39,6 +39,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Jost&display=swap" rel="stylesheet">
     <script>
+      // FIXME: This script doesn't actually load early enough in built pages, it looks like.
+      // Must be because everything's bundled into one HTML file.
+
       document.addEventListener("DOMContentLoaded", function() {
         // apply preferred background early on
         let settings = localStorage.getItem("settings") || "{}";
