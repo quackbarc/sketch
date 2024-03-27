@@ -43,7 +43,19 @@
           type: Number,
           value: 1,  // Relative to the canvas elemt, not the viewport!
           observer: "_onZoom",
-        }
+        },
+
+        MINIMUM_ZOOM: {
+          type: Number,
+          value: 0.2,
+          readOnly: true,
+        },
+
+        MAXIMUM_ZOOM: {
+          type: Number,
+          value: 10,
+          readOnly: true,
+        },
       },
 
       _contentDimensions: {
@@ -68,6 +80,8 @@
         if(window.screen.orientation) {
           window.screen.orientation.addEventListener("change", this._onIronResize.bind(this));
         }
+
+        this.addEventListener("wheel", this._onWheel.bind(this));
 
         // DEBUGGING
         // @ts-ignore
@@ -143,6 +157,38 @@
         );
         this.zoom = zoom;
         this._notifyFit = true;
+      },
+
+      // Mouse event listeners
+
+      /** @param {WheelEvent} event */
+      _onWheel: function(event) {
+        const zoomFactor = event.deltaY > 0 ? (100/event.deltaY) : -(event.deltaY/100);
+        this._zoomInto(
+          event.clientX,
+          event.clientY,
+          this.zoom * zoomFactor,
+        );
+      },
+
+      // Zooming methods
+
+      _clamp: function(zoom) {
+        return Math.min(this.MAXIMUM_ZOOM, Math.max(this.MINIMUM_ZOOM, zoom));
+      },
+
+      /**
+       * Zooms the container into a given point.
+       * 
+       * @param {number} x
+       * @param {number} y
+       * @param {number} zoom
+       *    The target zoom level. Do note that the final zoom level would be clamped
+       *    to MINIMUM_ZOOM and MAXIMUM_ZOOM.
+       */
+      _zoomInto: function(x, y, zoom) {
+        zoom = this._clamp(zoom);
+        this.zoom = zoom;
       },
     };
 
