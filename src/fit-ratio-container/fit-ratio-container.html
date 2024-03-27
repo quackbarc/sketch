@@ -2,22 +2,18 @@
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/iron-resizable-behavior/iron-resizable-behavior.html">
 
-<dom-module id="fit-ratio-container">
+<dom-module id="zoom-container">
   <template>
     <style>
-      :host {
-        @apply(--layout-horizontal);
-        @apply(--layout-center);
-        @apply(--layout-center-justified);
-        @apply(--layout-relative);
+      :host[fit] {
+        @apply(--layout-fit);
       }
     </style>
     <content></content>
   </template>
   <script>
     Polymer({
-
-      is: 'fit-ratio-container',
+      is: 'zoom-container',
 
       behaviors: [
         Polymer.IronResizableBehavior
@@ -28,14 +24,40 @@
       },
 
       properties: {
-        ratio: {
+        dimensions: {
           type: String,
           value: "1/1",
-          observer: '_onRatioChanged'
+          observer: '_onDimensionsChanged'
+        },
+
+        fit: {
+          type: Boolean,
+          value: true,
+          reflectToAttribute: true,
+          observer: "_onFit",
+        },
+
+        zoom: {
+          type: Number,
+          value: 1,  // Relative to the canvas elemt, not the viewport!
+          observer: "_onZoom",
         }
       },
 
+      _contentDimensions: {
+        width: 1,
+        height: 1,
+      },
+
       _ratio: 1,
+
+      _notifyFit: true,
+
+      get contentElement() {
+        return this.getContentChildren()[0];
+      },
+
+      // Event listeners
 
       ready: function() {
         // Safari/WebKit doesn't support screen.orientation as of 16.2.
@@ -46,6 +68,8 @@
         }
       },
 
+      // IronResizeBehavior event listeners
+
       _notifyAll: function(element) {
         return true;
       },
@@ -54,13 +78,13 @@
         return false;
       },
 
-      _onRatioChanged: function(newValue, oldValue) {
+      _onDimensionsChanged: function(newValue, oldValue) {
         var parts = newValue.toString().split("/");
 
-        var width = parseFloat(parts[0]);
-        var height = parseFloat(parts[1] || 1);
-
+        var width = this._contentDimensions.width = parseFloat(parts[0]);
+        var height = this._contentDimensions.height = parseFloat(parts[1] || 1);
         this._ratio = width / height;
+
         this._onIronResize();
       },
 
@@ -81,7 +105,39 @@
         this.resizerShouldNotify = this._notifyAll;
         this.notifyResize();
         this.resizerShouldNotify = this._notifyNone;
-      }
+
+        if(this.fit) {
+          this._refitZoom();
+        }
+      },
+
+      // Zooming event listeners
+
+      _onFit: function(newValue, oldValue) {
+        if(!oldValue && this.fit) {
+          this._refitZoom();
+        }
+      },
+
+      _onZoom: function() {
+        if(!this._readied) {
+          return;
+        }
+
+        if(this._notifyFit) {
+          this.fit = false;
+        }
+      },
+
+      _refitZoom: function() {
+        this._notifyFit = false;
+        const zoom = Math.min(
+          this.offsetWidth / this._contentDimensions.width,
+          this.offsetHeight / this._contentDimensions.height
+        );
+        this.zoom = zoom;
+        this._notifyFit = true;
+      },
     });
   </script>
 </dom-module>

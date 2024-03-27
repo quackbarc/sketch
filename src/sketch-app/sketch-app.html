@@ -61,8 +61,7 @@
         };
       }
 
-      fit-ratio-container {
-        @apply(--layout-fit);
+      zoom-container {
         margin: 16px;
 
         /**
@@ -316,7 +315,7 @@
     </style>
 
     <div class="content">
-      <fit-ratio-container ratio="4/3" id="container">
+      <zoom-container dimensions="800/600" id="container">
           <sketch-canvas
               id="sketch"
               ink="{{ink}}"
@@ -346,7 +345,7 @@
               drawing="{{drawing}}"
               flipped="{{sketchFlipped}}"
               disabled="{{sketchDisabled}}"></sketch-canvas>
-      </fit-ratio-container>
+      </zoom-container>
       <paper-fab
           title="{{_swapTitle(localize, sketchFlipped, allowFlippedSwaps)}}"
           icon="{{_swapIcon(sketchFlipped)}}"
