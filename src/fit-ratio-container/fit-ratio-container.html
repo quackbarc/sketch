@@ -185,9 +185,17 @@
         }
 
         if(!oldValue && this.fit) {
+          const lastZoom = this.zoom;
+
           this.position[0] = 0;
           this.position[1] = 0;
           this._refitZoom();
+          const currentZoom = this.zoom;
+
+          // If the zoom wasn't updated, then the viewport wasn't updated.
+          if(currentZoom == lastZoom) {
+            this._updateViewport();
+          }
         }
       },
 
@@ -221,6 +229,12 @@
           return;
         }
 
+        if(event.buttons == 4) {
+          this.fit = true;
+          return;
+        }
+
+        this.fit = false;
         this._setPanning(true);
         this._initialPosition = this.position.slice();
         this._initialPointerPosition = [event.clientX, event.clientY];
@@ -233,6 +247,7 @@
           return;
         }
 
+        this.fit = false;
         const x = event.clientX;
         const y = event.clientY;
         this._panFromInitial(x, y);
