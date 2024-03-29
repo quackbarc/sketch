@@ -1105,8 +1105,15 @@
         }
 
         function processPersistentKeybinds(event) {
+          const activating = event.type == "keydown";
+
           if(this.tool == "eraser") {
             this.$.sketch.activeStrokeErasing = event.shiftKey;
+            return false;
+          }
+
+          if(event.key == " ") {
+            this.$.sketch._activeKeyTool = activating ? "pan" : "";
             return false;
           }
 

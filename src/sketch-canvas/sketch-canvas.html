@@ -77,7 +77,11 @@
         this._canvas.lineWidth = 3;
         this._canvas.fillStyle = "black";
 
+        // Polymer seems to only start registering private properties for
+        // computed ones only when they're assigned during ready().
         this._activeTool = null;
+        this._activeKeyTool = null;
+
         this._bounds = this.getBoundingClientRect();
 
         this._updateRendering();
@@ -129,7 +133,7 @@
           type: String,
           notify: true,
           readOnly: true,
-          computed: '_tool(desiredTool, _activeTool)',
+          computed: '_tool(desiredTool, _activeTool, _activeKeyTool)',
           observer: '_onToolChanged'
         },
         disabled: {
@@ -276,6 +280,8 @@
       },
 
       // Private properties
+
+      _activeKeyTool: null,
 
       _canvas: null,
 
@@ -773,8 +779,8 @@
         return canEdit && !disabled;
       },
 
-      _tool(desiredTool, activeTool) {
-        return activeTool ? activeTool : desiredTool;
+      _tool(desiredTool, activeTool, activeKeyTool) {
+        return activeKeyTool || activeTool || desiredTool;
       },
 
       _eraseStrokes(setting, active) {
