@@ -308,7 +308,7 @@
     </style>
 
     <div class="content">
-      <zoom-container dimensions="800/600" id="container">
+      <zoom-container dimensions="800/600" id="container" pannable="{{pannable}}">
           <sketch-canvas
               id="sketch"
               ink="{{ink}}"
@@ -1153,6 +1153,13 @@
         peekID: {
           type: Number,
           value: null,
+        },
+
+        // tool state
+
+        pannable: {
+          type: Boolean,
+          computed: "_isPanning(tool)"
         },
 
         // settings

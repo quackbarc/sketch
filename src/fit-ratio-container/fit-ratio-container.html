@@ -14,6 +14,14 @@
         @apply(--layout-center);
         @apply(--layout-center-justified);
       }
+
+      :host[pannable] {
+        cursor: grab;
+      }
+
+      :host[panning] {
+        cursor: grabbing;
+      }
     </style>
     <content></content>
   </template>
@@ -46,6 +54,19 @@
         margins: {
           type: Number,
           value: 16,
+        },
+
+        pannable: {
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true,
+        },
+
+        panning: {
+          type: Boolean,
+          value: false,
+          readOnly: true,
+          reflectToAttribute: true,
         },
 
         fit: {
@@ -107,6 +128,8 @@
         }
 
         this.addEventListener("wheel", this._onWheel.bind(this));
+        this.addEventListener("pointerdown", this._onPointerDown.bind(this));
+        this.addEventListener("pointerup", this._onPointerUp.bind(this));
 
         // DEBUGGING
         // @ts-ignore
@@ -184,6 +207,18 @@
       },
 
       // Mouse event listeners
+
+      /** @param {PointerEvent} event */
+      _onPointerDown: function(event) {
+        this._setPanning(true);
+        this.setPointerCapture(event.pointerId);
+      },
+
+      /** @param {PointerEvent} event */
+      _onPointerUp: function(event) {
+        this._setPanning(false);
+        this.releasePointerCapture(event.pointerId);
+      },
 
       /** @param {WheelEvent} event */
       _onWheel: function(event) {

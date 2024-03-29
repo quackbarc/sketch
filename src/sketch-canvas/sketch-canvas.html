@@ -792,6 +792,8 @@
           * window.devicePixelRatio
         );
         switch(tool) {
+          case "pan":
+            return "inherit";  // Inherit <zoom-container>'s cursor
           case "eraser":
             return this._getRadiusCursorURI(Math.round(eraserRadius * canvasRatio));
           case "screentone":
