@@ -38,6 +38,16 @@
           observer: '_onDimensionsChanged'
         },
 
+        /**
+         * Faux-margins around the content element for zoom-to-fit.
+         * Prefer this over regular margins, since pointer events in that area
+         * like clicking or scrolling wouldn't be picked up by listeners.
+         */
+        margins: {
+          type: Number,
+          value: 16,
+        },
+
         fit: {
           type: Boolean,
           value: true,
@@ -166,8 +176,8 @@
       _refitZoom: function() {
         this._notifyFit = false;
         const zoom = Math.min(
-          this.offsetWidth / this._contentDimensions.width,
-          this.offsetHeight / this._contentDimensions.height
+          (this.offsetWidth - this.margins*2) / this._contentDimensions.width,
+          (this.offsetHeight - this.margins*2) / this._contentDimensions.height
         );
         this.zoom = zoom;
         this._notifyFit = true;
