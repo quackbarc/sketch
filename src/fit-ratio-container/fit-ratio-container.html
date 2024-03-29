@@ -197,8 +197,15 @@
 
       // Zooming methods
 
-      _clamp: function(zoom) {
-        return Math.min(this.MAXIMUM_ZOOM, Math.max(this.MINIMUM_ZOOM, zoom));
+      /**
+       * Clamps a given value to a given minimum/maximum.
+       * 
+       * @param {number} n
+       * @param {[number, number]}
+       *    The minimum and maximum values to clamp to, respectively.
+       */
+      _clamp: function(n, [min, max]) {
+        return Math.min(max, Math.max(min, n));
       },
 
       /**
@@ -212,7 +219,7 @@
        */
       _zoomInto: function(x, y, zoom) {
         const currentZoom = this.zoom;
-        zoom = this._clamp(zoom);
+        zoom = this._clamp(zoom, [this.MINIMUM_ZOOM, this.MAXIMUM_ZOOM]);
 
         // Offset `this.position` towards [x,y] in the current zoom,
         // then offset away from it with the same distance in the new zoom.
@@ -220,6 +227,13 @@
         const viewportY = y - this.offsetHeight/2;
         this.position[0] = (viewportX / currentZoom) + this.position[0] - (viewportX / zoom);
         this.position[1] = (viewportY / currentZoom) + this.position[1] - (viewportY / zoom);
+
+        // Restrict `this.position` so it's at least 100px from any edge
+        const minPositionOffset = 100;
+        let limX = (this.clientWidth/2 - minPositionOffset) / zoom + this.contentElement.clientWidth/2;
+        let limY = (this.clientHeight/2 - minPositionOffset) / zoom + this.contentElement.clientHeight/2;
+        this.position[0] = this._clamp(this.position[0], [-limX, limX]);
+        this.position[1] = this._clamp(this.position[1], [-limY, limY]);
 
         this.zoom = zoom;
       },
