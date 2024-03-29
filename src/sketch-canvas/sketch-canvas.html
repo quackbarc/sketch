@@ -514,6 +514,12 @@
 
       _action: function(tool) {
         switch(tool) {
+          case 'pan':
+            return {
+              start: (() => void 0),
+              middle: (() => void 0),
+              end: (() => void 0)
+            }
           case 'eraser':
             return {
               start: this._eraseStart.bind(this),

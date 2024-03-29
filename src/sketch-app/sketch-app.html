@@ -381,6 +381,13 @@
           icon="redo"
           disabled="{{_editDisabled(loading, canRedo)}}"
           on-tap="_redo"></paper-icon-button>
+      <paper-icon-button
+          title="{{localize('pan')}}"
+          icon="mdi:hand-back-right"
+          disabled="{{_toolDisabled(sketchDisabled, loading)}}"
+          active="{{_isPanning(tool)}}"
+          toggles="{{!_isPanning(tool)}}"
+          on-tap="_pan"></paper-icon-button>
       <paper-menu-button
           id="menuEraser"
           disabled="{{_toolDisabled(sketchDisabled, loading)}}"
@@ -971,6 +978,10 @@
         on-keys-pressed="_screentone"></iron-a11y-keys>
     <iron-a11y-keys
         target="[[target]]"
+        keys="h"
+        on-keys-pressed="_pan"></iron-a11y-keys>
+    <iron-a11y-keys
+        target="[[target]]"
         keys="e"
         on-keys-pressed="_erase"></iron-a11y-keys>
     <iron-a11y-keys
@@ -1389,6 +1400,10 @@
         }
       },
 
+      _pan: function() {
+        this.$.sketch.desiredTool = "pan";
+      },
+
       _erase: function(e) {
         this._menuAction(e, this.$.menuEraser, 'eraser');
       },
@@ -1597,6 +1612,10 @@
 
           this.$.sketch._miniMove(dx, dy);
         }
+      },
+
+      _isPanning: function(tool) {
+        return tool === 'pan';
       },
 
       _isErasing: function(tool) {
