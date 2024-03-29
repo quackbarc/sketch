@@ -5,8 +5,14 @@
 <dom-module id="zoom-container">
   <template>
     <style>
-      :host[fit] {
+      :host {
+        /* Pretty much how you'd normally fit a <div> */
         @apply(--layout-fit);
+
+        /* Pretty much how you'd normally center a <div> */
+        @apply(--layout);
+        @apply(--layout-center);
+        @apply(--layout-center-justified);
       }
     </style>
     <content></content>
@@ -112,15 +118,6 @@
         if(this.resizerShouldNotify == this._notifyAll) {
           return;
         }
-
-        var contentWidth = Math.min(this.offsetWidth, this.offsetHeight * this._ratio);
-        var contentHeight = Math.min(this.offsetHeight, this.offsetWidth / this._ratio);
-
-        var horizontalPadding = (this.offsetWidth - contentWidth) / 2.0;
-        var verticalPadding = (this.offsetHeight - contentHeight) / 2.0;
-
-        this.style.paddingLeft = this.style.paddingRight = horizontalPadding + "px";
-        this.style.paddingTop = this.style.paddingBottom = verticalPadding + "px";
 
         this.resizerShouldNotify = this._notifyAll;
         this.notifyResize();
