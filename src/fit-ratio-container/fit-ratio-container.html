@@ -128,13 +128,13 @@
           return;
         }
 
-        this.resizerShouldNotify = this._notifyAll;
-        this.notifyResize();
-        this.resizerShouldNotify = this._notifyNone;
-
         if(this.fit) {
           this._refitZoom();
         }
+
+        this.resizerShouldNotify = this._notifyAll;
+        this.notifyResize();
+        this.resizerShouldNotify = this._notifyNone;
       },
 
       // Zooming event listeners
@@ -218,6 +218,9 @@
         const x = Math.floor(-this.position[0] * this.zoom);
         const y = Math.floor(-this.position[1] * this.zoom);
         this.contentElement.style.transform = `matrix(${this.zoom}, 0, 0, ${this.zoom}, ${x}, ${y})`;
+
+        // Notify about the canvas bounding rect change down the chain
+        this.notifyResize();
       },
     };
 
