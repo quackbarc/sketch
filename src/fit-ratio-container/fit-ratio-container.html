@@ -113,6 +113,12 @@
 
       _notifyFit: true,
 
+      /** @type {number[]} The initial `this.position` of a move. */
+      _initialPosition: null,
+
+      /** @type {number[]} The initial cursor position of a move. */
+      _initialPointerPosition: null,
+
       get contentElement() {
         return this.getContentChildren()[0];
       },
@@ -129,6 +135,7 @@
 
         this.addEventListener("wheel", this._onWheel.bind(this));
         this.addEventListener("pointerdown", this._onPointerDown.bind(this));
+        this.addEventListener("pointermove", this._onPointerMove.bind(this));
         this.addEventListener("pointerup", this._onPointerUp.bind(this));
 
         // DEBUGGING
@@ -210,13 +217,36 @@
 
       /** @param {PointerEvent} event */
       _onPointerDown: function(event) {
+        if(!this.pannable) {
+          return;
+        }
+
         this._setPanning(true);
+        this._initialPosition = this.position.slice();
+        this._initialPointerPosition = [event.clientX, event.clientY];
         this.setPointerCapture(event.pointerId);
       },
 
       /** @param {PointerEvent} event */
+      _onPointerMove: function(event) {
+        if(!this.pannable || !this.panning) {
+          return;
+        }
+
+        const x = event.clientX;
+        const y = event.clientY;
+        this._panFromInitial(x, y);
+      },
+
+      /** @param {PointerEvent} event */
       _onPointerUp: function(event) {
+        if(!this.pannable) {
+          return;
+        }
+
         this._setPanning(false);
+        this._initialPosition = null;
+        this._initialPointerPosition = null;
         this.releasePointerCapture(event.pointerId);
       },
 
@@ -230,7 +260,7 @@
         );
       },
 
-      // Zooming methods
+      // Zooming/panning methods
 
       /**
        * Clamps a given value to a given minimum/maximum.
@@ -241,6 +271,43 @@
        */
       _clamp: function(n, [min, max]) {
         return Math.min(max, Math.max(min, n));
+      },
+
+      /**
+       * Pans from an initial point to a given point.
+       * `this._initialPosition` and `this._initialPointerPosition` must be set.
+       * Otherwise, this does nothing.
+       * 
+       * @param {number} x
+       * @param {number} y
+       */
+      _panFromInitial: function(x, y) {
+        if(!this._initialPosition || !this._initialPointerPosition) {
+          return;
+        }
+
+        const [iPosX, iPosY] = this._initialPosition;
+        const [ix, iy] = this._initialPointerPosition;
+        const distanceX = x - ix;
+        const distanceY = y - iy;
+        this.position[0] = iPosX - distanceX/this.zoom;
+        this.position[1] = iPosY - distanceY/this.zoom;
+        this._restrictPosition();
+
+        this._updateViewport();
+      },
+
+      /**
+       * Limits the current position to at least 100px from any edge.
+       * 
+       * @param {number?} zoom
+       */
+      _restrictPosition: function(zoom=this.zoom) {
+        const minPositionOffset = 100;
+        let limX = (this.clientWidth/2 - minPositionOffset) / zoom + this.contentElement.clientWidth/2;
+        let limY = (this.clientHeight/2 - minPositionOffset) / zoom + this.contentElement.clientHeight/2;
+        this.position[0] = this._clamp(this.position[0], [-limX, limX]);
+        this.position[1] = this._clamp(this.position[1], [-limY, limY]);
       },
 
       /**
@@ -262,13 +329,7 @@
         const viewportY = y - this.offsetHeight/2;
         this.position[0] = (viewportX / currentZoom) + this.position[0] - (viewportX / zoom);
         this.position[1] = (viewportY / currentZoom) + this.position[1] - (viewportY / zoom);
-
-        // Restrict `this.position` so it's at least 100px from any edge
-        const minPositionOffset = 100;
-        let limX = (this.clientWidth/2 - minPositionOffset) / zoom + this.contentElement.clientWidth/2;
-        let limY = (this.clientHeight/2 - minPositionOffset) / zoom + this.contentElement.clientHeight/2;
-        this.position[0] = this._clamp(this.position[0], [-limX, limX]);
-        this.position[1] = this._clamp(this.position[1], [-limY, limY]);
+        this._restrictPosition(zoom);
 
         this.zoom = zoom;
       },
