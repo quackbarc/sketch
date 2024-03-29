@@ -1114,6 +1114,7 @@
 
           if(event.key == " ") {
             this.$.sketch._activeKeyTool = activating ? "pan" : "";
+            event.preventDefault();
             return false;
           }
 
@@ -1127,8 +1128,8 @@
 
         window.addEventListener("keydown", preventSaving.bind(this));
         window.addEventListener("keydown", processExtraKeybinds.bind(this));
-        window.addEventListener("keydown", processPersistentKeybinds.bind(this));
-        window.addEventListener("keyup", processPersistentKeybinds.bind(this));
+        window.addEventListener("keydown", processPersistentKeybinds.bind(this), {capture: true});
+        window.addEventListener("keyup", processPersistentKeybinds.bind(this), {capture: true});
       },
 
       attached: function() {
