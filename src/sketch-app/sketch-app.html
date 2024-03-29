@@ -1360,7 +1360,9 @@
         if(!this.swapDisabled && !this.drawing) {
           const flip = this.sketchFlipped && this.allowFlippedSwaps;
           this.$.sketch.$.data.flipSwappedData = flip;
+
           this.$.api.swap(this.$.sketch.$.data.swapData);
+          this.$.container.fit = true;
           this.sketchDisabled = true;
           this.undoDisabled = true;
         }
@@ -1451,6 +1453,7 @@
         }
 
         this.$.api.peek();
+        this.$.container.fit = true;
         this.sketchDisabled = true;
         this.undoDisabled = false;
         this.peekID = null;
