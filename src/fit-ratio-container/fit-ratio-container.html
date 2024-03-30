@@ -268,7 +268,6 @@
 
         event.preventDefault();
         const oldPointers = this._pointers.slice();
-        this.setPointerCapture(event.pointerId);
         this._pointers.push(event);
 
         if(oldPointers.length == 1) {
@@ -310,7 +309,6 @@
         // in case .pannable gets suddenly disarmed.
 
         const oldPointers = this._pointers.slice();
-        this.releasePointerCapture(event.pointerId);
         this._removePointer(event);
 
         if(oldPointers.length == 1) {
