@@ -158,7 +158,7 @@
         },
         cursor: {
           type: String,
-          computed: '_cursor(disabled, tool, eraserRadius, toneRadius)',
+          computed: '_cursor(disabled, tool, eraserRadius, toneRadius, _bounds)',
           observer: '_onCursorChanged',
         },
 
@@ -814,16 +814,13 @@
         return active || setting;
       },
 
-      _cursor: function(disabled, tool, eraserRadius, toneRadius) {
-        if(disabled) {
+      _cursor: function(disabled, tool, eraserRadius, toneRadius, bounds) {
+        if(!this._readied || disabled) {
           return "crosshair";
         }
 
-        const canvasRatio = (
-          this.$.sketchCanvas.clientWidth
-          / this.$.sketchCanvas.width
-          * window.devicePixelRatio
-        );
+        const canvasRatio = (bounds.width / this.$.sketchCanvas.width);
+
         switch(tool) {
           case "pan":
             return "inherit";  // Inherit <zoom-container>'s cursor
