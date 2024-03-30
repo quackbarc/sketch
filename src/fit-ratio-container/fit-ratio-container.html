@@ -211,6 +211,10 @@
           this._refitZoom();
           const currentZoom = this.zoom;
 
+          // Give the ability to make .fit reset all panning/zooming variables
+          // in case anything goes wrong with them.
+          this._resetInitials();
+
           // If the zoom wasn't updated, then the viewport wasn't updated.
           if(currentZoom == lastZoom) {
             this._updateViewport();
@@ -228,6 +232,13 @@
         }
 
         this._updateViewport();
+      },
+
+      _resetInitials: function() {
+        this._initialPosition = null;
+        this._initialPointerPosition = null;
+        this._initialZoom = null;
+        this._initialPinchDistance = null;
       },
 
       _refitZoom: function() {
