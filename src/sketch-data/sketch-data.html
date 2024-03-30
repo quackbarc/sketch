@@ -274,6 +274,62 @@
       },
 
       erase: function(x, y, px, py, radius, eraseStrokes) {
+        return this.eraseSquare(x, y, px, py, radius, eraseStrokes);
+      },
+
+      eraseSquare: function(x, y, px, py, radius, eraseStrokes) {
+        const esquare = [[x - radius, y - radius], [x + radius, y + radius]];
+        const actions = [];
+
+        // Going in reverse, because it's much easier to manage actions
+        // that way I feel
+
+        for(let lineInd = this.lines.length - 1; lineInd >= 0; lineInd--) {
+          const line = this.lines[lineInd];
+          const [x1, y1, x2, y2] = line;
+          const ints = this._intersections([[x1, y1], [x2, y2]], esquare);
+          const within = this._within([x1, y1], esquare) && this._within([x2, y2], esquare);
+
+          if(within) {
+            const action = {
+              start: lineInd,
+              added: [],
+              removed: [line.slice()],
+            };
+            actions.push(action);
+          }
+
+          if(ints.length == 1) {
+            const [[ix, iy]] = ints;
+            const cutRightEnd = ix == x - radius;
+            const cutLeftEnd = ix == x + radius;
+            const added = cutRightEnd ? [x1, y1, ix, iy] : [ix, iy, x2, y2];
+            const action = {
+              start: lineInd,
+              added: [added],
+              removed: [line.slice()],
+            };
+            actions.push(action);
+          }
+
+          if(ints.length == 2) {
+            const [[ix1, iy1], [ix2, iy2]] = ints;
+            const action = {
+              start: lineInd,
+              added: [[x1, y1, ix1, iy1], [ix2, iy2, x2, y2]],
+              removed: [line.slice()],
+            };
+            actions.push(action);
+          }
+        }
+
+        this._doAction(actions);
+        this._action.push(...actions);
+        const erased = actions.length > 0;
+        return erased;
+      },
+
+      eraseNormal: function(x, y, px, py, radius, eraseStrokes) {
         var erased = false;
 
         for(var i = 0; i < this.lines.length; i++) {
