@@ -136,6 +136,8 @@
 
       _initialPinchDistance: null,
 
+      _initialTapTimestamp: null,
+
       get contentElement() {
         return this.getContentChildren()[0];
       },
@@ -322,6 +324,10 @@
         if(this._pointers.length == 1) {
           const event = this._pointers[0];
           this._singlePointerDown(event);
+
+          // Suppress potential "double-taps" caused by _singlePointerDown().
+          // I should probably put this line somewhere else.
+          this._initialTapTimestamp = null;
         }
         else if(this._pointers.length >= 2) {
           this._multiPointerDown(this._pointers);
@@ -335,6 +341,18 @@
           return;
         }
 
+        if(this._initialTapTimestamp) {
+          const doubleTapInterval = 600;
+          const delta = performance.now() - this._initialTapTimestamp;
+          if(delta <= doubleTapInterval) {
+            this._initialTapTimestamp = null;
+            this.fit = true;
+            return;
+          }
+        }
+
+        this._initialTapTimestamp = performance.now();
+
         this.fit = false;
         this._setPanning(true);
         this._initialPosition = this.position.slice();
@@ -346,6 +364,8 @@
         if(!this.panning) {
           return;
         }
+
+        this._initialTapTimestamp = null;
 
         this.fit = false;
         const x = pointer.clientX;
@@ -368,6 +388,8 @@
       _multiPointerDown: function(pointers) {
         const pinchDistance = this._getPinchDistance(pointers);
         const [x, y] = this._getPinchMidpoint(pointers);
+
+        this._initialTapTimestamp = null;
 
         this.fit = false;
         this._setPanning(true);
