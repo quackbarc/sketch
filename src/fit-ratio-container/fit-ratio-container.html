@@ -130,6 +130,10 @@
       /** @type {number[]} The initial cursor position of a move. */
       _initialPointerPosition: null,
 
+      _initialZoom: null,
+
+      _initialPinchDistance: null,
+
       get contentElement() {
         return this.getContentChildren()[0];
       },
@@ -369,6 +373,7 @@
         this._setPanning(true);
         this._initialPosition = this.position.slice();
         this._initialPointerPosition = [x, y];
+        this._initialZoom = this.zoom;
         this._initialPinchDistance = pinchDistance;
       },
 
@@ -382,8 +387,7 @@
         const [x, y] = this._getPinchMidpoint(pointers);
 
         this.fit = false;
-        this._panFromInitial(x, y);
-        this._zoomFromInitialPinch(pinchDistance);
+        this._zoomFromInitialPinch(x, y, pinchDistance);
       },
 
       /** @param {PointerEvent[]} pointers */
@@ -395,6 +399,7 @@
         this._setPanning(false);
         this._initialPosition = null;
         this._initialPointerPosition = null;
+        this._initialZoom = null;
         this._initialPinchDistance = null;
       },
 
@@ -453,8 +458,8 @@
 
       /**
        * Pans from an initial point to a given point.
-       * `this._initialPosition` and `this._initialPointerPosition` must be set.
-       * Otherwise, this does nothing.
+       * An initial position from `this.position` and viewport pointer position
+       * must be first set, otherwise, this does nothing.
        * 
        * @param {number} x
        * @param {number} y
@@ -507,6 +512,38 @@
         const viewportY = y - this.offsetHeight/2;
         this.position[0] = (viewportX / currentZoom) + this.position[0] - (viewportX / zoom);
         this.position[1] = (viewportY / currentZoom) + this.position[1] - (viewportY / zoom);
+        this._restrictPosition(zoom);
+
+        this.zoom = zoom;
+      },
+
+      /**
+       * @param {number} x
+       * @param {number} y
+       * @param {number} pinchDistance
+       */
+      _zoomFromInitialPinch: function(x, y, pinchDistance) {
+        if(this._initialPosition == null
+          || this._initialPointerPosition == null
+          || this._initialZoom == null
+          || this._initialPinchDistance == null) {
+          return;
+        }
+
+        const ratio = pinchDistance / this._initialPinchDistance;
+        const initialZoom = this._initialZoom;
+        const zoom = this._clamp(this._initialZoom * ratio, [this.MINIMUM_ZOOM, this.MAXIMUM_ZOOM]);
+
+        const [ix, iy] = this._initialPointerPosition;
+        const viewportX = ix - this.offsetWidth/2;
+        const viewportY = iy - this.offsetHeight/2;
+        this.position[0] = (viewportX / initialZoom) + this._initialPosition[0] - (viewportX / zoom);
+        this.position[1] = (viewportY / initialZoom) + this._initialPosition[1] - (viewportY / zoom);
+
+        const distanceX = x - ix;
+        const distanceY = y - iy;
+        this.position[0] -= distanceX/this.zoom;
+        this.position[1] -= distanceY/this.zoom;
         this._restrictPosition(zoom);
 
         this.zoom = zoom;
