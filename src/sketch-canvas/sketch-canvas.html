@@ -452,8 +452,6 @@
       },
 
       _processEvent(event) {
-        event.preventDefault();
-
         if(this.playing) {
           if(event.buttons > 0) {
             this.stop();
