@@ -114,6 +114,16 @@
 
       _notifyFit: true,
 
+      /**
+       * @type {PointerEvent[]}
+       * The current pointers being pressed down.
+       *
+       * We're using this over something convenient like TouchEvent
+       * mainly due to its lack of properties like `.pointerId` and
+       * its lack of support on Safari (as of 2024-03-30).
+       */
+      _pointers: [],
+
       /** @type {number[]} The initial `this.position` of a move. */
       _initialPosition: null,
 
@@ -224,13 +234,99 @@
 
       // Mouse event listeners
 
+      /** @param {PointerEvent} pointer */
+      _removePointer: function(pointer) {
+        const [cachedPointer] = this._pointers.filter((p) => p.pointerId == pointer.pointerId);
+        if(!cachedPointer) {
+          return;
+        }
+
+        const index = this._pointers.indexOf(cachedPointer);
+        this._pointers.splice(index, 1);
+      },
+
+      /** @param {PointerEvent} pointer */
+      _replacePointer: function(pointer) {
+        const [cachedPointer] = this._pointers.filter((p) => p.pointerId == pointer.pointerId);
+        if(!cachedPointer) {
+          return;
+        }
+
+        const index = this._pointers.indexOf(cachedPointer);
+        this._pointers.splice(index, 1, pointer);
+      },
+
       /** @param {PointerEvent} event */
       _onPointerDown: function(event) {
         if(!this.pannable) {
           return;
         }
 
-        if(event.buttons == 4) {
+        event.preventDefault();
+        const oldPointers = this._pointers.slice();
+        this.setPointerCapture(event.pointerId);
+        this._pointers.push(event);
+
+        if(oldPointers.length == 1) {
+          const event = oldPointers[0];
+          this._singlePointerUp(event);
+        }
+        else if(oldPointers.length >= 2){
+          this._multiPointerUp(oldPointers);
+        }
+        if(this._pointers.length == 1) {
+          this._singlePointerDown(event);
+        }
+        else if(this._pointers.length >= 2){
+          this._multiPointerDown(this._pointers);
+        }
+      },
+
+      /** @param {PointerEvent} event */
+      _onPointerMove: function(event) {
+        if(!this.pannable) {
+          return;
+        }
+
+        // Replace the pointer with a more up-to-date version of the pointer
+        this._replacePointer(event);
+
+        if(this._pointers.length == 1) {
+          this._singlePointerMove(event);
+        }
+        else if(this._pointers.length >= 2){
+          this._multiPointerMove(this._pointers);
+        }
+      },
+
+      /** @param {PointerEvent} event */
+      _onPointerUp: function(event) {
+        // Ignore the `this.pannable` early return on purpose;
+        // we wanna keep picking up pointerUps again to disable .panning
+        // in case .pannable gets suddenly disarmed.
+
+        const oldPointers = this._pointers.slice();
+        this.releasePointerCapture(event.pointerId);
+        this._removePointer(event);
+
+        if(oldPointers.length == 1) {
+          this._singlePointerUp(event);
+        }
+        else if(oldPointers.length >= 2){
+          this._multiPointerUp(oldPointers);
+        }
+        if(this._pointers.length == 1) {
+          const event = this._pointers[0];
+          this._singlePointerDown(event);
+        }
+        else if(this._pointers.length >= 2) {
+          this._multiPointerDown(this._pointers);
+        }
+      },
+
+      /** @param {PointerEvent} pointer */
+      _singlePointerDown: function(pointer) {
+        if(pointer.buttons == 4) {
           this.fit = true;
           return;
         }
@@ -238,26 +334,23 @@
         this.fit = false;
         this._setPanning(true);
         this._initialPosition = this.position.slice();
-        this._initialPointerPosition = [event.clientX, event.clientY];
-        this.setPointerCapture(event.pointerId);
-
-        event.preventDefault();
+        this._initialPointerPosition = [pointer.clientX, pointer.clientY];
       },
 
-      /** @param {PointerEvent} event */
-      _onPointerMove: function(event) {
-        if(!this.pannable || !this.panning) {
+      /** @param {PointerEvent} pointer */
+      _singlePointerMove: function(pointer) {
+        if(!this.panning) {
           return;
         }
 
         this.fit = false;
-        const x = event.clientX;
-        const y = event.clientY;
+        const x = pointer.clientX;
+        const y = pointer.clientY;
         this._panFromInitial(x, y);
       },
 
-      /** @param {PointerEvent} event */
-      _onPointerUp: function(event) {
+      /** @param {PointerEvent} pointer */
+      _singlePointerUp: function(pointer) {
         if(!this.panning) {
           return;
         }
@@ -265,7 +358,18 @@
         this._setPanning(false);
         this._initialPosition = null;
         this._initialPointerPosition = null;
-        this.releasePointerCapture(event.pointerId);
+      },
+
+      /** @param {PointerEvent[]} pointers */
+      _multiPointerDown: function(pointers) {
+      },
+
+      /** @param {PointerEvent[]} pointers */
+      _multiPointerMove: function(pointers) {
+      },
+
+      /** @param {PointerEvent[]} pointers */
+      _multiPointerUp: function(pointers) {
       },
 
       /** @param {WheelEvent} event */
