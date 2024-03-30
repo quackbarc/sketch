@@ -1113,16 +1113,12 @@
 
           if(this.tool == "eraser") {
             this.$.sketch.activeStrokeErasing = event.shiftKey;
-            return false;
           }
 
           if(event.key == " ") {
             this.$.sketch._activeKeyTool = activating ? "pan" : "";
             event.preventDefault();
-            return false;
           }
-
-          return true;
         }
 
         this._restoreData();
