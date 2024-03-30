@@ -1611,10 +1611,25 @@
             newValue = this.$.sketch.eraserRadius += v;
             changedValue = this.$.sketch.eraserRadius;
             break;
+          case 'pen, true':
+            name = "sample rate";
+            newValue = this.$.sketch.timeResolution += v;
+            changedValue = this.$.sketch.timeResolution;
+            break;
+          case 'fill, true':
+            name = "fill spacing";
+            newValue = this.$.sketch.fillSpacing += v;
+            changedValue = this.$.sketch.fillSpacing;
+            break;
           case 'screentone, false':
             name = "screentone size";
             newValue = this.$.sketch.toneRadius += v;
             changedValue = this.$.sketch.toneRadius;
+            break;
+          case 'screentone, true':
+            name = "screentone spacing";
+            newValue = this.$.sketch.toneSpacing += v;
+            changedValue = this.$.sketch.toneSpacing;
             break;
         }
         // the sliders take care of the value limits, so we're taking advantage of
