@@ -244,7 +244,7 @@
 
       paper-dialog {
         font-size: 16px;
-        line-height: 1.2em;
+        max-width: 100%;
 
         --webkit-user-select: text;
         user-select: text;
@@ -265,6 +265,7 @@
         max-width: 600px;
         table-layout: fixed;
         border-spacing: 1em 0.5em;
+        line-height: 1.2em;
       }
 
       paper-dialog .markdown-html table th:nth-child(1) {
@@ -355,7 +356,7 @@
     </div>
 
     <paper-dialog id="dialogKeybind" with-backdrop>
-        <h2>Keyboard shortcuts</h2>
+        <h2>Keyboard shortcuts and controls</h2>
         <paper-dialog-scrollable>
             <marked-element>
                 <div class="markdown-html"></div>
