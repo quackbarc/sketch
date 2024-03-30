@@ -110,8 +110,6 @@
         height: 1,
       },
 
-      _ratio: 1,
-
       _notifyFit: true,
 
       _updatingViewport: false,
@@ -156,10 +154,6 @@
         this.addEventListener("pointerdown", this._onPointerDown.bind(this));
         this.addEventListener("pointermove", this._onPointerMove.bind(this));
         this.addEventListener("pointerup", this._onPointerUp.bind(this));
-
-        // DEBUGGING
-        // @ts-ignore
-        window.z = this;
       },
 
       // IronResizeBehavior event listeners
@@ -174,10 +168,8 @@
 
       _onDimensionsChanged: function(newValue, oldValue) {
         var parts = newValue.toString().split("/");
-
-        var width = this._contentDimensions.width = parseFloat(parts[0]);
-        var height = this._contentDimensions.height = parseFloat(parts[1] || 1);
-        this._ratio = width / height;
+        this._contentDimensions.width = parseFloat(parts[0]);
+        this._contentDimensions.height = parseFloat(parts[1] || 1);
 
         this._onIronResize();
       },
@@ -567,16 +559,16 @@
         const initialZoom = this._initialZoom;
         const zoom = this._clamp(this._initialZoom * ratio, [this.MINIMUM_ZOOM, this.MAXIMUM_ZOOM]);
 
+        // Same with _zoomInto's zooming, except we're offsetting it towards,
+        // and away from, the initial pointer position.
+        // Then, normal panning rules are be applied.
         const [ix, iy] = this._initialPointerPosition;
         const viewportX = ix - this.offsetWidth/2;
         const viewportY = iy - this.offsetHeight/2;
-        this.position[0] = (viewportX / initialZoom) + this._initialPosition[0] - (viewportX / zoom);
-        this.position[1] = (viewportY / initialZoom) + this._initialPosition[1] - (viewportY / zoom);
-
         const distanceX = x - ix;
         const distanceY = y - iy;
-        this.position[0] -= distanceX/this.zoom;
-        this.position[1] -= distanceY/this.zoom;
+        this.position[0] = (viewportX / initialZoom) + this._initialPosition[0] - ((viewportX + distanceX) / zoom);
+        this.position[1] = (viewportY / initialZoom) + this._initialPosition[1] - ((viewportY + distanceY) / zoom);
         this._restrictPosition(zoom);
 
         this.zoom = zoom;
