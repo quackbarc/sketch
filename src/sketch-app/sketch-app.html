@@ -308,7 +308,11 @@
     </style>
 
     <div class="content">
-      <zoom-container dimensions="800/600" id="container" pannable="{{pannable}}">
+      <zoom-container
+          id="container"
+          dimensions="800/600"
+          pannable="{{pannable}}"
+          panning="{{panning}}">
           <sketch-canvas
               id="sketch"
               ink="{{ink}}"
@@ -1170,6 +1174,11 @@
           computed: "_isPanning(tool)"
         },
 
+        panning: {
+          type: Boolean,
+          observer: "_onPanningChanged",
+        },
+
         // settings
 
         hideSwap: {
@@ -1363,6 +1372,11 @@
 
       _onAlert: function(message) {
         this._alert(message.detail);
+      },
+
+      _onPanningChanged: function(isPanning) {
+        const keyPanning = this.$.sketch._activeKeyTool == "pan";
+        this.$.sketch.lockTool = isPanning && keyPanning;
       },
 
       // Event handlers for buttons

@@ -136,6 +136,11 @@
           computed: '_tool(desiredTool, _activeTool, _activeKeyTool)',
           observer: '_onToolChanged'
         },
+        lockTool: {
+          type: Boolean,
+          value: false,
+          observer: '_onToolLocked'
+        },
         disabled: {
           type: Boolean,
           notify: true,
@@ -303,6 +308,8 @@
 
       _wasPlaying: false,
 
+      _lockedTool: null,
+
       _lastTool: null,
 
       _lastX: null,
@@ -387,6 +394,12 @@
 
         for(let e of events) {
           this._processEvent(e);
+        }
+      },
+
+      _onToolLocked(event) {
+        if(!this._lockedTool) {
+          this._lockedTool = this.tool;
         }
       },
 
@@ -498,6 +511,10 @@
             this._action(tool).middle(x, y, this._lastX, this._lastY);
           }
           else {
+            if(!this.lockTool) {
+              this._lockedTool = null;
+            }
+
             this.$.sketchCanvas.setPointerCapture(event.pointerId);
             this._action(tool).start(x, y);
             this._setDrawing(true);
@@ -519,6 +536,10 @@
       },
 
       _action: function(tool) {
+        if(this._lockedTool && this._lockedTool != tool) {
+          tool = null;
+        }
+
         switch(tool) {
           case 'pan':
             return {
@@ -555,6 +576,12 @@
               start: (() => void 0),
               middle: (() => void 0),
               end: this._fill.bind(this)
+            }
+          default:
+            return {
+              start: (() => void 0),
+              middle: (() => void 0),
+              end: (() => void 0)
             }
         }
       },

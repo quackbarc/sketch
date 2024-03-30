@@ -19,7 +19,7 @@
         cursor: grab;
       }
 
-      :host[panning] {
+      :host[pannable][panning] {
         cursor: grabbing;
       }
     </style>
@@ -65,6 +65,7 @@
         panning: {
           type: Boolean,
           value: false,
+          notify: true,
           readOnly: true,
           reflectToAttribute: true,
         },
