@@ -114,6 +114,8 @@
 
       _notifyFit: true,
 
+      _updatingViewport: false,
+
       /**
        * @type {PointerEvent[]}
        * The current pointers being pressed down.
@@ -547,13 +549,26 @@
         this.zoom = zoom;
       },
 
+      // Throttle calls to the transform, as an effort on making it speedier.
+      // Looks like it's doing its job.
       _updateViewport: function() {
+        if(this._updatingViewport) {
+          return;
+        }
+
+        window.requestAnimationFrame(this.__updateViewport.bind(this));
+        this._updatingViewport = true;
+      },
+
+      __updateViewport: function() {
         const x = Math.floor(-this.position[0] * this.zoom);
         const y = Math.floor(-this.position[1] * this.zoom);
         this.contentElement.style.transform = `matrix(${this.zoom}, 0, 0, ${this.zoom}, ${x}, ${y})`;
 
         // Notify about the canvas bounding rect change down the chain
         this.notifyResize();
+
+        this._updatingViewport = false;
       },
     };
 
