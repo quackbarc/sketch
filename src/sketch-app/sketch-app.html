@@ -439,11 +439,8 @@
           on-tap="_move"></paper-icon-button>
       <paper-icon-button
           title="{{localize('pen')}}"
-          icon="create"
-          disabled="{{_toolDisabled(sketchDisabled, loading)}}"
-          active="{{_isDrawing(tool)}}"
-          toggles="{{!_isDrawing(tool)}}"
-          on-tap="_draw"></paper-icon-button>
+          icon="close"
+          disabled></paper-icon-button>
       <paper-menu-button
           id="menuFill"
           disabled="{{_toolDisabled(sketchDisabled, loading)}}"
@@ -552,7 +549,7 @@
       </paper-menu-button>
       <paper-menu-button
           id="menuScreentone"
-          disabled="{{_toolDisabled(sketchDisabled, loading)}}"
+          disabled
           dynamic-align
           allow-outside-scroll
           ignore-select
@@ -562,7 +559,7 @@
         <paper-icon-button
             class="dropdown-trigger"
             title="{{localize('screentone')}}"
-            icon="editor:border-clear"
+            icon="close"
             active="{{_isToning(tool)}}"
             toggles="{{!_isToning(tool)}}"></paper-icon-button>
           <div class="dropdown-content settings">
@@ -975,20 +972,12 @@
         on-keys-pressed="_reset"></iron-a11y-keys>
     <iron-a11y-keys
         target="[[target]]"
-        keys="s"
-        on-keys-pressed="_screentone"></iron-a11y-keys>
-    <iron-a11y-keys
-        target="[[target]]"
         keys="e"
         on-keys-pressed="_erase"></iron-a11y-keys>
     <iron-a11y-keys
         target="[[target]]"
         keys="m"
         on-keys-pressed="_move"></iron-a11y-keys>
-    <iron-a11y-keys
-        target="[[target]]"
-        keys="b p"
-        on-keys-pressed="_draw"></iron-a11y-keys>
     <iron-a11y-keys
         target="[[target]]"
         keys="f"
@@ -1382,7 +1371,7 @@
       },
 
       _draw: function() {
-        this.$.sketch.desiredTool = 'pen';
+        // nothing!
       },
 
       _move: function() {
@@ -1390,7 +1379,7 @@
       },
 
       _screentone: function(e) {
-        this._menuAction(e, this.$.menuScreentone, 'screentone');
+        // nothing!
       },
 
       _fill: function(e) {
