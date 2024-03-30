@@ -1018,11 +1018,7 @@
         on-keys-pressed="_copyImage"></iron-a11y-keys>
     <iron-a11y-keys
         target="[[target]]"
-        keys="["
-        on-keys-pressed="_changeSize"></iron-a11y-keys>
-    <iron-a11y-keys
-        target="[[target]]"
-        keys="]"
+        keys="[ ] { }"
         on-keys-pressed="_changeSize"></iron-a11y-keys>
     <iron-a11y-keys
         target="[[target]]"
@@ -1603,25 +1599,30 @@
 
       _changeSize: function(e) {
         e.preventDefault();
-        var v = e.detail.key == '[' ? -1 : 1;
+        var v = (e.detail.key == '[' || e.detail.key == '{') ? -1 : 1;
         var tool = this.$.sketch.tool;
-        var newValue, changedValue;
+        var newValue, changedValue, name;
 
-        switch(tool) {
-          case 'eraser':
+        const keyEvent = e.detail.keyboardEvent;
+        const query = `${tool}, ${keyEvent.shiftKey}`;
+        switch(query) {
+          case 'eraser, false':
+            name = "eraser size";
             newValue = this.$.sketch.eraserRadius += v;
             changedValue = this.$.sketch.eraserRadius;
             break;
-          case 'screentone':
+          case 'screentone, false':
+            name = "screentone size";
             newValue = this.$.sketch.toneRadius += v;
             changedValue = this.$.sketch.toneRadius;
+            break;
         }
         // the sliders take care of the value limits, so we're taking advantage of
         // that instead of hard-coding the limits again
         newValue = changedValue != newValue ? changedValue : newValue;
 
-        if(newValue) {
-          this._alert(`${tool} size: ${newValue}`);
+        if(newValue != null) {
+          this._alert(`${name}: ${newValue}`);
         }
       },
 
