@@ -362,14 +362,40 @@
 
       /** @param {PointerEvent[]} pointers */
       _multiPointerDown: function(pointers) {
+        const pinchDistance = this._getPinchDistance(pointers);
+        const [x, y] = this._getPinchMidpoint(pointers);
+
+        this.fit = false;
+        this._setPanning(true);
+        this._initialPosition = this.position.slice();
+        this._initialPointerPosition = [x, y];
+        this._initialPinchDistance = pinchDistance;
       },
 
       /** @param {PointerEvent[]} pointers */
       _multiPointerMove: function(pointers) {
+        if(!this.panning) {
+          return;
+        }
+
+        const pinchDistance = this._getPinchDistance(pointers);
+        const [x, y] = this._getPinchMidpoint(pointers);
+
+        this.fit = false;
+        this._panFromInitial(x, y);
+        this._zoomFromInitialPinch(pinchDistance);
       },
 
       /** @param {PointerEvent[]} pointers */
       _multiPointerUp: function(pointers) {
+        if(!this.panning) {
+          return;
+        }
+
+        this._setPanning(false);
+        this._initialPosition = null;
+        this._initialPointerPosition = null;
+        this._initialPinchDistance = null;
       },
 
       /** @param {WheelEvent} event */
@@ -395,6 +421,34 @@
        */
       _clamp: function(n, [min, max]) {
         return Math.min(max, Math.max(min, n));
+      },
+
+      /** 
+       * @param {PointerEvent[]} pointers
+       */
+      _getPinchDistance: function(pointers) {
+        const xs = pointers.map(p => p.clientX);
+        const ys = pointers.map(p => p.clientY);
+        const minX = Math.min(...xs);
+        const minY = Math.min(...ys);
+        const pinchDistance = Math.hypot(
+          Math.min(...xs) - Math.max(...xs),
+          Math.min(...ys) - Math.max(...ys),
+        )
+        return pinchDistance;
+      },
+
+      /** 
+       * @param {PointerEvent[]} pointers
+       * @returns {[number, number]}
+       *    The midpoint's [x,y].
+       */
+      _getPinchMidpoint: function(pointers) {
+        const xs = pointers.map(p => p.clientX);
+        const ys = pointers.map(p => p.clientY);
+        const x = xs.reduce((acc, x) => acc + x) / pointers.length;
+        const y = ys.reduce((acc, y) => acc + y) / pointers.length;
+        return [x, y];
       },
 
       /**
