@@ -240,6 +240,8 @@
         this._initialPosition = this.position.slice();
         this._initialPointerPosition = [event.clientX, event.clientY];
         this.setPointerCapture(event.pointerId);
+
+        event.preventDefault();
       },
 
       /** @param {PointerEvent} event */
@@ -274,6 +276,8 @@
           event.clientY,
           this.zoom * zoomFactor,
         );
+
+        event.preventDefault();
       },
 
       // Zooming/panning methods
