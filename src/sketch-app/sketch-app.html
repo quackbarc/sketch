@@ -1048,6 +1048,8 @@
   </template>
 
   <script>
+    const ALL_BLACK_INK = 2708 / 65_535;
+
     Polymer({
       is: 'sketch-app',
 
@@ -1204,7 +1206,7 @@
       // Private methods
 
       _swapDisabled: function(sketchDisabled, sketchFlipped, allowFlipped, loading, ink) {
-        return sketchDisabled || (!allowFlipped && sketchFlipped) || loading || ink <= 0;
+        return sketchDisabled || (!allowFlipped && sketchFlipped) || loading || ink <= 0 || ink == ALL_BLACK_INK;
         /* ink might be affected by the negative ink bug but i'm not
            sure if that's still around after the eraser fix */
       },
@@ -1214,7 +1216,7 @@
       },
 
       _resetDisabled: function(sketchDisabled, loading, enabled, ink) {
-        return loading || ink <= 0 || (sketchDisabled ? false : !enabled);
+        return loading || ink <= 0 || ink == ALL_BLACK_INK || (sketchDisabled ? false : !enabled);
       },
 
       _undoDisabled: function(sketchDisabled, loading, enabled, undoDisabled) {
@@ -1226,7 +1228,7 @@
       },
 
       _rememberTab: function(autosave, sketchDisabled, ink) {
-        return autosave && !sketchDisabled && ink > 0;
+        return autosave && !sketchDisabled && (ink > 0 && ink != ALL_BLACK_INK);
       },
 
       _saveData: function() {
