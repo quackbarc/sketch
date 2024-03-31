@@ -9,8 +9,8 @@
 
 | Keybind          | Description      |
 |:-----------------|:-----------------|
-| `P` or `B`       | Switches to the Pen tool. |
-| `S`              | Switches to the Screentone tool. |
+| `P` or `B`       | Switches to the ??? tool. |
+| `S`              | Switches to the ????????? tool. |
 | `M`              | Switches to the Move tool. |
 | `E`              | Switches to the Eraser tool. |
 | `F`              | Switches to the Fill tool. |

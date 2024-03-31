@@ -742,7 +742,7 @@
                       checked="{{keybindToggling}}"
                       noink></paper-toggle-button>
               </paper-item>
-              <paper-item class="settings-item">
+              <paper-item class="settings-item" disabled>
                   <paper-item-body two-line>
                       <div>Automatically save sketch and history</div>
                       <div secondary>
@@ -751,6 +751,7 @@
                       </div>
                   </paper-item-body>
                   <paper-toggle-button
+                      disabled
                       checked="{{autosave}}"
                       noink></paper-toggle-button>
               </paper-item>
@@ -829,12 +830,13 @@
                     </paper-listbox>
                   </paper-dropdown-menu>
               </paper-item>
-              <paper-item class="settings-item dropdown">
+              <paper-item class="settings-item dropdown" disabled>
                   <paper-item-body two-line>
                       <div>Background</div>
                       <div secondary>Page background of the app</div>
                   </paper-item-body>
                   <paper-dropdown-menu
+                    disabled
                     no-label-float>
                     <paper-listbox
                       class="dropdown-content"
@@ -897,7 +899,7 @@
 
               <hr>
               <h2>Etch-a-Sketch</h2>
-              <paper-item class="settings-item">
+              <paper-item class="settings-item" disabled>
                   <paper-item-body two-line>
                       <div>Etch-a-Sketch mode</div>
                       <div secondary>
@@ -905,10 +907,11 @@
                       </div>
                   </paper-item-body>
                   <paper-toggle-button
+                      disabled
                       checked="{{etchMode}}"
                       noink></paper-toggle-button>
               </paper-item>
-              <paper-item class="settings-item slider">
+              <paper-item class="settings-item slider" disabled>
                   <paper-item-body two-line>
                       <div>Line step</div>
                       <div secondary>Line length per step, in px</div>
@@ -1169,12 +1172,12 @@
             1, dark background
           */
           type: Number,
-          value: 0,
+          value: 1,
           observer: "_onBackgroundChange"
         },
         autosave: {
           type: Boolean,
-          value: true
+          value: false
         },
         keybindToggling: {
           type: Boolean,
@@ -1259,13 +1262,19 @@
           animationSpeed: this.$.sketch.animationSpeed,
           limitedInk: this.$.sketch.$.data.limitedInk,
           ignoreTouch: this.$.sketch.ignoreTouch,
-          autosave: this.autosave,
+          autosave: savedSettings.autosave == null
+            ? this.autosave
+            : savedSettings.autosave,
           keybindToggling: this.keybindToggling,
           hideSwap: this.hideSwap,
           gallerySource: this.gallerySource,
           allowFlippedSwaps: this.allowFlippedSwaps,
-          backgroundType: this.backgroundType,
-          renderType: savedSettings.renderType == null ? this.$.sketch.renderType : savedSettings.renderType,
+          backgroundType: savedSettings.backgroundType == null
+            ? this.backgroundType
+            : savedSettings.backgroundType,
+          renderType: savedSettings.renderType == null
+            ? this.$.sketch.renderType
+            : savedSettings.renderType,
         };
 
         localStorage.setItem('settings', JSON.stringify(settings));
@@ -1281,12 +1290,10 @@
           this._setSetting("animationSpeed", settings);
           this._setSetting("limitedInk", settings);
           this._setSetting("ignoreTouch", settings, this.$.sketch);
-          this._setSetting("autosave", settings);
           this._setSetting("hideSwap", settings);
           this._setSetting("keybindToggling", settings);
           this._setSetting("gallerySource", settings);
           this._setSetting("allowFlippedSwaps", settings);
-          this._setSetting("backgroundType", settings);
         }
 
         var toolSettings = JSON.parse(localStorage.getItem('toolSettings'));
