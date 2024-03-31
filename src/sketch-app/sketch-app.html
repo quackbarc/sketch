@@ -1229,18 +1229,6 @@
       },
 
       _saveData: function() {
-        if(this.rememberTab) {
-          var save = {
-            history: this.$.sketch.$.data.history,
-            head: this.$.sketch.$.data.head
-          };
-
-          localStorage.setItem('save' + this.tabID, JSON.stringify(save));
-        }
-        else {
-          localStorage.removeItem('save' + this.tabID);
-        }
-
         var toolSettings = {
           tool: this.tool,
           eraserRadius: this.$.sketch.eraserRadius,
@@ -1294,13 +1282,6 @@
           this._setSetting("allowFlippedSwaps", settings);
           this._setSetting("backgroundType", settings);
           this._setSetting("renderType", settings);
-        }
-
-        var save = JSON.parse(localStorage.getItem('save' + this.tabID));
-        if(save) {
-          this._setSetting("history", save, this.$.sketch.$.data);
-          this._setSetting("head", save, this.$.sketch.$.data);
-          this.$.sketch.refreshLines();
         }
 
         var toolSettings = JSON.parse(localStorage.getItem('toolSettings'));
