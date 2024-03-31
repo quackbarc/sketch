@@ -18,20 +18,35 @@
         position: fixed;
         margin: 0;
 
-        --primary-color: #980706;
-        --dark-primary-color: #3c0101;
+        background: #000;
+
+        --primary-color: #999;
+        --primary-text-color: #fff;
+        --dark-primary-color: #444;
+        --toolbar-color: #000;
         /* --light-primary-color: var(--paper-red-500); */
 
-        --accent-color: var(--paper-indigo-a200);
+        --accent-color: var(--primary-color);
         --light-accent-color: var(--paper-indigo-a100);
         --dark-accent-color: var(--paper-indigo-a400);
 
-        --paper-progress-active-color: var(--paper-indigo-a200);
+        --paper-listbox-background-color: #000;
+        --paper-toggle-button-unchecked-bar-color: var(--dark-primary-color);
+        --paper-toggle-button-unchecked-button-color: var(--dark-primary-color);
+        --paper-toolbar-background: var(--toolbar-color);
+        --paper-progress-active-color: var(--primary-color);
+        --paper-slider-active-color: var(--dark-primary-color);
+        --paper-slider-secondary-color: var(--dark-primary-color);
+        --paper-slider-knob-color: var(--dark-primary-color);
         --paper-slider-input: {width: 80px};
       }
 
-      .background-dark {
-        background-color: #222;
+      /**
+       * It takes a bit for browsers to render gradients while it's loading,
+       * so we'll only deploy them by the time it's done doing that
+       */
+      sketch-app {
+         background: radial-gradient(#050505, #000); 
       }
     </style>
 
