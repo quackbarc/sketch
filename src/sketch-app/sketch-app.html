@@ -711,12 +711,13 @@
 
               <hr>
               <h2>General</h2>
-              <paper-item class="settings-item slider">
+              <paper-item class="settings-item slider" disabled>
                   <paper-item-body two-line>
                       <div>Sample rate</div>
                       <div secondary>Input latency, in ms</div>
                   </paper-item-body>
                   <paper-slider
+                      disabled
                       value="{{timeResolution}}"
                       min="0"
                       max="50"
@@ -1257,7 +1258,9 @@
 
         const savedSettings = JSON.parse(localStorage.getItem('settings') || "{}");
         var settings = {
-          timeResolution: this.$.sketch.timeResolution,
+          timeResolution: savedSettings.timeResolution == null
+            ? this.$.sketch.timeResolution
+            : savedSettings.timeResolution,
           timeResolutionLimited: this.$.sketch.timeResolutionLimited,
           animationSpeed: this.$.sketch.animationSpeed,
           limitedInk: this.$.sketch.$.data.limitedInk,
@@ -1285,7 +1288,6 @@
 
         var settings = JSON.parse(localStorage.getItem('settings'));
         if(settings) {
-          this._setSetting("timeResolution", settings);
           this._setSetting("timeResolutionLimited", settings);
           this._setSetting("animationSpeed", settings);
           this._setSetting("limitedInk", settings);
