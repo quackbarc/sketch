@@ -444,11 +444,8 @@
       </paper-menu-button>
       <paper-icon-button
           title="{{localize('move')}}"
-          icon="mdi:cursor-move"
-          disabled="{{_toolDisabled(sketchDisabled, loading)}}"
-          active="{{_isMoving(tool)}}"
-          toggles="{{!_isMoving(tool)}}"
-          on-tap="_move"></paper-icon-button>
+          icon="close"
+          disabled></paper-icon-button>
       <paper-icon-button
           title="{{localize('pen')}}"
           icon="close"
@@ -993,10 +990,6 @@
         on-keys-pressed="_erase"></iron-a11y-keys>
     <iron-a11y-keys
         target="[[target]]"
-        keys="m"
-        on-keys-pressed="_move"></iron-a11y-keys>
-    <iron-a11y-keys
-        target="[[target]]"
         keys="f"
         on-keys-pressed="_fill"></iron-a11y-keys>
     <iron-a11y-keys
@@ -1399,7 +1392,7 @@
       },
 
       _move: function() {
-        this.$.sketch.desiredTool = 'move';
+        // nothing!
       },
 
       _screentone: function(e) {
