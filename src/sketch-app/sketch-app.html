@@ -1233,8 +1233,9 @@
       },
 
       _saveData: function() {
+        const savedToolSettings = JSON.parse(localStorage.getItem('toolSettings') || "{}");
         var toolSettings = {
-          tool: this.tool,
+          tool: savedToolSettings.tool == null ? this.tool : savedToolSettings.tool,
           eraserRadius: this.$.sketch.eraserRadius,
           eraseStrokes: this.$.sketch.eraseStrokes,
           etchStep: this.$.sketch.lineStep,
@@ -1290,7 +1291,6 @@
 
         var toolSettings = JSON.parse(localStorage.getItem('toolSettings'));
         if(toolSettings) {
-          this._setSetting("tool", toolSettings, this.$.sketch, "desiredTool");
           this._setSetting("eraserRadius", toolSettings);
           this._setSetting("eraseStrokes", toolSettings);
           this._setSetting("etchStep", toolSettings, this.$.sketch, "lineStep");
