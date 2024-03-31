@@ -844,12 +844,13 @@
                     </paper-listbox>
                   </paper-dropdown-menu>
               </paper-item>
-              <paper-item class="settings-item dropdown">
+              <paper-item class="settings-item dropdown" disabled>
                   <paper-item-body two-line>
                       <div>Rendering style</div>
                       <div secondary>How sketches are rendered in the app</div>
                   </paper-item-body>
                   <paper-dropdown-menu
+                    disabled
                     dynamic-align
                     no-label-float>
                     <paper-listbox
@@ -1250,6 +1251,7 @@
 
         localStorage.setItem('toolSettings', JSON.stringify(toolSettings));
 
+        const savedSettings = JSON.parse(localStorage.getItem('settings') || "{}");
         var settings = {
           timeResolution: this.$.sketch.timeResolution,
           timeResolutionLimited: this.$.sketch.timeResolutionLimited,
@@ -1262,7 +1264,7 @@
           gallerySource: this.gallerySource,
           allowFlippedSwaps: this.allowFlippedSwaps,
           backgroundType: this.backgroundType,
-          renderType: this.$.sketch.renderType,
+          renderType: savedSettings.renderType == null ? this.$.sketch.renderType : savedSettings.renderType,
         };
 
         localStorage.setItem('settings', JSON.stringify(settings));
@@ -1284,7 +1286,6 @@
           this._setSetting("gallerySource", settings);
           this._setSetting("allowFlippedSwaps", settings);
           this._setSetting("backgroundType", settings);
-          this._setSetting("renderType", settings);
         }
 
         var toolSettings = JSON.parse(localStorage.getItem('toolSettings'));
