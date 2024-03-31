@@ -20,6 +20,11 @@
         'redo': '_onRedo'
       },
 
+      ready: function() {
+        this.black();
+        this.clearHistory();
+      },
+
       // Public properties
 
       properties: {
@@ -545,6 +550,25 @@
       // Other public functions
 
       /**
+       * Sets the canvas to be black.
+       */
+      black: function() {
+        const black = [];
+        for(let y = 0; y <= 600; y += 2) {
+          black.push([0, y, 800, y]);
+        }
+        this._shuffleArray(black);
+
+        const action = {
+          start: 0,
+          added: black,
+          removed: this.lines.map(line => line.slice())
+        };
+        this._doAction([action])
+        this.pushHistory([action]);
+      },
+
+      /**
        * Regenerates sketch data by traversing the undo history.
        */
       refreshLines: function() {
@@ -875,6 +899,20 @@
         );
 
         return retpoints;
+      },
+
+      /**
+       * Shuffles a given array in-place.
+       * Uses the Durstenfeld shuffle, as implemented here:
+       * https://stackoverflow.com/a/12646864
+       *
+       * @param {Array} array
+       */
+      _shuffleArray: function(array) {
+        for(let i = array.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [array[i], array[j]] = [array[j], array[i]];
+        }
       },
 
       // Private number methods

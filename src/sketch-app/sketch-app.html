@@ -1410,7 +1410,7 @@
           this.$.sketch.$.data.history = this.$.sketch.$.data.history.slice(0, -1);
         }
 
-        this.$.sketch.data = "";
+        this.$.sketch.black();
         if(this.sketchDisabled && this.undoDisabled) {
           this.$.sketch.$.data.clearHistory();
         }

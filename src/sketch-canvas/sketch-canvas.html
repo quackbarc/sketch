@@ -83,7 +83,7 @@
         this._bounds = this.getBoundingClientRect();
 
         this._updateRendering();
-        this._clear();
+        this._render();
       },
 
       behaviors: [
@@ -343,6 +343,11 @@
 
       flip: function() {
         this._setFlipped(!this.flipped);
+      },
+
+      black: function() {
+        this.$.data.black();
+        this._render();
       },
 
       refreshLines: function() {
