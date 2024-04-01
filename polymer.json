@@ -11,7 +11,7 @@
   "extraDependencies": [
     "assets/*",
     "src/sketch-app/*.md",
-    "manifest.json",
-    "favicon.ico"
+    "favicon.ico",
+    "manifest.json"
   ]
 }
