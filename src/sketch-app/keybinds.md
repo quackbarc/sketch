@@ -12,11 +12,11 @@
 | `P` or `B`       | Switches to the ??? tool. |
 | `S`              | Switches to the ????????? tool. |
 | `M`              | Switches to the ???? tool. |
-| `E`              | Switches to the Eraser tool. |
+| `E`              | Switches to the Flashlight tool. |
 | `F`              | Switches to the Fill tool. |
-| `[`              | Decreases brush size (eraser/screentone). |
-| `]`              | Increases brush size (eraser/screentone). |
-| `Shift` (hold)   | Activates stroke erasing (eraser). |
+| `[`              | Decreases brush size (flashlight/screentone). |
+| `]`              | Increases brush size (flashlight/screentone). |
+| `Shift` (hold)   | Activates stroke erasing (flashlight). |
 | `Delete`         | Clears the canvas. |
 | `Ctrl`+`Z`       | Undoes an action. |
 | `Ctrl`+`Y`       | Redoes the last action. |

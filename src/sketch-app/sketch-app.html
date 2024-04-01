@@ -412,17 +412,17 @@
           <paper-icon-button
               class="dropdown-trigger"
               title="{{localize('eraser')}}"
-              icon="mdi:eraser-variant"
+              icon="editor:highlight"
               active="{{_isErasing(tool)}}"
               toggles="{{!_isErasing(tool)}}"></paper-icon-button>
           <div class="dropdown-content settings">
-              <h2>Eraser</h2>
+              <h2>Flashlight</h2>
               <paper-item class="settings-item">
                   <paper-item-body two-line>
-                      <div>Erase strokes</div>
+                      <div>Flash strokes and rows</div>
                       <div secondary>
-                        Erases entire lines instead of line corners. Holding
-                        down Shift while erasing also activates this.
+                        Flashes entire rows instead of just small areas.
+                        Holding down Shift also activates this.
                       </div>
                   </paper-item-body>
                   <paper-toggle-button
@@ -1574,6 +1574,9 @@
         newValue = changedValue != newValue ? changedValue : newValue;
 
         if(newValue) {
+          if(tool == "eraser") {
+            tool = "flashlight";
+          }
           this._alert(`${tool} size: ${newValue}`);
         }
       },
