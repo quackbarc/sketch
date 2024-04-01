@@ -445,6 +445,7 @@
 
         modeSettings.limitedInk = this.limitedInk;
         action.added = this._fillPattern(slope, maskLines, mode, modeSettings);
+        this._shuffleArray(action.added);
 
         if(action.added.length >= 1) {
           this._doAction([action]);
