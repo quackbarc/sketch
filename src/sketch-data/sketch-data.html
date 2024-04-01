@@ -286,6 +286,21 @@
 
         for(let lineInd = this.lines.length - 1; lineInd >= 0; lineInd--) {
           const line = this.lines[lineInd];
+
+          // Normal non-fill lines can come from pastes. Erase them like normal.
+          if(line.length > 4) {
+            const added = this._eraseLineNormal(line, x, y, radius, eraseStrokes);
+            if(added) {
+              const action = {
+                start: lineInd,
+                added: added,
+                removed: [line.slice()],
+              };
+              actions.push(action);
+            }
+            continue;
+          }
+
           const [x1, y1, x2, y2] = line;
           const ints = this._intersections([[x1, y1], [x2, y2]], esquare);
           const within = this._within([x1, y1], esquare) && this._within([x2, y2], esquare);
@@ -729,6 +744,42 @@
         if(oldLength > 0 && this.lines.length == 0) {
           this._setLength(0);
         }
+      },
+
+      /**
+       * @param {number[]} line
+       * @param {number} x
+       * @param {number} y
+       * @param {number} width
+       * @param {boolean} eraseStrokes
+       * 
+       * @returns {number[][]}
+       *    The lines created by the erase. Can have 0 to 2 lines.
+       */
+      _eraseLineNormal: function(line, x, y, width, eraseStrokes) {
+        const newLines = [];
+        const rect = [[x - width, y - width], [x + width, y + width]];
+
+        for(var j = 0; j < line.length; j += 2) {
+          if(this._within([line[j], line[j+1]], rect)) {
+            if(eraseStrokes) {
+              return [];
+            }
+
+            const first = line.slice(0, j);
+            const second = line.slice(j + 2);
+            if(first.length > 2) {
+              newLines.push(first);
+            }
+            if(second.length > 2) {
+              newLines.push(second);
+            }
+
+            return newLines;
+          }
+        }
+
+        return null;
       },
 
       _fillPattern: function(slope, maskLines, type = "normal", settings = {}) {
