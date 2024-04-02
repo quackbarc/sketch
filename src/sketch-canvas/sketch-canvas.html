@@ -73,9 +73,8 @@
           // And its software rendering looks terrible, especially for fills.
           willReadFrequently: false,
         });
-        this._canvas.strokeStyle = "black";
-        this._canvas.lineWidth = 3;
-        this._canvas.fillStyle = "black";
+        // Restore rendering on GPU or other driver crashes
+        this._canvas.canvas.addEventListener("contextrestored", this._updateRendering.bind(this));
 
         // Polymer seems to only start registering private properties for
         // computed ones only when they're assigned during ready().
@@ -437,6 +436,9 @@
           return;
         }
 
+        this._canvas.strokeStyle = "black";
+        this._canvas.lineWidth = 3;
+        this._canvas.fillStyle = "black";
         this._canvas.lineJoin = "round";
         this._canvas.lineCap = "round";
         if(this.renderType >= 1) {
