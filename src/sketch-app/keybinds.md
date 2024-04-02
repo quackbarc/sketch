@@ -9,18 +9,18 @@
 
 | Keybind          | Description      |
 |:-----------------|:-----------------|
-| `P` or `B`       | Switches to the ??? tool. |
-| `S`              | Switches to the ????????? tool. |
-| `M`              | Switches to the ???? tool. |
-| `E`              | Switches to the Flashlight tool. |
+| `P` or `B`       | Switches to the Pen tool. |
+| `S`              | Switches to the Screentone tool. |
+| `M`              | Switches to the Move tool. |
+| `E`              | Switches to the Eraser tool. |
 | `F`              | Switches to the Fill tool. |
-| `[`              | Decreases brush size (flashlight/screentone). |
-| `]`              | Increases brush size (flashlight/screentone). |
-| `Shift` (hold)   | Activates stroke erasing (flashlight). |
+| `[`              | Decreases brush size (eraser/screentone). |
+| `]`              | Increases brush size (eraser/screentone). |
+| `Shift` (hold)   | Activates stroke erasing (eraser). |
 | `Delete`         | Clears the canvas. |
 | `Ctrl`+`Z`       | Undoes an action. |
 | `Ctrl`+`Y`       | Redoes the last action. |
-| `↑` `↓` `←` `→`  | I don't remember what these do. |
+| `↑` `↓` `←` `→`  | Moves the sketch by 1 pixel (move). |
 
 ---
 
