@@ -1134,7 +1134,8 @@
         }
         this._clipboardReadTextDisabled = clipboardReadTextDisabled;
 
-        this._updateChangelogs();
+        this._updateChangelogs()
+          .then(() => this._alertNewChangelogs());
 
         // Prevent Chrome from capturing CTRL+S
         function preventSaving(event) {
@@ -1887,7 +1888,7 @@
         this.$.changelogsContent.markdown = markdownLines.join("\n\n");
       },
 
-      _alert: async function(message) {
+      _alert: async function(message, ms=3000) {
         var title = document.querySelector('.title');
         var span = document.querySelector('.title span');
         var alertSpan = document.querySelector('#alert');
@@ -1899,7 +1900,7 @@
         }
         this._hideStats();
 
-        let sleepPromise = this._sleepPromise = this._sleep(3000);
+        let sleepPromise = this._sleepPromise = this._sleep(ms);
         await sleepPromise;
 
         if(this._sleepPromise === sleepPromise) {
@@ -1908,6 +1909,28 @@
           this.$.toolbar.classList.remove("alertOnly");
           this._hideStats();
         }
+      },
+
+      _alertNewChangelogs: async function() {
+        // It should be fine to repeatedly fetch releases;
+        // requests get cached for a minute.
+        const headers = {
+          "X-GitHub-Api-Version": "2022-11-28",
+        };
+        const releasesURL = "https://api.github.com/repos/quackbarc/sketch/releases";
+        const releases = await fetch(releasesURL, {headers}).then(resp => resp.json());
+        const latestRelease = releases[0];
+        if(!latestRelease) {
+          return;
+        }
+
+        const hasSettings = !!localStorage.getItem("settings");
+        const latestVersion = latestRelease.name;
+        const lastVersion = localStorage.getItem("lastRelease");
+        if(lastVersion ? lastVersion != latestVersion : hasSettings) {
+          this._alert("new update! check changelogs in settings", 5000);
+        }
+        localStorage.setItem("lastRelease", latestVersion);
       },
 
       _sleep: function(ms) {
