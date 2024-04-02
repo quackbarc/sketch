@@ -355,7 +355,7 @@
           on-tap="_swap"></paper-fab>
     </div>
 
-    <paper-dialog id="dialogKeybind" with-backdrop>
+    <paper-dialog id="keybindDialog" with-backdrop>
         <h2>Keyboard shortcuts and controls</h2>
         <paper-dialog-scrollable>
             <marked-element>
@@ -1793,11 +1793,11 @@
       },
 
       _openKeybindMenu: function() {
-        this.$.dialogKeybind.open();
+        this.$.keybindDialog.open();
       },
 
       _toggleKeybindMenu: function() {
-        this.$.dialogKeybind.toggle();
+        this.$.keybindDialog.toggle();
       },
 
       _alert: async function(message) {
