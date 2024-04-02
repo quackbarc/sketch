@@ -37,6 +37,8 @@ Adjustable settings with `[` and `]`:
 
 | Keybind          | Description      |
 |:-----------------|:-----------------|
+| `-`/`+`          | Adjusts the zoom level. |
+| `0`              | Resets the zoom level to fit the window. |
 | `↓`              | Flips the canvas horizontally. |
 
 - Scrolling with any tool will zoom the canvas in and out.

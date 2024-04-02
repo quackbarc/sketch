@@ -1026,6 +1026,14 @@
         on-keys-pressed="_changeSize"></iron-a11y-keys>
     <iron-a11y-keys
         target="[[target]]"
+        keys="- ="
+        on-keys-pressed="_changeZoom"></iron-a11y-keys>
+    <iron-a11y-keys
+        target="[[target]]"
+        keys="0"
+        on-keys-pressed="_resetZoom"></iron-a11y-keys>
+    <iron-a11y-keys
+        target="[[target]]"
         keys="down"
         on-keys-pressed="_flip"></iron-a11y-keys>
     <iron-a11y-keys
@@ -1643,6 +1651,15 @@
         if(newValue != null) {
           this._alert(`${name}: ${newValue}`);
         }
+      },
+
+      _changeZoom: function(event) {
+        var zoomFactor = (event.detail.key == '-') ? 7/10 : 10/7;
+        this.$.container.zoom *= zoomFactor;
+      },
+
+      _resetZoom: function() {
+        this.$.container.fit = true;
       },
 
       _arrowKeys: function() {
