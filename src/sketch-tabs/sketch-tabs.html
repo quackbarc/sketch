@@ -1,10 +1,10 @@
 <script>
-  const KEEP_ALIVE_INTERVAL = 30_000;
+  const KEEP_ALIVE_INTERVAL = 30000;
   // TIMEOUT breakdown:
   // Chrome's 60-second throttling for setInterval() calls
   // (https://developer.chrome.com/blog/timer-throttling-in-chrome-88/),
   // plus the interval, and a 10s grace period for good measure.
-  const KEEP_ALIVE_TIMEOUT = 70_000 + KEEP_ALIVE_INTERVAL;
+  const KEEP_ALIVE_TIMEOUT = 70000 + KEEP_ALIVE_INTERVAL;
 
   window.Sketch = window.Sketch || {};
   Sketch.TabBehavior = {
