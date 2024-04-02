@@ -244,16 +244,24 @@
 
       paper-dialog {
         font-size: 16px;
-        max-width: 100%;
+        max-width: 600px;
 
         --webkit-user-select: text;
         user-select: text;
       }
 
-      paper-dialog h2 {
+      paper-dialog > h2 {
         text-transform: uppercase;
         letter-spacing: 2px;
         font-size: 24px;
+      }
+
+      paper-dialog .markdown-html li {
+        margin-block: 0.25em;
+      }
+
+      paper-dialog .markdown-html img {
+        width: 100%;
       }
 
       paper-dialog .markdown-html h3 {
@@ -272,11 +280,19 @@
         width: 30%;
       }
 
-      paper-dialog .markdown-html code {
+      paper-dialog#keybindDialog .markdown-html code {
         background-color: #0001;
         padding: 2px 5px;
         border: 2px solid #0003;
         border-radius: 5px;
+      }
+
+      paper-dialog#changelogs .markdown-html h1.version-name {
+        text-align: center;
+        font-family: "Jost", "Roboto", "Noto", sans-serif;
+      }
+      paper-dialog#changelogs .markdown-html p:has(.version-timestamp) {
+        text-align: center;
       }
 
       /* paper-menu-button sizing fix */
@@ -361,6 +377,24 @@
             <marked-element>
                 <div class="markdown-html"></div>
                 <script type="text/markdown" src="./keybinds.md"></script>
+            </marked-element>
+        </paper-dialog-scrollable>
+        <div class="buttons">
+            <paper-button dialog-confirm autofocus>Close</paper-button>
+        </div>
+    </paper-dialog>
+
+    <paper-dialog id="changelogs" with-backdrop>
+        <h2>Changelogs</h2>
+        <paper-dialog-scrollable>
+            <marked-element id="changelogsContent">
+                <div class="markdown-html"></div>
+                <!-- Placeholder text while we're fetching changelogs -->
+                <script type="text/markdown">
+                    No changes. None of them. This client has always been like this.
+                    Nothing's changed, because it's always been the same.
+                    If you really think anything's changed, you might have to ask God.
+                </script>
             </marked-element>
         </paper-dialog-scrollable>
         <div class="buttons">
@@ -805,6 +839,12 @@
                   <iron-icon item-icon icon="font-download"></iron-icon>
                   <div>Open keyboard shortcuts menu</div>
               </paper-icon-item>
+              <paper-icon-item
+                  class="button-item"
+                  on-tap="_openChangelogs">
+                  <iron-icon item-icon icon="mdi:list-box-outline"></iron-icon>
+                  <div>Open changelogs</div>
+              </paper-icon-item>
 
               <hr>
               <h2>App appearance</h2>
@@ -1092,8 +1132,9 @@
         if(clipboardReadTextDisabled) {
           window.addEventListener('paste', (e) => {this._pasteText(e.clipboardData.getData("text"))});
         }
-
         this._clipboardReadTextDisabled = clipboardReadTextDisabled;
+
+        this._updateChangelogs();
 
         // Prevent Chrome from capturing CTRL+S
         function preventSaving(event) {
@@ -1796,8 +1837,54 @@
         this.$.keybindDialog.open();
       },
 
+      _openChangelogs: function() {
+        this.$.changelogs.open();
+      },
+
       _toggleKeybindMenu: function() {
         this.$.keybindDialog.toggle();
+      },
+
+      _updateChangelogs: async function() {
+        const markdownLines = [];
+
+        const headers = {
+          "X-GitHub-Api-Version": "2022-11-28",
+        };
+        const releasesURL = "https://api.github.com/repos/quackbarc/sketch/releases";
+        const releases = await fetch(releasesURL, {headers}).then(resp => resp.json());
+
+        const latestRelease = releases[0];
+        if(!latestRelease) {
+          return;
+        }
+
+        for(const release of releases) {
+          const timestamp = new Date(release.published_at);
+          const timestampStr = timestamp.toLocaleString(
+            "default", {
+                weekday: "short",
+                month: "long",
+                day: "2-digit",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+            }
+          );
+
+          const commitPattern = /\b([0-9a-f]{30,})\b/g;
+          let body = release.body;
+          body = body.replace(commitPattern, "");
+
+          markdownLines.push(
+            `<h1 class="version-name">${release.name}</h1>`,
+            `<em class="version-timestamp">${timestampStr}</em>`,
+            body,
+            '---',
+          );
+        };
+
+        this.$.changelogsContent.markdown = markdownLines.join("\n\n");
       },
 
       _alert: async function(message) {
