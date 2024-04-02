@@ -110,6 +110,8 @@
         height: 1,
       },
 
+      _notifyZoom: true,
+
       _notifyFit: true,
 
       _updatingViewport: false,
@@ -214,14 +216,19 @@
         }
       },
 
-      _onZoom: function() {
-        if(!this._readied) {
+      _onZoom: function(newValue, oldValue) {
+        if(!this._readied || !this._notifyZoom) {
           return;
         }
 
         if(this._notifyFit) {
           this.fit = false;
         }
+
+        this._notifyZoom = false;
+        this.zoom = this._clamp(newValue, [this.MINIMUM_ZOOM, this.MAXIMUM_ZOOM]);
+        this._restrictPosition();
+        this._notifyZoom = true;
 
         this._updateViewport();
       },
