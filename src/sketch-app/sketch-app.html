@@ -99,6 +99,7 @@
       }
       .title .stats span {
         /* really dumb workaround */
+        /* really dumb workaround */
         margin-left: 3px;
       }
 
@@ -1066,7 +1067,7 @@
         on-keys-pressed="_changeSize"></iron-a11y-keys>
     <iron-a11y-keys
         target="[[target]]"
-        keys="- ="
+        keys="- _ = +"
         on-keys-pressed="_changeZoom"></iron-a11y-keys>
     <iron-a11y-keys
         target="[[target]]"
@@ -1696,7 +1697,17 @@
       },
 
       _changeZoom: function(event) {
-        var zoomFactor = (event.detail.key == '-') ? 7/10 : 10/7;
+        let zoomFactor = 1;
+        switch(event.detail.key) {
+          case '-':
+          case '_':
+            zoomFactor = 7/10;
+            break;
+          case '+':
+          case '=':
+            zoomFactor = 10/7;
+            break;
+        }
         this.$.container.zoom *= zoomFactor;
       },
 
