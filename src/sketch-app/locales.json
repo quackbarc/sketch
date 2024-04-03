@@ -6,6 +6,7 @@
     "reset": "Reset (Del)",
     "undo": "Undo (Ctrl+Z)",
     "redo": "Redo (Ctrl+Y)",
+    "pan": "Pan (H/Space)",
     "eraser": "Eraser (E)",
     "move": "Move (M)",
     "pen": "Pen (P/B)",

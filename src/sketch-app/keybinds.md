@@ -14,13 +14,22 @@
 | `M`              | Switches to the Move tool. |
 | `E`              | Switches to the Eraser tool. |
 | `F`              | Switches to the Fill tool. |
-| `[`              | Decreases brush size (eraser/screentone). |
-| `]`              | Increases brush size (eraser/screentone). |
+| `H`              | Switches to the Pan tool. |
 | `Shift` (hold)   | Activates stroke erasing (eraser). |
+| `Space` (hold)   | Temporarily activates the Pan tool. |
 | `Delete`         | Clears the canvas. |
 | `Ctrl`+`Z`       | Undoes an action. |
 | `Ctrl`+`Y`       | Redoes the last action. |
 | `↑` `↓` `←` `→`  | Moves the sketch by 1 pixel (move). |
+
+Adjustable settings with `[` and `]`:
+
+| Keybind          | Description      |
+|:-----------------|:-----------------|
+| `[`/`]`          | Adjusts brush size (eraser/screentone). |
+| `Shift`+`[`/`]`  | Adjusts sample rate (pen). |
+| `Shift`+`[`/`]`  | Adjusts screentone spacing (screentone). |
+| `Shift`+`[`/`]`  | Adjusts fill spacing (fill). |
 
 ---
 
@@ -28,7 +37,13 @@
 
 | Keybind          | Description      |
 |:-----------------|:-----------------|
-| `H` or `↓`      | Flips the canvas horizontally. |
+| `-`/`+`          | Adjusts the zoom level. |
+| `0`              | Resets the zoom level to fit the window. |
+| `↓`              | Flips the canvas horizontally. |
+
+- Scrolling with any tool will zoom the canvas in and out.
+- Clicking and dragging or pinching around with the pan tool does just what you'd expect.
+- Double-clicking or middle-clicking with the pan tool resets the zoom.
 
 ---
 
