@@ -152,7 +152,7 @@
           window.screen.orientation.addEventListener("change", this._onIronResize.bind(this));
         }
 
-        this.addEventListener("wheel", this._onWheel.bind(this));
+        this.addEventListener("wheel", this._onWheel.bind(this), {passive: false});
         this.addEventListener("pointerdown", this._onPointerDown.bind(this));
         this.addEventListener("pointermove", this._onPointerMove.bind(this));
         this.addEventListener("pointerup", this._onPointerUp.bind(this));
