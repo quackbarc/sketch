@@ -9,6 +9,15 @@
   window.Sketch = window.Sketch || {};
   Sketch.TabBehavior = {
     created: function() {
+        // Use a new save if autosave is turned off, just so it doesn't clash with
+        // the other saves in case it gets turned back on.
+        // (TODO): not hooked to sketch-app.autosave's default!
+        const settings = JSON.parse(localStorage.getItem("settings") || "{}");
+        const autosave = settings.autosave == null ? true : settings.autosave;
+        if(!autosave) {
+          this.useNewTab = true;
+        }
+
         this._removeUnopenedTabs();
         this._trackTabOpen();
         window.addEventListener('beforeunload', this._trackTabClose.bind(this));
@@ -25,6 +34,10 @@
     },
 
     properties: {
+      useNewTab: {
+        type: Boolean,
+        value: false
+      },
       rememberTab: {
         type: Boolean,
         value: false
@@ -43,8 +56,11 @@
         && !sessionStorage.getItem("dontDuplicate")
         && ("wasDiscarded" in document ? !document.wasDiscarded : true);  // <-- for Chrome; Page Lifecycle API
 
-      if(sessionStorage.getItem('tabID') && !isTabDuplicate) {
+      if(sessionStorage.getItem('tabID') && !isTabDuplicate && !this.useNewTab) {
         this.tabID = parseInt(sessionStorage.getItem('tabID'));
+      }
+      else if(this.useNewTab) {
+        this.tabID = this._getNewID();
       }
       else {
         this.tabID = this._getUnusedID();
@@ -109,6 +125,21 @@
 
       let newID = 0;
       while(tabs[newID]) {
+        newID++;
+      }
+      return newID;
+    },
+
+    /**
+     * Returns the ID of a new save.
+     * 
+     * @returns {number}
+     */
+    _getNewID: function() {
+      const tabs = JSON.parse(localStorage.getItem("tabs"));
+
+      let newID = 0;
+      while(tabs[newID] || localStorage.getItem(`save${newID}`)) {
         newID++;
       }
       return newID;

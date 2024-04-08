@@ -1217,7 +1217,7 @@
         },
         rememberTab: {
           type: Boolean,
-          computed: "_rememberTab(autosave, sketchDisabled, ink)"
+          computed: "_rememberTab(sketchDisabled, ink)"
         },
         swapDisabled: {
           type: Boolean,
@@ -1311,21 +1311,22 @@
         return loading || !enabled;
       },
 
-      _rememberTab: function(autosave, sketchDisabled, ink) {
-        return autosave && !sketchDisabled && ink > 0;
+      _rememberTab: function(sketchDisabled, ink) {
+        return !sketchDisabled && ink > 0;
       },
 
       _saveData: function() {
-        if(this.rememberTab) {
-          var save = {
-            history: this.$.sketch.$.data.history,
-            head: this.$.sketch.$.data.head
-          };
-
-          localStorage.setItem('save' + this.tabID, JSON.stringify(save));
-        }
-        else {
-          localStorage.removeItem('save' + this.tabID);
+        if(this.autosave) {
+          if(this.rememberTab) {
+            var save = {
+              history: this.$.sketch.$.data.history,
+              head: this.$.sketch.$.data.head
+            };
+            localStorage.setItem('save' + this.tabID, JSON.stringify(save));
+          }
+          else {
+            localStorage.removeItem('save' + this.tabID);
+          }
         }
 
         var toolSettings = {
@@ -1386,7 +1387,7 @@
         }
 
         var save = JSON.parse(localStorage.getItem('save' + this.tabID));
-        if(save) {
+        if(this.autosave && save) {
           this._setSetting("history", save, this.$.sketch.$.data);
           this._setSetting("head", save, this.$.sketch.$.data);
           this.$.sketch.refreshLines();
