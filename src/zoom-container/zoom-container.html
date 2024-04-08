@@ -103,6 +103,14 @@
           value: 10,
           readOnly: true,
         },
+
+        // settings
+
+        enableScrollZooming: {
+          type: Boolean,
+          value: true,
+          notify: true,
+        },
       },
 
       _contentDimensions: {
@@ -436,6 +444,10 @@
 
       /** @param {WheelEvent} event */
       _onWheel: function(event) {
+        if(!this.enableScrollZooming) {
+          return;
+        }
+
         const zoomFactor = event.deltaY > 0 ? (100/event.deltaY) : -(event.deltaY/100);
         this._zoomInto(
           event.clientX,

@@ -333,7 +333,8 @@
           id="container"
           dimensions="800/600"
           pannable="{{pannable}}"
-          panning="{{panning}}">
+          panning="{{panning}}"
+          enable-scroll-zooming="{{enableScrollZooming}}">
           <sketch-canvas
               id="sketch"
               ink="{{ink}}"
@@ -832,6 +833,19 @@
                   </paper-item-body>
                   <paper-toggle-button
                       checked="{{sketchIgnoreTouch}}"
+                      noink></paper-toggle-button>
+              </paper-item>
+              <paper-item class="settings-item">
+                  <paper-item-body two-line>
+                      <div>Enable scroll zooming</div>
+                      <div secondary>
+                          Whether scrolling on the canvas should zoom it in or
+                          not. Disable this if your device has its own zooming
+                          powered by scrolling, e.g. some laptop touchpads.
+                      </div>
+                  </paper-item-body>
+                  <paper-toggle-button
+                      checked="{{enableScrollZooming}}"
                       noink></paper-toggle-button>
               </paper-item>
               <paper-icon-item
@@ -1345,6 +1359,7 @@
           allowFlippedSwaps: this.allowFlippedSwaps,
           backgroundType: this.backgroundType,
           renderType: this.$.sketch.renderType,
+          enableScrollZooming: this.$.container.enableScrollZooming,
         };
 
         localStorage.setItem('settings', JSON.stringify(settings));
@@ -1367,6 +1382,7 @@
           this._setSetting("allowFlippedSwaps", settings);
           this._setSetting("backgroundType", settings);
           this._setSetting("renderType", settings);
+          this._setSetting("enableScrollZooming", settings);
         }
 
         var save = JSON.parse(localStorage.getItem('save' + this.tabID));
