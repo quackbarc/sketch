@@ -454,6 +454,10 @@
         // Values from touchpad scrolls tend to go below them.
         // Values from non-pixel `event.deltaMode`s do too,
         // so for consistency's sake, they'll be counted too.
+        //
+        // Further reading on how browsers and OSs set `event.deltaY`:
+        // https://github.com/basilfx/normalize-wheel/blob/master/src/normalizeWheel.js
+        // (it's also where the arbitrary 120 is from)
         deltaY = deltaY > 0 ? Math.max(120, deltaY) : Math.min(-120, deltaY);
 
         const zoomFactor = deltaY > 0 ? (100/deltaY) : -(deltaY/100);
