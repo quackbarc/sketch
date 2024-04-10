@@ -600,15 +600,15 @@
         this.zoom = zoom;
       },
 
-      // Throttle calls to the transform, as an effort on making it speedier.
-      // Looks like it's doing its job.
+      // Throttle calls to the transform by RAF, as an effort to reduce DOM jank.
       _updateViewport: function() {
         if(this._updatingViewport) {
           return;
         }
 
-        window.requestAnimationFrame(this.__updateViewport.bind(this));
         this._updatingViewport = true;
+        this.__updateViewport();
+        window.requestAnimationFrame(() => this._updatingViewport = false);
       },
 
       __updateViewport: function() {
@@ -618,8 +618,6 @@
 
         // Notify about the canvas bounding rect change down the chain
         this.notifyResize();
-
-        this._updatingViewport = false;
       },
     };
 
