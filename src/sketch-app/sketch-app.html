@@ -758,14 +758,6 @@
                       max="50"
                       editable></paper-slider>
               </paper-item>
-              <paper-item class="settings-item slider">
-                  <div>Sketch animation speed</div>
-                  <paper-slider
-                      value="{{animationSpeed}}"
-                      min="5"
-                      max="30"
-                      editable></paper-slider>
-              </paper-item>
               <paper-item class="settings-item">
                   <paper-item-body two-line>
                       <div>Toggle tool settings with keybind</div>
@@ -938,6 +930,19 @@
                       </paper-item>
                     </paper-listbox>
                   </paper-dropdown-menu>
+              </paper-item>
+              <paper-item class="settings-item slider">
+                  <paper-item-body two-line>
+                      <div>Animation speed</div>
+                      <div secondary>
+                          How fast sketches would play back on peeks and swaps
+                      </div>
+                  </paper-item-body>
+                  <paper-slider
+                      value="{{animationSpeed}}"
+                      min="5"
+                      max="30"
+                      editable></paper-slider>
               </paper-item>
               <paper-item class="settings-item">
                   <paper-item-body two-line>
