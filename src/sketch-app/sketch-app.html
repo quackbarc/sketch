@@ -880,46 +880,6 @@
                     </paper-listbox>
                   </paper-dropdown-menu>
               </paper-item>
-              <paper-item class="settings-item dropdown">
-                  <paper-item-body two-line>
-                      <div>Rendering style</div>
-                      <div secondary>How sketches are rendered in the app</div>
-                  </paper-item-body>
-                  <paper-dropdown-menu
-                    dynamic-align
-                    no-label-float>
-                    <paper-listbox
-                      class="dropdown-content"
-                      selected="{{renderType}}">
-                      <paper-item label="Default">
-                          <paper-item-body two-line>
-                              <div>Default</div>
-                              <div secondary>
-                                  Round line tips, round corner edges.
-                              </div>
-                          </paper-item-body>
-                      </paper-item>
-                      <paper-item label="Gallery-style">
-                          <paper-item-body two-line>
-                              <div>Gallery-style</div>
-                              <div secondary>
-                                  Hard line tips, round corner edges.
-                                  Similar to garyc.me's.
-                              </div>
-                          </paper-item-body>
-                      </paper-item>
-                      <paper-item label="Gallery-style (spiky)">
-                          <paper-item-body two-line>
-                              <div>Gallery-style (spiky)</div>
-                              <div secondary>
-                                  Hard line tips, spiky corner edges.
-                                  Similar to garyc.me's before 2022.
-                              </div>
-                          </paper-item-body>
-                      </paper-item>
-                    </paper-listbox>
-                  </paper-dropdown-menu>
-              </paper-item>
               <paper-item class="settings-item">
                   <paper-item-body two-line>
                       <div>Hide swap button</div>
@@ -1340,7 +1300,6 @@
           gallerySource: this.gallerySource,
           allowFlippedSwaps: this.allowFlippedSwaps,
           backgroundType: this.backgroundType,
-          renderType: this.$.sketch.renderType,
           enableScrollZooming: this.$.container.enableScrollZooming,
         };
 
@@ -1361,7 +1320,6 @@
           this._setSetting("gallerySource", settings);
           this._setSetting("allowFlippedSwaps", settings);
           this._setSetting("backgroundType", settings);
-          this._setSetting("renderType", settings);
           this._setSetting("enableScrollZooming", settings);
         }
 
