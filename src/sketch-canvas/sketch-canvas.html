@@ -168,11 +168,6 @@
           notify: true,
           value: 20
         },
-        timeResolutionLimited: {
-          type: Boolean,
-          notify: true,
-          value: false
-        },
         ignoreTouch: {
           type: Boolean,
           notify: true,
@@ -502,7 +497,7 @@
           this._pointerType = this._pointerType == null ? event.pointerType : this._pointerType;
           this._activeTool = pointerErasing ? 'eraser' : null;
           if(this._wasPressed) {
-            const obeyTimeResolution = this.timeResolutionLimited ? this.tool == "pen" : true;
+            const obeyTimeResolution = this.tool == "pen";
             if(obeyTimeResolution
               && this.timeResolution != 0
               && this._timeResolved(event.timeStamp) - this._timeResolved(this._lastEventTimeStamp) == 0) {
