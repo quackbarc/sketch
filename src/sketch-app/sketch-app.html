@@ -932,19 +932,6 @@
                     </paper-listbox>
                   </paper-dropdown-menu>
               </paper-item>
-              <paper-item class="settings-item slider">
-                  <paper-item-body two-line>
-                      <div>Animation speed</div>
-                      <div secondary>
-                          How fast sketches would play back on peeks and swaps
-                      </div>
-                  </paper-item-body>
-                  <paper-slider
-                      value="{{animationSpeed}}"
-                      min="5"
-                      max="30"
-                      editable></paper-slider>
-              </paper-item>
               <paper-item class="settings-item">
                   <paper-item-body two-line>
                       <div>Hide swap button</div>
@@ -1358,7 +1345,6 @@
         var settings = {
           timeResolution: this.$.sketch.timeResolution,
           timeResolutionLimited: this.$.sketch.timeResolutionLimited,
-          animationSpeed: this.$.sketch.animationSpeed,
           limitedInk: this.$.sketch.$.data.limitedInk,
           ignoreTouch: this.$.sketch.ignoreTouch,
           autosave: this.autosave,
@@ -1381,7 +1367,6 @@
         if(settings) {
           this._setSetting("timeResolution", settings);
           this._setSetting("timeResolutionLimited", settings);
-          this._setSetting("animationSpeed", settings);
           this._setSetting("limitedInk", settings);
           this._setSetting("ignoreTouch", settings, this.$.sketch);
           this._setSetting("autosave", settings);
