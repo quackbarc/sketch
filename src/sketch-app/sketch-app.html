@@ -889,6 +889,34 @@
                       checked="{{hideSwap}}"
                       noink></paper-toggle-button>
               </paper-item>
+
+              <template is="dom-if" if="[[konami]]">
+              <hr>
+              <h2>Hidden settings</h2>
+              <paper-item class="settings-item">
+                  <paper-item-body two-line>
+                      <div>Etch-a-Sketch mode</div>
+                      <div secondary>
+                        Draws with the arrow keys instead of a mouse/pen.
+                      </div>
+                  </paper-item-body>
+                  <paper-toggle-button
+                      checked="{{etchMode}}"
+                      noink></paper-toggle-button>
+              </paper-item>
+              <paper-item class="settings-item slider">
+                  <paper-item-body two-line>
+                      <div>Etch: Line step</div>
+                      <div secondary>Line length per step, in px</div>
+                  </paper-item-body>
+                  <paper-slider
+                      value="{{lineStep}}"
+                      max="20"
+                      min="1"
+                      disabled="{{!etchMode}}"
+                      editable></paper-slider>
+              </paper-item>
+              </template>
           </div>
       </paper-menu-button>
 
