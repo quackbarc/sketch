@@ -1144,6 +1144,10 @@
           type: Number,
           value: null,
         },
+        konami: {
+          type: Boolean,
+          value: false,
+        },
 
         // tool state
 
@@ -1199,6 +1203,8 @@
       },
 
       // Private properties
+
+      _arrowKeyHistory8: [],
 
       _sleepPromise: null,
 
@@ -1651,6 +1657,17 @@
             case "down": dy += 1; break;
             case "left": dx -= 1; break;
             case "right": dx += 1; break;
+          }
+
+          const arrowHistory = this._arrowKeyHistory8;
+          arrowHistory.push(event.detail.key);
+
+          if(arrowHistory.length > 8) {
+            arrowHistory.shift();
+          }
+          if(arrowHistory.join(",") == "up,up,down,down,left,right,left,right" && !this.konami) {
+            this.konami = true;
+            this._alert("you hear the sound of cogs moving.", 5000);
           }
 
           this.$.sketch._miniMove(dx, dy);
