@@ -31,6 +31,8 @@
 <dom-module id="sketch-app">
   <template>
     <style>
+      /* General styles */
+
       :host {
         @apply(--layout-fit);
         @apply(--layout-vertical);
@@ -244,6 +246,7 @@
 
       paper-dialog {
         font-size: 16px;
+        overflow-wrap: anywhere;
         max-width: 600px;
 
         --webkit-user-select: text;
@@ -323,10 +326,17 @@
         height: 100%;
       }
 
+      /* Media queries */
+
       @media (max-width: 600px) {
         #toolbar paper-menu-button,
         #toolbar paper-icon-button {
           padding: 6px;
+        }
+
+        paper-dialog ul ul {
+          /* Remove stock indentation of nested <ul>s */
+          padding: 0;
         }
       }
     </style>
