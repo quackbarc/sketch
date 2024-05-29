@@ -164,6 +164,7 @@
         this.addEventListener("pointerdown", this._onPointerDown.bind(this));
         this.addEventListener("pointermove", this._onPointerMove.bind(this));
         this.addEventListener("pointerup", this._onPointerUp.bind(this));
+        this.addEventListener("pointercancel", this._onPointerUp.bind(this));
       },
 
       // IronResizeBehavior event listeners
@@ -294,6 +295,7 @@
         }
 
         const oldPointers = this._pointers.slice();
+        this._removePointer(event);
         this._pointers.push(event);
 
         if(oldPointers.length == 1) {
