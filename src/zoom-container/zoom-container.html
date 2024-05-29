@@ -285,6 +285,11 @@
       /** @param {PointerEvent} event */
       _onPointerDown: function(event) {
         if(!this.pannable) {
+          // Release implicit pointer capture on touch-capable devices.
+          // https://w3c.github.io/pointerevents/#dfn-implicit-pointer-capture
+          if(this.hasPointerCapture(event.pointerId)) {
+            this.releasePointerCapture(event.pointerId);
+          }
           return;
         }
 
