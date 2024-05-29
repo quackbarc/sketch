@@ -294,6 +294,8 @@
           return;
         }
 
+        this.setPointerCapture(event.pointerId);
+
         const oldPointers = this._pointers.slice();
         this._removePointer(event);
         this._pointers.push(event);
