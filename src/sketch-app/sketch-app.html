@@ -890,6 +890,60 @@
                     </paper-listbox>
                   </paper-dropdown-menu>
               </paper-item>
+              <paper-item class="settings-item dropdown">
+                  <paper-item-body two-line>
+                      <div>Rendering style</div>
+                      <div secondary>How sketches are rendered in the app</div>
+                  </paper-item-body>
+                  <paper-dropdown-menu
+                    dynamic-align
+                    no-label-float>
+                    <paper-listbox
+                      class="dropdown-content"
+                      selected="{{renderType}}">
+                      <paper-item label="Default">
+                          <paper-item-body two-line>
+                              <div>Default</div>
+                              <div secondary>
+                                  Round line tips, round corner edges.
+                              </div>
+                          </paper-item-body>
+                      </paper-item>
+                      <paper-item label="Gallery-style">
+                          <paper-item-body two-line>
+                              <div>Gallery-style</div>
+                              <div secondary>
+                                  Hard line tips, round corner edges.
+                                  Similar to garyc.me's.
+                              </div>
+                          </paper-item-body>
+                      </paper-item>
+                      <paper-item label="Gallery-style (spiky)">
+                          <paper-item-body two-line>
+                              <div>Gallery-style (spiky)</div>
+                              <div secondary>
+                                  Hard line tips, spiky corner edges.
+                                  Similar to garyc.me's before 2022.
+                              </div>
+                          </paper-item-body>
+                      </paper-item>
+                    </paper-listbox>
+                  </paper-dropdown-menu>
+              </paper-item>
+              <paper-item class="settings-item slider">
+                  <paper-item-body two-line>
+                      <div>Animation speed</div>
+                      <div secondary>
+                          How fast sketches would be played back
+                          on peeks and swaps
+                      </div>
+                  </paper-item-body>
+                  <paper-slider
+                      value="{{animationSpeed}}"
+                      min="5"
+                      max="30"
+                      editable></paper-slider>
+              </paper-item>
               <paper-item class="settings-item">
                   <paper-item-body two-line>
                       <div>Hide swap button</div>
@@ -1310,6 +1364,8 @@
 
         var settings = {
           timeResolution: this.$.sketch.timeResolution,
+          timeResolutionLimited: this.$.sketch.timeResolutionLimited,
+          animationSpeed: this.$.sketch.animationSpeed,
           limitedInk: this.$.sketch.$.data.limitedInk,
           ignoreTouch: this.$.sketch.ignoreTouch,
           autosave: this.autosave,
@@ -1330,6 +1386,8 @@
         var settings = JSON.parse(localStorage.getItem('settings'));
         if(settings) {
           this._setSetting("timeResolution", settings);
+          this._setSetting("timeResolutionLimited", settings);
+          this._setSetting("animationSpeed", settings);
           this._setSetting("limitedInk", settings);
           this._setSetting("ignoreTouch", settings, this.$.sketch);
           this._setSetting("autosave", settings);
