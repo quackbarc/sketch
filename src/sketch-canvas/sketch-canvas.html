@@ -493,6 +493,10 @@
           return;
         }
 
+        if(tool == "pan") {
+          return;
+        }
+
         if(pressed) {
           this._pointerType = this._pointerType == null ? event.pointerType : this._pointerType;
           this._activeTool = pointerErasing ? 'eraser' : null;
