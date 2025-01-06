@@ -505,9 +505,7 @@
 
             if(this._within([i, j], rect)
               && this._insideCircle(x, y, i, j, radius)
-              && (pattern == TonePattern.DIAGONAL
-                ? this._canDiagonalDot(i, j, offX, offY, spacing)
-                : true)
+              && this._matchesTonePattern(pattern, i, j, offX, offY, spacing)
               && !this.tonePoints.has(tonepoint)) {
                 this.tonePoints.add(tonepoint);
                 tones.push([i, j, i, j]);
@@ -736,8 +734,7 @@
                     break lineLoop;
                   }
 
-                  let canDiagonalDot = this._canDiagonalDot(x, line[1], offX, offY, spacing);
-                  if(tonePattern == TonePattern.DIAGONAL && !canDiagonalDot) {
+                  if(!this._matchesTonePattern(tonePattern, x, line[1], offX, offY, spacing)) {
                     continue;
                   }
 
@@ -934,10 +931,22 @@
         return line.length == 4 && line[0]+2 == line[2] && line[1]+2 == line[3];
       },
 
-      _canDiagonalDot: function(x, y, offsetX, offsetY, spacing) {
-        let xOddEven = Math.abs(x - offsetX) % (spacing*2);
-        let yOddEven = Math.abs(y - offsetY) % (spacing*2);
-        return xOddEven == yOddEven;  // basically XNOR
+      _matchesTonePattern: function(pattern, x, y, offsetX, offsetY, spacing) {
+        switch(pattern) {
+          case TonePattern.NORMAL: {
+            return true;
+          }
+
+          case TonePattern.DIAGONAL: {
+            let xOddEven = Math.abs(x - offsetX) % (spacing*2);
+            let yOddEven = Math.abs(y - offsetY) % (spacing*2);
+            return xOddEven == yOddEven;  // basically XNOR
+          }
+
+          default: {
+            return true;
+          }
+        }
       },
 
       // Private filling methods
