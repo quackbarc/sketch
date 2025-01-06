@@ -1702,10 +1702,18 @@
             changedValue = this.$.sketch.timeResolution;
             break;
           case 'fill, true':
-            name = "fill spacing";
-            newValue = this.$.sketch.fillSpacing += v;
-            changedValue = this.$.sketch.fillSpacing;
-            break;
+            if(this.fillScreentone) {
+              name = "fill screentone spacing";
+              newValue = this.$.sketch.toneSpacing += v;
+              changedValue = this.$.sketch.toneSpacing;
+              break;
+            }
+            else {
+              name = "fill spacing";
+              newValue = this.$.sketch.fillSpacing += v;
+              changedValue = this.$.sketch.fillSpacing;
+              break;
+            }
           case 'screentone, false':
             name = "screentone size";
             newValue = this.$.sketch.toneRadius += v;
