@@ -1,8 +1,6 @@
 {
   "en": {
     "swap": "Swap (Ctrl+Enter)",
-    "swapFlipped": "Swap flipped (Ctrl+Enter)",
-    "swapDisabledFlipped": "Can't swap when the canvas is currently flipped",
     "reset": "Reset (Del)",
     "undo": "Undo (Ctrl+Z)",
     "redo": "Redo (Ctrl+Y)",
