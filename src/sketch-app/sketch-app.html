@@ -133,6 +133,10 @@
 
       /* Settings styles */
 
+      iron-icon.flipped {
+        transform: scaleX(-1);
+      }
+
       paper-dropdown-menu paper-item {
         max-width: 300px;
       }
@@ -701,7 +705,12 @@
               <paper-icon-item
                   class="button-item"
                   on-tap="_flip">
-                      <iron-icon item-icon icon="image:flip"></iron-icon>
+                      <template is="dom-if" if="[[!sketchFlipped]]">
+                          <iron-icon item-icon icon="image:flip"></iron-icon>
+                      </template>
+                      <template is="dom-if" if="[[sketchFlipped]]">
+                          <iron-icon item-icon class="flipped" icon="image:flip"></iron-icon>
+                      </template>
                       <div>Flip canvas horizontally</div>
               </paper-icon-item>
               <template is="dom-if" if="[[!playing]]">
