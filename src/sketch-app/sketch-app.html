@@ -1451,7 +1451,9 @@
 
       _swap: function() {
         if(!this.swapDisabled && !this.drawing) {
-          this.$.sketch.$.data.flipSwappedData = this.sketchFlipped;
+          if(this.sketchFlipped) {
+            this.$.sketch.$.data.flip();
+          }
 
           this.$.api.swap(this.$.sketch.$.data.swapData);
           this.$.container.fit = true;
