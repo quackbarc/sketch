@@ -18,6 +18,9 @@
         position: fixed;
         margin: 0;
 
+        /* Globally prevents iOS Safari from doing double-tap-to-zoom gestures. */
+        touch-action: manipulation;
+
         --primary-color: #980706;
         --dark-primary-color: #3c0101;
         /* --light-primary-color: var(--paper-red-500); */
