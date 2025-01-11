@@ -21,6 +21,7 @@
         this._removeUnopenedTabs();
         this._trackTabOpen();
         window.addEventListener('beforeunload', this._trackTabClose.bind(this));
+        window.addEventListener('pagehide', this._trackTabClose.bind(this));
         window.addEventListener('pageshow', (event) => {
           // Restore tab state if we came back from the back/forward cache
           if(event.persisted) {
