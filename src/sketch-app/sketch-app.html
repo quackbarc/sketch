@@ -1128,6 +1128,8 @@
       },
 
       ready: function() {
+        // Overrides
+
         // override to fix constant string-int casting of .value between
         // paper-slider instances with the textarea that would eventually
         // cause stack errors
@@ -1139,6 +1141,8 @@
           e._changeValue = Polymer.IronRangeBehavior._changeValue;
         });
 
+        // Property and element updates
+
         // Firefox... https://developer.mozilla.org/en-US/docs/Web/API/Clipboard_API#browser_compatibility
         const clipboardReadTextDisabled = !(navigator.clipboard && navigator.clipboard.readText);
         if(clipboardReadTextDisabled) {
@@ -1148,6 +1152,8 @@
 
         this._updateChangelogs()
           .then(() => this._alertNewChangelogs());
+
+        // Event listeners
 
         // Prevent Chrome from capturing CTRL+S
         function preventSaving(event) {
