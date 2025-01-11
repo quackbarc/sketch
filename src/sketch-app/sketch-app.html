@@ -39,7 +39,7 @@
         --paper-slider-height: 4px;
         --paper-item-body-two-line-min-height: 56px;
 
-        /* Prevents tablet pens and iOS Safari from selecting anything it sees */
+        /* Prevents the app from being selectable by tablet pens and iOS Safari. */
         -webkit-user-select: none;
         user-select: none;
       }
@@ -1198,6 +1198,11 @@
         window.addEventListener("keydown", processExtraKeybinds.bind(this));
         window.addEventListener("keydown", processPersistentKeybinds.bind(this), {capture: true});
         window.addEventListener("keyup", processPersistentKeybinds.bind(this), {capture: true});
+
+        // https://stackoverflow.com/a/70992717
+        // Prevents iOS Safari from trying to select any text it finds whenever
+        // the canvas/viewport is hold-tapped.
+        this.$.container.addEventListener("touchstart", (e) => e.preventDefault(), true);
       },
 
       attached: function() {
