@@ -1753,6 +1753,10 @@
             case "right": dx += 1; break;
           }
 
+          if(this.sketchFlipped) {
+            dx *= -1;
+          }
+
           const arrowHistory = this._arrowKeyHistory8;
           arrowHistory.push(event.detail.key);
 
