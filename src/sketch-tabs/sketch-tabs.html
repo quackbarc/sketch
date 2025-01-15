@@ -7,6 +7,10 @@
   const KEEP_ALIVE_TIMEOUT = 70000 + KEEP_ALIVE_INTERVAL;
 
   window.Sketch = window.Sketch || {};
+
+  /**
+   * @polymerBehavior
+   */
   Sketch.TabBehavior = {
     created: function() {
         // Use a new save if autosave is turned off, just so it doesn't clash with
