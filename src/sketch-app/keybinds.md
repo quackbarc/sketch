@@ -28,8 +28,7 @@ Adjustable settings with `[` and `]`:
 |:-----------------|:-----------------|
 | `[`/`]`          | Adjusts brush size (eraser/screentone). |
 | `Shift`+`[`/`]`  | Adjusts sample rate (pen). |
-| `Shift`+`[`/`]`  | Adjusts screentone spacing (screentone). |
-| `Shift`+`[`/`]`  | Adjusts fill spacing (fill). |
+| `Shift`+`[`/`]`  | Adjusts fill/tone spacing (fill/screentone). |
 
 ---
 
