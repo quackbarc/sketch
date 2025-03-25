@@ -721,11 +721,17 @@
                   on-tap="_flip">
                       <template is="dom-if" if="[[!sketchFlipped]]">
                           <iron-icon item-icon icon="image:flip"></iron-icon>
+                          <div>Flip canvas horizontally</div>
                       </template>
                       <template is="dom-if" if="[[sketchFlipped]]">
                           <iron-icon item-icon class="flipped" icon="image:flip"></iron-icon>
+                          <paper-item-body two-line>
+                              <div>Flip canvas horizontally</div>
+                              <div secondary>
+                                  Currently flipped.
+                              </div>
+                          </paper-item-body>
                       </template>
-                      <div>Flip canvas horizontally</div>
               </paper-icon-item>
               <template is="dom-if" if="[[!playing]]">
                   <paper-icon-item
