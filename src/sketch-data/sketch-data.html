@@ -572,6 +572,37 @@
         this._setTonePoints(newtonepoints);
       },
 
+      /**
+       * Gets a requested half of swap-compatible data.
+       * @param {string} part
+       *    The part to get. Must be 'left' or 'right'.
+       * @returns {string}
+       */
+      getHalfSwapData: function(part) {
+        if(part != "left" && part != "right") {
+          throw TypeError("part must be 'left' or 'right'");
+        }
+
+        if(part == "right") {
+          const lines = this.lines.slice();
+          const newlines = lines.map((line) => {
+            return line.map((coord, index) => {
+              return index % 2 == 0 ? coord - 800 : coord;
+            });
+          });
+
+          console.log(newlines);
+
+          this._setLines(newlines);
+          const data = this.swapData;
+          this._setLines(lines);
+          return data;
+        }
+        else {
+          return this.swapData;
+        }
+      },
+
       // Private functions
 
       _onUndo: function(event) {

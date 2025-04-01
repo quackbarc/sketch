@@ -1128,6 +1128,7 @@
         peekers="{{peekers}}"
         loading="{{loading}}"
         on-get="_onGet"
+        on-part-swapped="_onPartSwapped"
         on-swap-failed="_onSwapFailed"
         on-swap-waiting="_onSwapWaiting"></sketch-api>
   </template>
@@ -1439,6 +1440,10 @@
 
       // Event handlers for API and ajax
 
+      _onPartSwapped: function() {
+        this._alert("sending the other half...");
+      },
+
       _onSwapWaiting: function() {
         this._alert('waiting for other sketch...');
       },
@@ -1487,7 +1492,21 @@
             this.$.sketch.$.data.flip();
           }
 
-          this.$.api.swap(this.$.sketch.$.data.swapData);
+          const dataLeft = this.$.sketch.$.data.getHalfSwapData("left");
+          const dataRight = this.$.sketch.$.data.getHalfSwapData("right");
+          if(dataRight && !dataLeft) {
+            this._alert("sending just the right half...");
+            this.$.api.swap(dataRight);
+          }
+          else if(dataRight) {
+            this._alert("sending the right half...");
+            this.$.api.swapMultiple(dataRight, dataLeft);
+          }
+          else if(dataLeft) {
+            this._alert("sending just the left half...");
+            this.$.api.swap(dataLeft);
+          }
+
           this.$.container.fit = true;
           this.sketchDisabled = true;
           this.undoDisabled = true;
