@@ -62,7 +62,9 @@
       },
 
       get data() {
-        var lines = this._clip(this.lines);
+        // Slightly extend clipping scope so the left sketch lines up with the right sketch.
+        // Can't do the same for the other way around, unfortunately.
+        var lines = this._clip(this.lines, [[0, 0], [805, 600]]);
 
         if(this.hidden) {
           var arrayBuffer = new ArrayBuffer(Math.max(0, lines.length - 1) + 2 * lines.reduce((sum, line) => sum + line.length, 0));
@@ -794,9 +796,10 @@
         return Math.pow(10, Math.max(0, width - n.length)).toString().substr(1) + n;
       },
 
-      _clip: function(lines) {
-        // TODO
-        const rect = [[0, 0], [1600, 600]];
+      _clip: function(lines, rect=null) {
+        if(!rect) {
+          rect = [[0, 0], [1600, 600]];
+        }
 
         return lines.flatMap(
           (line) => {
