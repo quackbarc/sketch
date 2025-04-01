@@ -378,6 +378,7 @@
               animation-speed="{{animationSpeed}}"
               limited-ink="{{limitedInk}}"
               render-type="{{renderType}}"
+              wide-separator="{{wideSeparator}}"
               on-tool-changed="_closeMenus"
               drawing="{{drawing}}"
               flipped="{{sketchFlipped}}"
@@ -860,6 +861,21 @@
                   <iron-icon item-icon icon="mdi:list-box-outline"></iron-icon>
                   <div>Open changelogs</div>
               </paper-icon-item>
+
+              <hr>
+              <h2>April Fools</h2>
+              <paper-item class="settings-item">
+                  <paper-item-body two-line>
+                      <div>Show separator on canvas center</div>
+                      <div secondary>
+                          Shows the boundary on where the sketch would split
+                          once it gets swapped.
+                      </div>
+                  </paper-item-body>
+                  <paper-toggle-button
+                      checked="{{wideSeparator}}"
+                      noink></paper-toggle-button>
+              </paper-item>
 
               <hr>
               <h2>App appearance</h2>
@@ -1383,6 +1399,7 @@
           timeResolutionLimited: this.$.sketch.timeResolutionLimited,
           animationSpeed: this.$.sketch.animationSpeed,
           limitedInk: this.$.sketch.$.data.limitedInk,
+          wideSeparator: this.$.sketch.wideSeparator,
           ignoreTouch: this.$.sketch.ignoreTouch,
           autosave: this.autosave,
           keybindToggling: this.keybindToggling,
@@ -1404,6 +1421,7 @@
           this._setSetting("timeResolutionLimited", settings);
           this._setSetting("animationSpeed", settings);
           this._setSetting("limitedInk", settings);
+          this._setSetting("wideSeparator", settings);
           this._setSetting("ignoreTouch", settings, this.$.sketch);
           this._setSetting("autosave", settings);
           this._setSetting("hideSwap", settings);

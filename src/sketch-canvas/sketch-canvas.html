@@ -191,6 +191,12 @@
           value: 1,
           observer: "_updateRendering"
         },
+        wideSeparator: {
+          type: Boolean,
+          notify: true,
+          value: false,
+          observer: "_updateRendering"
+        },
 
         // tool settings
 
@@ -734,6 +740,18 @@
         this._canvas.fillStyle = "white";
         this._canvas.fillRect(0, 0, 1600, 600);
         this._canvas.fillStyle = "black";
+
+        if(this.wideSeparator) {
+          this._canvas.save();
+          this._canvas.setLineDash([8, 5]);
+          this._canvas.lineWidth = 1.5;
+          this._canvas.strokeStyle = "#0003";
+          this._canvas.beginPath();
+          this._canvas.moveTo(800, 0);
+          this._canvas.lineTo(800, 601);
+          this._canvas.stroke();
+          this._canvas.restore();
+        }
       },
 
       _animate(timestamp) {
