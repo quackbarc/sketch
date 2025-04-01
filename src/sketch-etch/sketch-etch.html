@@ -86,7 +86,7 @@
       var lastY = y = this.etchCursor.y;
       x += this.lineStep * this._deltaX;
       y += this.lineStep * this._deltaY;
-      this.etchCursor.x = Math.min(800, Math.max(0, x));
+      this.etchCursor.x = Math.min(1600, Math.max(0, x));
       this.etchCursor.y = Math.min(600, Math.max(0, y));
       if(!(this.etchCursor.x == lastX && this.etchCursor.y == lastY)) {
         this._draw(this.etchCursor.x, this.etchCursor.y, lastX, lastY);

@@ -196,7 +196,7 @@
         }
 
         let currentLine = this.currentLines.at(-1);
-        const rect = [[0, 0], [800, 600]];
+        const rect = [[0, 0], [1600, 600]];
         const outOfBounds = !this._within([px, py], rect) && !this._within([x, y], rect);
         const exitingBounds = this._within([px, py], rect) && !this._within([x, y], rect);
         const enteringBounds = !this._within([px, py], rect) && this._within([x, y], rect);
@@ -305,8 +305,8 @@
       fill: function(x, y, canvas, mode = "normal", modeSettings = {}) {
         const ctx = canvas.getContext('2d');
         const transform = ctx.getTransform();
-        this._canvasData = ctx.getImageData(0,0, 800,600).data;
-        this._canvasFlipped = transform.e == 800 && transform.a == -1;
+        this._canvasData = ctx.getImageData(0,0, 1600,600).data;
+        this._canvasFlipped = transform.e == 1600 && transform.a == -1;
 
         if(!this._fillable(x, y)) {
           return [];
@@ -328,8 +328,8 @@
         const yinc = xInclined ? slope : 1;
 
         // using typed array to save memory
-        // extend mask dimensions by 1px to support axes x=800 and y=600
-        const mask = new Uint8Array(801*601);
+        // extend mask dimensions by 1px to support axes x=800(?) and y=600
+        const mask = new Uint8Array(1601*601);
         const maskLines = [];
         const queue = [[x, y]];
         while(queue.length > 0) {
@@ -478,7 +478,7 @@
       },
 
       tone: function(x, y, px, py, options) {
-        const rect = [[0, 0], [800, 600]];
+        const rect = [[0, 0], [1600, 600]];
         const action = this._action[0];
         const {pattern, radius, spacing, offX, offY} = options;
 
@@ -540,7 +540,7 @@
           const line = this.lines[i];
 
           for(let j = 0; j < line.length; j += 2) {
-            line[j] = 800 - line[j];
+            line[j] = 1600 - line[j];
           }
         }
       },
@@ -652,7 +652,7 @@
       },
 
       _fillPattern: function(slope, maskLines, type = "normal", settings = {}) {
-        const rect = [[0, 0], [800, 600]];
+        const rect = [[0, 0], [1600, 600]];
         const xInclined = -1 <= slope && slope <= 1;
         const vertical = Math.abs(slope) == Infinity;
         const xinc = xInclined ? 1 : (vertical ? 0 : (1 / slope));
@@ -764,7 +764,8 @@
       },
 
       _clip: function(lines) {
-        const rect = [[0, 0], [800, 600]];
+        // TODO
+        const rect = [[0, 0], [1600, 600]];
 
         return lines.flatMap(
           (line) => {
@@ -952,19 +953,19 @@
       // Private filling methods
 
       _maskIndex: function(x, y) {
-        return Math.floor(y) * 801 + Math.floor(x);
+        return Math.floor(y) * 1601 + Math.floor(x);
       },
 
       _canvasIndex: function(x, y) {
         // Clamp coordinates to canvas data boundaries;
         // this is particularly useful for x=800 and y=600.
         // Probably not the best solution ever?
-        x = Math.min(x, 800 - 1);
+        x = Math.min(x, 1600 - 1);
         y = Math.min(y, 600 - 1);
 
-        x = this._canvasFlipped ? (800 - x) : x;
+        x = this._canvasFlipped ? (1600 - x) : x;
 
-        return Math.floor(y) * 800 + Math.floor(x);
+        return Math.floor(y) * 1600 + Math.floor(x);
       },
 
       /**
@@ -976,7 +977,7 @@
        * @returns {boolean}
        */
       _fillable: function(x, y) {
-        const rect = [[0, 0], [800, 600]];
+        const rect = [[0, 0], [1600, 600]];
         const within = this._within([x, y], rect);
         const fillable = this._canvasData[this._canvasIndex(x, y) * 4] > 0;
         return within && fillable;

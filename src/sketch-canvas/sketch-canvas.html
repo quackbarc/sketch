@@ -37,7 +37,7 @@
         on-pointerup="_onPointerMove"
         on-pointercancel="_onPointerMove"
         on-contextmenu="_onContextMenu"
-        width="800"
+        width="1600"
         height="600"></canvas>
     <sketch-data
         id="data"
@@ -415,7 +415,7 @@
           return;
         }
 
-        const transform = this.flipped ? {a: -1, e: 800} : {};
+        const transform = this.flipped ? {a: -1, e: 1600} : {};
         this._canvas.setTransform(transform);
         this._canvas2.setTransform(transform);
         this._render();
@@ -480,13 +480,13 @@
         var pressed = event.buttons > 0;
 
         var tool = pointerErasing ? "eraser" : this.tool;
-        var point = this._scaleCoordinates(this._bounds, event.clientX, event.clientY, 800, 600);
-        var x = this.flipped ? 800 - point[0] : point[0];
+        var point = this._scaleCoordinates(this._bounds, event.clientX, event.clientY, 1600, 600);
+        var x = this.flipped ? 1600 - point[0] : point[0];
         var y = point[1];
 
         var moved = !(this._lastX == x && this._lastY == y);
-        var isInBounds = x >= 0 && x < 800 && y >= 0 && y < 600;
-        var wasInBounds = this._lastX >= 0 && this._lastX < 800 && this._lastY >= 0 && this._lastY < 600;
+        var isInBounds = x >= 0 && x < 1600 && y >= 0 && y < 600;
+        var wasInBounds = this._lastX >= 0 && this._lastX < 1600 && this._lastY >= 0 && this._lastY < 600;
 
         // prevent consecutive actions on the same coordinates
         if(!moved && (this._wasPressed == pressed)) {
@@ -596,13 +596,13 @@
       },
 
       _drawStart(x, y) {
-        this._canvas2.drawImage(this._canvas.canvas, 0, 0, 800, 600);
+        this._canvas2.drawImage(this._canvas.canvas, 0, 0, 1600, 600);
         this.$.data.drawStart();
         this._draw(x, y, x, y);
       },
 
       _draw(x, y, px, py) {
-        this._canvas.drawImage(this._canvas2.canvas, 0, 0, 800, 600);
+        this._canvas.drawImage(this._canvas2.canvas, 0, 0, 1600, 600);
         this.$.data.draw(x, y, px, py);
         this.$.data.currentLines.forEach((line) => this._drawLine(line));
       },
@@ -732,7 +732,7 @@
 
       _clear() {
         this._canvas.fillStyle = "white";
-        this._canvas.fillRect(0, 0, 800, 600);
+        this._canvas.fillRect(0, 0, 1600, 600);
         this._canvas.fillStyle = "black";
       },
 
@@ -745,7 +745,7 @@
           var pointsDrawn = 0;
 
           while(pointsDrawn < pointsToDraw && this.playing) {
-            this._canvas.drawImage(this._canvas2.canvas, 0, 0, 800, 600);
+            this._canvas.drawImage(this._canvas2.canvas, 0, 0, 1600, 600);
             this._drawLine(this.$.data.lines[this._playProgressLines].slice(0, this._playProgressPoints + 4));
 
             pointsDrawn++;
@@ -753,7 +753,7 @@
             if(this._playProgressPoints >= this.$.data.lines[this._playProgressLines].length - 2) {
               this._playProgressPoints = 0;
               this._playProgressLines++;
-              this._canvas2.drawImage(this._canvas.canvas, 0, 0, 800, 600);
+              this._canvas2.drawImage(this._canvas.canvas, 0, 0, 1600, 600);
               if(this._playProgressLines >= this.$.data.lines.length) {
                 break;
               }
@@ -761,7 +761,7 @@
           }
         }
         else {
-          this._canvas2.drawImage(this._canvas.canvas, 0, 0, 800, 600);
+          this._canvas2.drawImage(this._canvas.canvas, 0, 0, 1600, 600);
         }
 
         this._lastTimestamp = timestamp;
