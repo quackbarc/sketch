@@ -163,13 +163,6 @@
         var data = event.detail.response;
         var id = this.$.getRequest.params.id;
 
-        if(this._swapQueue.length > 0) {
-          const nextPart = this._swapQueue.shift();
-          this.fire('part-swapped', this._swapQueue.length);
-          this.swap(nextPart);
-          return;
-        }
-
         if(data == "wait") {
           if(!this._waiting) {
             this.fire('swap-waiting');
@@ -201,6 +194,13 @@
           setTimeout(this.$.swapRequest.generateRequest.bind(this.$.swapRequest), (1 - id) * 1000);
         }
         else {
+          if(this._swapQueue.length >= 1) {
+            const nextPart = this._swapQueue.shift();
+            this.fire('part-swapped', this._swapQueue.length);
+            this.swap(nextPart);
+            return;
+          }
+
           this.$.getStatsRequest.generateRequest();
           this.$.getRequest.params = { id: id || "" };
           this.$.getRequest.generateRequest();
