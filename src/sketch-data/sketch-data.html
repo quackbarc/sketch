@@ -126,6 +126,11 @@
 
           for(var j = 0; j < line.length * 2; j += 2) {
             line[j / 2] = parseInt(lines[i].substr(j, 2), 36);
+
+            const isXCoord = j % 4 == 0;
+            if(isXCoord) {
+              line[j / 2] += 400;
+            }
           }
 
           if(this._isDot(line)) {
