@@ -247,6 +247,29 @@
         padding-left: 6px;
       }
 
+      :host[compact-buttons] .settings .button-row {
+        display: flex;
+        justify-content: center;
+
+        padding: 0px 10px;
+      }
+      :host[compact-buttons] .settings .button-row .button-item {
+        display: inline-block;
+        min-width: unset;
+        min-height: unset;
+
+        padding: 8px;
+
+        --paper-item-icon-width: auto;
+      }
+      :host[compact-buttons] .settings .button-row .button-item > * {
+        /**
+         * The * selector here applies to everything except the icon.
+         * The icon is under <paper-icon-item>'s scope.
+         */
+        display: none;
+      }
+
       /* paper-dialog */
 
       paper-dialog {
@@ -717,6 +740,7 @@
               icon="settings"></paper-icon-button>
           <div class="dropdown-content settings">
               <h2>Actions</h2>
+              <section class="button-row">
               <paper-icon-item
                   class="button-item"
                   on-tap="_flip">
@@ -774,6 +798,7 @@
                       </paper-item-body>
                       </template>
               </paper-icon-item>
+              </section>
 
               <hr>
               <h2>General</h2>
@@ -966,6 +991,15 @@
                       min="5"
                       max="30"
                       editable></paper-slider>
+              </paper-item>
+              <paper-item class="settings-item">
+                  <paper-item-body two-line>
+                      <div>Use compact actions menu</div>
+                      <div secondary>Shrinks the actions menu into just the icons.</div>
+                  </paper-item-body>
+                  <paper-toggle-button
+                      checked="{{compactButtons}}"
+                      noink></paper-toggle-button>
               </paper-item>
               <paper-item class="settings-item">
                   <paper-item-body two-line>
@@ -1295,6 +1329,12 @@
           type: Boolean,
           value: false
         },
+        compactButtons: {
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true,
+          observer: "_onCompactButtonsChange"
+        },
         backgroundType: {
           /* enum
             0, white background
@@ -1406,6 +1446,7 @@
           autosave: this.autosave,
           keybindToggling: this.keybindToggling,
           hideSwap: this.hideSwap,
+          compactButtons: this.compactButtons,
           gallerySource: this.gallerySource,
           backgroundType: this.backgroundType,
           enableScrollZooming: this.$.container.enableScrollZooming,
@@ -1427,6 +1468,7 @@
           this._setSetting("ignoreTouch", settings, this.$.sketch);
           this._setSetting("autosave", settings);
           this._setSetting("hideSwap", settings);
+          this._setSetting("compactButtons", settings);
           this._setSetting("keybindToggling", settings);
           this._setSetting("gallerySource", settings);
           this._setSetting("backgroundType", settings);
@@ -1859,6 +1901,18 @@
       },
 
       // UI-related methods
+
+      _onCompactButtonsChange: function(toggled) {
+        // Polymer 1.0 doesn't really apply custom style properties when they
+        // change at run-time; rather they only apply on creation time.
+        // We'll have to call `updateStyles()` whenever we make such changes.
+        //
+        // For reference, custom style properties are prefixed with `--`.
+        // The CSS for ":host[compact-buttons]" has one.
+        //
+        // https://polymer-library.polymer-project.org/1.0/docs/devguide/styling#custom-properties-shim-limitations
+        this.updateStyles();
+      },
 
       _onBackgroundChange: function(type) {
         let background;
