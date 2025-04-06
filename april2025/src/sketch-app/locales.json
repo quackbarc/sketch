@@ -1,0 +1,26 @@
+{
+  "en": {
+    "swap": "Swap (Ctrl+Enter)",
+    "reset": "Reset (Del)",
+    "undo": "Undo (Ctrl+Z)",
+    "redo": "Redo (Ctrl+Y)",
+    "pan": "Pan (H/Space)",
+    "eraser": "Eraser (E)",
+    "move": "Move (M)",
+    "pen": "Pen (P/B)",
+    "screentone": "Screentone (S)",
+    "fill": "Fill (F)",
+    "settings": "Settings",
+    "peek": "Peek",
+    "viewGallery": "View gallery",
+    "viewSketchOnGallery": "View #{id} on the gallery",
+    "save": "Save (Ctrl+S)",
+    "ink": "{amount, number, percent} ink used",
+    "sketches": "{num, plural, =-1 {- sketches} one {# sketch} other {# sketches}}",
+    "artists": "{num, plural, =-1 {- artists} one {# artist} other {# artists}}",
+    "peekers": "{num, plural, =-1 {- peekers} one {# peeker} other {# peekers}}",
+    "tooltipSketches": "Sketches on garyc.me over the past 5 minutes",
+    "tooltipArtists": "Artists who drew on garyc.me over the past 5 minutes",
+    "tooltipPeekers": "Peekers of the last sketch and watchers of the gallery over the past 5 minutes"
+  }
+}
