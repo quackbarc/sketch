@@ -1330,6 +1330,8 @@
 
       _arrowKeyHistory8: [],
 
+      _currentCopySide: "left",
+
       _sleepPromise: null,
 
       _clipboardReadTextDisabled: false,
@@ -1669,13 +1671,17 @@
             return this._alert('unable to copy to clipboard');
           }
 
-          var data = this.$.sketch.data;
+          var side = this._currentCopySide;
+          var data = this.$.sketch.$.data.getHalfSwapData(side);
           navigator.clipboard.writeText(data);
+
           if(data) {
-            this._alert('copied to clipboard');
+            this._alert(`copied the ${side} side (copy again to switch)`);
           } else {
             this._alert('copied to clipboard (but at what cost)');
           }
+
+          this._currentCopySide = side == "left" ? "right" : "left";
         }
       },
 
