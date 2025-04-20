@@ -120,7 +120,6 @@
         flipped: {
           type: Boolean,
           notify: true,
-          readOnly: true,
           value: false,
           observer: '_onFlippedChanged',
         },
@@ -347,7 +346,7 @@
       },
 
       flip: function() {
-        this._setFlipped(!this.flipped);
+        this.flipped = !this.flipped;
       },
 
       refreshLines: function() {
