@@ -1221,6 +1221,9 @@
           return true;
         }
 
+        // For keybinds that <iron-a11y-keys> can't support, e.g. `ctrl+[SYMBOL]` keys,
+        // or no-modifier keybinds (like `enter`, but without implicitly catching
+        // `ctrl+enter` or `alt+enter` too).
         function processExtraKeybinds(event) {
           if((event.ctrlKey || event.metaKey) && (event.key == "/") && (!event.altKey && !event.shiftKey)) {
             this._toggleKeybindMenu();
