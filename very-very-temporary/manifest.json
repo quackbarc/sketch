@@ -1,0 +1,18 @@
+{
+  "name": "sketch",
+  "short_name": "sketch",
+  "description": "A simple polymer client for garyc.me/sketch",
+  "start_url": ".",
+  "display": "standalone",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "16x16 32x32 48x48 64x64"
+    },
+    {
+      "src": "assets/pwa-icon_192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
