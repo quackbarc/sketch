@@ -1354,7 +1354,7 @@
 
       _clipboardReadTextDisabled: false,
 
-      // Private methods
+      // Computed methods
 
       _swapDisabled: function(sketchDisabled, loading, ink) {
         return sketchDisabled || loading || ink <= 0;
@@ -1381,6 +1381,18 @@
       _rememberTab: function(sketchDisabled, ink) {
         return !sketchDisabled && ink > 0;
       },
+
+      _flooredInk: function(ink) {
+        return Math.floor(ink*100) / 100;
+      },
+
+      _viewGalleryTitle: function(localize, peekID) {
+        return peekID
+          ? this.localize("viewSketchOnGallery", "id", peekID)
+          : this.localize("viewGallery");
+      },
+
+      // Private methods
 
       _saveData: function() {
         if(this.autosave) {
@@ -1489,6 +1501,35 @@
         }
       },
 
+      // Property observers
+
+      _onPanningChanged: function(isPanning) {
+        const keyPanning = this.$.sketch._activeKeyTool == "pan";
+        this.$.sketch.lockTool = isPanning && keyPanning;
+      },
+
+      _onCompactButtonsChange: function(toggled) {
+        // Polymer 1.0 doesn't really apply custom style properties when they
+        // change at run-time; rather they only apply on creation time.
+        // We'll have to call `updateStyles()` whenever we make such changes.
+        //
+        // For reference, custom style properties are prefixed with `--`.
+        // The CSS for ":host[compact-buttons]" has one.
+        //
+        // https://polymer-library.polymer-project.org/1.0/docs/devguide/styling#custom-properties-shim-limitations
+        this.updateStyles();
+      },
+
+      _onBackgroundChange: function(type) {
+        const background = "background-" + type;
+
+        let classlist = document.body.classList;
+        classlist.add(background);
+        Array.from(classlist)
+          .filter(cl => (cl.startsWith("background-") && cl != background))
+          .forEach(cl => classlist.remove(cl));
+      },
+
       // Event handlers for API and ajax
 
       _onSwapWaiting: function() {
@@ -1514,11 +1555,6 @@
 
       _onAlert: function(message) {
         this._alert(message.detail);
-      },
-
-      _onPanningChanged: function(isPanning) {
-        const keyPanning = this.$.sketch._activeKeyTool == "pan";
-        this.$.sketch.lockTool = isPanning && keyPanning;
       },
 
       // Event handlers for buttons
@@ -1814,6 +1850,32 @@
         this.$.container.fit = true;
       },
 
+      _isPanning: function(tool) {
+        return tool === 'pan';
+      },
+
+      _isErasing: function(tool) {
+        return tool === 'eraser';
+      },
+
+      _isDrawing: function(tool) {
+        return tool === 'pen';
+      },
+
+      _isMoving: function(tool) {
+        return tool === 'move';
+      },
+
+      _isToning: function(tool) {
+        return tool === 'screentone';
+      },
+
+      _isFilling: function(tool) {
+        return tool === 'fill';
+      },
+
+      // Event handlers for keyboard and other inputs
+
       _arrowKeys: function() {
         if(!this.sketchDisabled && this._isMoving(this.tool)) {
           let [dx, dy] = [0, 0];
@@ -1843,52 +1905,59 @@
         }
       },
 
-      _isPanning: function(tool) {
-        return tool === 'pan';
-      },
-
-      _isErasing: function(tool) {
-        return tool === 'eraser';
-      },
-
-      _isDrawing: function(tool) {
-        return tool === 'pen';
-      },
-
-      _isMoving: function(tool) {
-        return tool === 'move';
-      },
-
-      _isToning: function(tool) {
-        return tool === 'screentone';
-      },
-
-      _isFilling: function(tool) {
-        return tool === 'fill';
+      _etchEvent: function(event) {
+        if(this.etchMode && !this.sketchDisabled && !this._isMoving(this.tool)) {
+          this.$.sketch.etchEvent(event.detail.keyboardEvent);
+        };
       },
 
       // UI-related methods
 
-      _onCompactButtonsChange: function(toggled) {
-        // Polymer 1.0 doesn't really apply custom style properties when they
-        // change at run-time; rather they only apply on creation time.
-        // We'll have to call `updateStyles()` whenever we make such changes.
-        //
-        // For reference, custom style properties are prefixed with `--`.
-        // The CSS for ":host[compact-buttons]" has one.
-        //
-        // https://polymer-library.polymer-project.org/1.0/docs/devguide/styling#custom-properties-shim-limitations
-        this.updateStyles();
+      _alert: async function(message, ms=3000) {
+        var title = document.querySelector('.title');
+        var span = document.querySelector('.title span');
+        var alertSpan = document.querySelector('#alert');
+
+        alertSpan.innerHTML = message;
+        span.hidden = true;
+        if(title.clientWidth < alertSpan.scrollWidth) {
+          this.$.toolbar.classList.add("alertOnly");
+        }
+        this._hideStats();
+
+        let sleepPromise = this._sleepPromise = this._sleep(ms);
+        await sleepPromise;
+
+        if(this._sleepPromise === sleepPromise) {
+          alertSpan.innerHTML = '';
+          span.hidden = false;
+          this.$.toolbar.classList.remove("alertOnly");
+          this._hideStats();
+        }
       },
 
-      _onBackgroundChange: function(type) {
-        const background = "background-" + type;
+      _toggleKeybindMenu: function() {
+        this.$.keybindDialog.toggle();
+      },
 
-        let classlist = document.body.classList;
-        classlist.add(background);
-        Array.from(classlist)
-          .filter(cl => (cl.startsWith("background-") && cl != background))
-          .forEach(cl => classlist.remove(cl));
+      _openKeybindMenu: function() {
+        this.$.keybindDialog.open();
+      },
+
+      _openChangelogs: function() {
+        this.$.changelogs.open();
+      },
+
+      _closeMenus: function() {
+        document.querySelectorAll('iron-dropdown').forEach((x) => x.close());
+      },
+
+      _hideUI: function(event) {
+        event.detail.keyboardEvent.preventDefault();
+        this.$.toolbar.hidden = !this.$.toolbar.hidden;
+
+        // guess i gotta call this manually
+        this.$.container._onIronResize();
       },
 
       _menuAction: function(event, elem, tool) {
@@ -1913,20 +1982,6 @@
         this.$.sketch.desiredTool = tool;
       },
 
-      _closeMenus: function() {
-        document.querySelectorAll('iron-dropdown').forEach((x) => x.close());
-      },
-
-      _flooredInk: function(ink) {
-        return Math.floor(ink*100) / 100;
-      },
-
-      _viewGalleryTitle: function(localize, peekID) {
-        return peekID
-          ? this.localize("viewSketchOnGallery", "id", peekID)
-          : this.localize("viewGallery");
-      },
-
       _hideStats: function() {
         var title = document.querySelector('.title');
         var stats = title.querySelector('.stats');
@@ -1936,26 +1991,6 @@
         var maxWidth = span.offsetWidth + alertSpan.offsetWidth + stats.offsetWidth + 26 // margins + 2
 
         stats.style.visibility = title.offsetWidth <= maxWidth ? 'hidden' : ''
-      },
-
-      _hideUI: function(event) {
-        event.detail.keyboardEvent.preventDefault();
-        this.$.toolbar.hidden = !this.$.toolbar.hidden;
-
-        // guess i gotta call this manually
-        this.$.container._onIronResize();
-      },
-
-      _openKeybindMenu: function() {
-        this.$.keybindDialog.open();
-      },
-
-      _openChangelogs: function() {
-        this.$.changelogs.open();
-      },
-
-      _toggleKeybindMenu: function() {
-        this.$.keybindDialog.toggle();
       },
 
       _updateChangelogs: async function() {
@@ -2000,29 +2035,6 @@
         this.$.changelogsContent.markdown = markdownLines.join("\n\n");
       },
 
-      _alert: async function(message, ms=3000) {
-        var title = document.querySelector('.title');
-        var span = document.querySelector('.title span');
-        var alertSpan = document.querySelector('#alert');
-
-        alertSpan.innerHTML = message;
-        span.hidden = true;
-        if(title.clientWidth < alertSpan.scrollWidth) {
-          this.$.toolbar.classList.add("alertOnly");
-        }
-        this._hideStats();
-
-        let sleepPromise = this._sleepPromise = this._sleep(ms);
-        await sleepPromise;
-
-        if(this._sleepPromise === sleepPromise) {
-          alertSpan.innerHTML = '';
-          span.hidden = false;
-          this.$.toolbar.classList.remove("alertOnly");
-          this._hideStats();
-        }
-      },
-
       _alertNewChangelogs: async function() {
         // It should be fine to repeatedly fetch releases;
         // requests get cached for a minute.
@@ -2045,14 +2057,10 @@
         localStorage.setItem("lastRelease", latestVersion);
       },
 
+      // Utility methods
+
       _sleep: function(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
-      },
-
-      _etchEvent: function(event) {
-        if(this.etchMode && !this.sketchDisabled && !this._isMoving(this.tool)) {
-          this.$.sketch.etchEvent(event.detail.keyboardEvent);
-        };
       },
 
       _setSetting: function(name, settings, target = this, targetName = null) {
