@@ -916,9 +916,10 @@
                     no-label-float>
                     <paper-listbox
                       class="dropdown-content"
-                      selected="{{backgroundType}}">
-                      <paper-item>Light</paper-item>
-                      <paper-item>Dark</paper-item>
+                      selected="{{backgroundType}}"
+                      attr-for-selected="value">
+                      <paper-item value="light">Light</paper-item>
+                      <paper-item value="dark">Dark</paper-item>
                     </paper-listbox>
                   </paper-dropdown-menu>
               </paper-item>
@@ -1319,12 +1320,8 @@
           observer: "_onCompactButtonsChange"
         },
         backgroundType: {
-          /* enum
-            0, white background
-            1, dark background
-          */
-          type: Number,
-          value: 0,
+          type: String,
+          value: "light",
           observer: "_onBackgroundChange"
         },
         autosave: {
@@ -1440,6 +1437,17 @@
 
         var settings = JSON.parse(localStorage.getItem('settings'));
         if(settings) {
+          switch(settings.backgroundType) {
+            case 1: {
+              settings.backgroundType = "dark";
+              break;
+            }
+            case 0: {
+              settings.backgroundType = "light";
+              break;
+            }
+          }
+
           this._setSetting("timeResolution", settings);
           this._setSetting("timeResolutionLimited", settings);
           this._setSetting("animationSpeed", settings);
@@ -1872,16 +1880,7 @@
       },
 
       _onBackgroundChange: function(type) {
-        let background;
-        switch(type) {
-          case 1:
-            background = "background-dark";
-            break;
-          case 0:
-          default:
-            background = "background-light";
-            break;
-        }
+        const background = "background-" + type;
 
         let classlist = document.body.classList;
         classlist.add(background);

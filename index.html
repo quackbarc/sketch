@@ -46,18 +46,22 @@
       // Must be because everything's bundled into one HTML file.
 
       document.addEventListener("DOMContentLoaded", function() {
-        // apply preferred background early on
+        // Apply preferred background early on
         let settings = localStorage.getItem("settings") || "{}";
-        let backgroundType = JSON.parse(settings).backgroundType || 0;
+        let backgroundType = JSON.parse(settings).backgroundType || "light";
         switch(backgroundType) {
-          case 1:
-            document.body.classList.add("background-dark");
+          case 1: {
+            backgroundType = "dark";
             break;
-          case 0:
-          default:
-            document.body.classList.add("background-light");
+          }
+          case 0: {
+            backgroundType = "light";
             break;
+          }
         }
+
+        const backgroundClass = `background-${backgroundType}`;
+        document.body.classList.add(backgroundClass);
       });
     </script>
   </head>
