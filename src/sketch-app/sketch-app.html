@@ -38,7 +38,7 @@
         @apply(--layout-fit);
         @apply(--layout-vertical);
         --paper-slider-height: 4px;
-        --paper-item-body-two-line-min-height: 56px;
+        --paper-item-body-two-line-min-height: 0px;
 
         /* Prevents the app from being selectable by tablet pens and iOS Safari. */
         -webkit-user-select: none;
@@ -138,7 +138,23 @@
         transform: scaleX(-1);
       }
 
+      paper-toggle-button {
+        /* Remove the spacing dedicated to labels within the button */
+        --paper-toggle-button-label-spacing: 0px;
+      }
+
+      paper-dropdown-menu {
+        --paper-input-container-input: {
+            padding: 0px 4px;
+            cursor: pointer;
+        };
+      }
+
       paper-dropdown-menu paper-item {
+        cursor: pointer;
+
+        padding: 8px 16px;
+        min-height: 0px;
         max-width: 300px;
       }
 
@@ -179,6 +195,7 @@
         overflow-y: scroll;
       }
 
+      /* TODO: use h3's instead of h2's for mini-settings */
       .settings h2 {
         text-transform: uppercase;
         color: #aaa;
@@ -270,13 +287,63 @@
         display: none;
       }
 
+      /* Big settings styles */
+
+      .settings-list h3 {
+        text-transform: uppercase;
+        color: #aaa;
+        font-size: 14px;
+        letter-spacing: 2px;
+
+        padding: 16px 8px 4px;
+        margin: 0px;
+      }
+
+      .settings-list h3:first-child {
+        padding-top: 8px;
+      }
+
+      .settings-list hr {
+        border: none;
+        border-top: 1px solid #ccc;
+      }
+
+      .settings-list .settings-item {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+
+        padding: 10px 8px;
+        min-height: 48px;
+        min-width: 300px;
+        max-width: none;
+      }
+
+      .settings-list .settings-item paper-dropdown-menu {
+        width: 215px;
+        gap: 4px;
+      }
+
+      .settings-list .settings-item paper-slider {
+        width: 230px;
+        gap: 4px;
+      }
+
       /* paper-dialog */
 
       paper-dialog {
-        font-size: 16px;
         overflow-wrap: anywhere;
-        max-width: 600px;
+        font-size: 16px;
         margin: 24px 16px;
+
+        /**
+         * (max viewport width - the 16px side margins)
+         * I don't think there's any other way to make a container
+         * with a base width that can shrink down to fit the viewport
+         * while still respecting margins.
+         **/
+        max-width: calc(100% - 32px);
+        width: 600px;
 
         -webkit-user-select: text;
         user-select: text;
@@ -363,6 +430,20 @@
           padding: 6px;
         }
 
+        .settings-list h3,
+        .settings-list .settings-item {
+          padding-left: 4px;
+          padding-right: 4px;
+        }
+
+        .settings-list .settings-item paper-dropdown-menu {
+          width: 150px;
+        }
+
+        .settings-list .settings-item paper-slider {
+          width: 165px;
+        }
+
         paper-dialog ul ul {
           /* Remove stock indentation of nested <ul>s */
           padding: 0;
@@ -440,6 +521,173 @@
                     If you really think anything's changed, you might have to ask God.
                 </script>
             </marked-element>
+        </paper-dialog-scrollable>
+        <div class="buttons">
+            <paper-button dialog-confirm autofocus>Close</paper-button>
+        </div>
+    </paper-dialog>
+
+    <paper-dialog id="settings" with-backdrop>
+        <h2>Settings</h2>
+        <paper-dialog-scrollable class="settings-list">
+            <h3>General</h3>
+            <paper-item class="settings-item">
+                <paper-item-body two-line>
+                    <div>Toggle tool settings with keybind</div>
+                    <div secondary>
+                        Whether tool keybinds should open/close their
+                        respective tools' settings or not.
+                    </div>
+                </paper-item-body>
+                <paper-toggle-button
+                    checked="{{keybindToggling}}"
+                    noink></paper-toggle-button>
+            </paper-item>
+            <paper-item class="settings-item">
+                <paper-item-body two-line>
+                    <div>Automatically save sketch and history</div>
+                    <div secondary>
+                        Whether sketches and undo history should be autosaved
+                        and restored on a new tab, or not.
+                    </div>
+                </paper-item-body>
+                <paper-toggle-button
+                    checked="{{autosave}}"
+                    noink></paper-toggle-button>
+            </paper-item>
+            <paper-item class="settings-item">
+                <paper-item-body two-line>
+                    <div>Ignore touch inputs</div>
+                    <div secondary>
+                        Whether finger taps on the canvas should be ignored
+                        or not. Useful for tablet users using EMR styluses.
+                    </div>
+                </paper-item-body>
+                <paper-toggle-button
+                    checked="{{sketchIgnoreTouch}}"
+                    noink></paper-toggle-button>
+            </paper-item>
+            <paper-item class="settings-item">
+                <paper-item-body two-line>
+                    <div>Enable scroll zooming</div>
+                    <div secondary>
+                        Whether scrolling on the canvas should zoom it in or
+                        not. Disable this if your device has its own zooming
+                        powered by scrolling, e.g. some laptop touchpads.
+                    </div>
+                </paper-item-body>
+                <paper-toggle-button
+                    checked="{{enableScrollZooming}}"
+                    noink></paper-toggle-button>
+            </paper-item>
+            <paper-item class="settings-item dropdown">
+                <paper-item-body two-line>
+                    <div>Gallery</div>
+                    <div secondary>The gallery to swap sketches onto.</div>
+                </paper-item-body>
+                <paper-dropdown-menu
+                  dynamic-align
+                  no-label-float>
+                  <paper-listbox
+                    class="dropdown-content"
+                    selected="{{gallery}}"
+                    attr-for-selected="value">
+                    <paper-item value="garyc.me">garyc.me</paper-item>
+                    <paper-item value="noz.rip">noz.rip</paper-item>
+                  </paper-listbox>
+                </paper-dropdown-menu>
+            </paper-item>
+
+            <hr>
+            <h3>App appearance</h3>
+            <paper-item class="settings-item dropdown">
+                <paper-item-body two-line>
+                    <div>Background</div>
+                    <div secondary>Page background of the app</div>
+                </paper-item-body>
+                <paper-dropdown-menu
+                  no-label-float>
+                  <paper-listbox
+                    class="dropdown-content"
+                    selected="{{backgroundType}}"
+                    attr-for-selected="value">
+                    <paper-item value="light">Light</paper-item>
+                    <paper-item value="dark">Dark</paper-item>
+                  </paper-listbox>
+                </paper-dropdown-menu>
+            </paper-item>
+            <paper-item class="settings-item dropdown">
+                <paper-item-body two-line>
+                    <div>Rendering style</div>
+                    <div secondary>How sketches are rendered in the app</div>
+                </paper-item-body>
+                <paper-dropdown-menu
+                  dynamic-align
+                  no-label-float>
+                  <paper-listbox
+                    class="dropdown-content"
+                    selected="{{renderType}}">
+                    <paper-item label="Default">
+                        <paper-item-body two-line>
+                            <div>Default</div>
+                            <div secondary>
+                                Round line tips, round corner edges.
+                            </div>
+                        </paper-item-body>
+                    </paper-item>
+                    <paper-item label="Gallery-style">
+                        <paper-item-body two-line>
+                            <div>Gallery-style</div>
+                            <div secondary>
+                                Hard line tips, round corner edges.
+                                Similar to garyc.me's.
+                            </div>
+                        </paper-item-body>
+                    </paper-item>
+                    <paper-item label="Gallery-style (spiky)">
+                        <paper-item-body two-line>
+                            <div>Gallery-style (spiky)</div>
+                            <div secondary>
+                                Hard line tips, spiky corner edges.
+                                Similar to garyc.me's before 2022.
+                            </div>
+                        </paper-item-body>
+                    </paper-item>
+                  </paper-listbox>
+                </paper-dropdown-menu>
+            </paper-item>
+            <paper-item class="settings-item slider">
+                <paper-item-body two-line>
+                    <div>Animation speed</div>
+                    <div secondary>
+                        How fast sketches would be played back
+                        on peeks and swaps
+                    </div>
+                </paper-item-body>
+                <paper-slider
+                    value="{{animationSpeed}}"
+                    min="5"
+                    max="30"
+                    editable></paper-slider>
+            </paper-item>
+            <paper-item class="settings-item">
+                <paper-item-body two-line>
+                    <div>Use compact actions menu</div>
+                    <div secondary>Shrinks the actions menu into just the icons.</div>
+                </paper-item-body>
+                <paper-toggle-button
+                    checked="{{compactButtons}}"
+                    noink></paper-toggle-button>
+            </paper-item>
+            <paper-item class="settings-item">
+                <paper-item-body two-line>
+                    <div>Hide swap button</div>
+                    <div secondary>Note: Swapping can still be done with Ctrl+Enter.</div>
+                </paper-item-body>
+                <paper-toggle-button
+                    checked="{{hideSwap}}"
+                    noink></paper-toggle-button>
+            </paper-item>
         </paper-dialog-scrollable>
         <div class="buttons">
             <paper-button dialog-confirm autofocus>Close</paper-button>
@@ -813,84 +1061,6 @@
                       max="50"
                       editable></paper-slider>
               </paper-item>
-              <paper-item class="settings-item">
-                  <paper-item-body two-line>
-                      <div>Toggle tool settings with keybind</div>
-                      <div secondary>
-                          Whether tool keybinds should open/close their
-                          respective tools' settings or not.
-                      </div>
-                  </paper-item-body>
-                  <paper-toggle-button
-                      checked="{{keybindToggling}}"
-                      noink></paper-toggle-button>
-              </paper-item>
-              <paper-item class="settings-item">
-                  <paper-item-body two-line>
-                      <div>Automatically save sketch and history</div>
-                      <div secondary>
-                          Whether sketches and undo history should be autosaved
-                          and restored on a new tab, or not.
-                      </div>
-                  </paper-item-body>
-                  <paper-toggle-button
-                      checked="{{autosave}}"
-                      noink></paper-toggle-button>
-              </paper-item>
-              <paper-item class="settings-item">
-                  <paper-item-body two-line>
-                      <div>Prevent drawing past ink limit</div>
-                      <div secondary>
-                        Note: Even if this is turned off, swapping will still
-                        clip the sketch to 100%.
-                      </div>
-                  </paper-item-body>
-                  <paper-toggle-button
-                      checked="{{limitedInk}}"
-                      noink></paper-toggle-button>
-              </paper-item>
-              <paper-item class="settings-item">
-                  <paper-item-body two-line>
-                      <div>Ignore touch inputs</div>
-                      <div secondary>
-                          Whether finger taps on the canvas should be ignored
-                          or not. Useful for tablet users using EMR styluses.
-                      </div>
-                  </paper-item-body>
-                  <paper-toggle-button
-                      checked="{{sketchIgnoreTouch}}"
-                      noink></paper-toggle-button>
-              </paper-item>
-              <paper-item class="settings-item">
-                  <paper-item-body two-line>
-                      <div>Enable scroll zooming</div>
-                      <div secondary>
-                          Whether scrolling on the canvas should zoom it in or
-                          not. Disable this if your device has its own zooming
-                          powered by scrolling, e.g. some laptop touchpads.
-                      </div>
-                  </paper-item-body>
-                  <paper-toggle-button
-                      checked="{{enableScrollZooming}}"
-                      noink></paper-toggle-button>
-              </paper-item>
-              <paper-item class="settings-item dropdown">
-                  <paper-item-body two-line>
-                      <div>Gallery</div>
-                      <div secondary>The gallery to swap sketches onto.</div>
-                  </paper-item-body>
-                  <paper-dropdown-menu
-                    dynamic-align
-                    no-label-float>
-                    <paper-listbox
-                      class="dropdown-content"
-                      selected="{{gallery}}"
-                      attr-for-selected="value">
-                      <paper-item value="garyc.me">garyc.me</paper-item>
-                      <paper-item value="noz.rip">noz.rip</paper-item>
-                    </paper-listbox>
-                  </paper-dropdown-menu>
-              </paper-item>
               <paper-icon-item
                   class="button-item"
                   on-tap="_openKeybindMenu">
@@ -903,97 +1073,12 @@
                   <iron-icon item-icon icon="mdi:list-box-outline"></iron-icon>
                   <div>Open changelogs</div>
               </paper-icon-item>
-
-              <hr>
-              <h2>App appearance</h2>
-              <paper-item class="settings-item dropdown">
-                  <paper-item-body two-line>
-                      <div>Background</div>
-                      <div secondary>Page background of the app</div>
-                  </paper-item-body>
-                  <paper-dropdown-menu
-                    no-label-float>
-                    <paper-listbox
-                      class="dropdown-content"
-                      selected="{{backgroundType}}"
-                      attr-for-selected="value">
-                      <paper-item value="light">Light</paper-item>
-                      <paper-item value="dark">Dark</paper-item>
-                    </paper-listbox>
-                  </paper-dropdown-menu>
-              </paper-item>
-              <paper-item class="settings-item dropdown">
-                  <paper-item-body two-line>
-                      <div>Rendering style</div>
-                      <div secondary>How sketches are rendered in the app</div>
-                  </paper-item-body>
-                  <paper-dropdown-menu
-                    dynamic-align
-                    no-label-float>
-                    <paper-listbox
-                      class="dropdown-content"
-                      selected="{{renderType}}">
-                      <paper-item label="Default">
-                          <paper-item-body two-line>
-                              <div>Default</div>
-                              <div secondary>
-                                  Round line tips, round corner edges.
-                              </div>
-                          </paper-item-body>
-                      </paper-item>
-                      <paper-item label="Gallery-style">
-                          <paper-item-body two-line>
-                              <div>Gallery-style</div>
-                              <div secondary>
-                                  Hard line tips, round corner edges.
-                                  Similar to garyc.me's.
-                              </div>
-                          </paper-item-body>
-                      </paper-item>
-                      <paper-item label="Gallery-style (spiky)">
-                          <paper-item-body two-line>
-                              <div>Gallery-style (spiky)</div>
-                              <div secondary>
-                                  Hard line tips, spiky corner edges.
-                                  Similar to garyc.me's before 2022.
-                              </div>
-                          </paper-item-body>
-                      </paper-item>
-                    </paper-listbox>
-                  </paper-dropdown-menu>
-              </paper-item>
-              <paper-item class="settings-item slider">
-                  <paper-item-body two-line>
-                      <div>Animation speed</div>
-                      <div secondary>
-                          How fast sketches would be played back
-                          on peeks and swaps
-                      </div>
-                  </paper-item-body>
-                  <paper-slider
-                      value="{{animationSpeed}}"
-                      min="5"
-                      max="30"
-                      editable></paper-slider>
-              </paper-item>
-              <paper-item class="settings-item">
-                  <paper-item-body two-line>
-                      <div>Use compact actions menu</div>
-                      <div secondary>Shrinks the actions menu into just the icons.</div>
-                  </paper-item-body>
-                  <paper-toggle-button
-                      checked="{{compactButtons}}"
-                      noink></paper-toggle-button>
-              </paper-item>
-              <paper-item class="settings-item">
-                  <paper-item-body two-line>
-                      <div>Hide swap button</div>
-                      <div secondary>Note: Swapping can still be done with Ctrl+Enter.</div>
-                  </paper-item-body>
-                  <paper-toggle-button
-                      checked="{{hideSwap}}"
-                      noink></paper-toggle-button>
-              </paper-item>
+              <paper-icon-item
+                  class="button-item"
+                  on-tap="_openSettings">
+                  <iron-icon item-icon icon="settings"></iron-icon>
+                  <div>Show all settings</div>
+              </paper-icon-item>
 
               <template is="dom-if" if="[[konami]]">
               <hr>
@@ -1953,6 +2038,10 @@
 
       _openChangelogs: function() {
         this.$.changelogs.open();
+      },
+
+      _openSettings: function() {
+        this.$.settings.open();
       },
 
       _closeMenus: function() {
