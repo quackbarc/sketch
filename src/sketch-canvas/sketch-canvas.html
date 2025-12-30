@@ -42,6 +42,7 @@
     <sketch-data
         id="data"
         length="{{dataLength}}"
+        max-length="{{maxDataLength}}"
         can-undo="{{dataCanUndo}}"
         can-redo="{{dataCanRedo}}"
         limited-ink="{{limitedInk}}"></sketch-data>
@@ -103,7 +104,7 @@
           type: Number,
           notify: true,
           readOnly: true,
-          computed: 'computeInk(dataLength)'
+          computed: 'computeInk(maxDataLength, dataLength)'
         },
         drawing: {
           type: Boolean,
@@ -262,6 +263,10 @@
           type: Boolean,
           notify: true
         },
+        maxDataLength: {
+          type: Number,
+          notify: true
+        },
       },
 
       get data() {
@@ -354,8 +359,8 @@
         this._render();
       },
 
-      computeInk: function(dataLength) {
-        return dataLength / this.$.data.MAX_LENGTH;
+      computeInk: function(maxLength, dataLength) {
+        return dataLength / maxLength;
       },
 
       copyCanvas: function() {

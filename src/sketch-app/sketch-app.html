@@ -401,6 +401,7 @@
               animation-speed="{{animationSpeed}}"
               limited-ink="{{limitedInk}}"
               render-type="{{renderType}}"
+              max-data-length="{{maxDataLength}}"
               on-tool-changed="_closeMenus"
               drawing="{{drawing}}"
               flipped="{{sketchFlipped}}"
@@ -873,6 +874,23 @@
                       checked="{{enableScrollZooming}}"
                       noink></paper-toggle-button>
               </paper-item>
+              <paper-item class="settings-item dropdown">
+                  <paper-item-body two-line>
+                      <div>Gallery</div>
+                      <div secondary>The gallery to swap sketches onto.</div>
+                  </paper-item-body>
+                  <paper-dropdown-menu
+                    dynamic-align
+                    no-label-float>
+                    <paper-listbox
+                      class="dropdown-content"
+                      selected="{{gallery}}"
+                      attr-for-selected="value">
+                      <paper-item value="garyc.me">garyc.me</paper-item>
+                      <paper-item value="noz.rip">noz.rip</paper-item>
+                    </paper-listbox>
+                  </paper-dropdown-menu>
+              </paper-item>
               <paper-icon-item
                   class="button-item"
                   on-tap="_openKeybindMenu">
@@ -888,25 +906,6 @@
 
               <hr>
               <h2>App appearance</h2>
-              <paper-item class="settings-item dropdown">
-                  <paper-item-body two-line>
-                      <div>Gallery</div>
-                      <div secondary>
-                        The gallery that the View Gallery button would open up.
-                      </div>
-                  </paper-item-body>
-                  <paper-dropdown-menu
-                    dynamic-align
-                    no-label-float>
-                    <paper-listbox
-                      class="dropdown-content"
-                      selected="{{gallerySource}}"
-                      attr-for-selected="value">
-                      <paper-item value="garyc.me">garyc.me</paper-item>
-                      <paper-item value="noz.rip">noz.rip</paper-item>
-                    </paper-listbox>
-                  </paper-dropdown-menu>
-              </paper-item>
               <paper-item class="settings-item dropdown">
                   <paper-item-body two-line>
                       <div>Background</div>
@@ -1158,6 +1157,7 @@
 
     <sketch-api
         id="api"
+        source="{{gallery}}"
         sketches="{{sketches}}"
         artists="{{artists}}"
         peekers="{{peekers}}"
@@ -1335,9 +1335,9 @@
           type: Boolean,
           value: true
         },
-        gallerySource: {
-          type: String,
-          value: "garyc.me",
+        maxDataLength: {
+          type: Number,
+          computed: "_maxDataLength(gallery)"
         },
 
         // visual
@@ -1383,6 +1383,10 @@
 
       _rememberTab: function(sketchDisabled, ink) {
         return !sketchDisabled && ink > 0;
+      },
+
+      _maxDataLength: function(source) {
+        return source == "noz.rip" ? 128*1024 : 64*1024 - 1;
       },
 
       _flooredInk: function(ink) {
@@ -1439,7 +1443,7 @@
           keybindToggling: this.keybindToggling,
           hideSwap: this.hideSwap,
           compactButtons: this.compactButtons,
-          gallerySource: this.gallerySource,
+          gallery: this.gallery,
           renderType: this.renderType,
           backgroundType: this.backgroundType,
           enableScrollZooming: this.$.container.enableScrollZooming,
@@ -1473,7 +1477,7 @@
           this._setSetting("hideSwap", settings);
           this._setSetting("compactButtons", settings);
           this._setSetting("keybindToggling", settings);
-          this._setSetting("gallerySource", settings);
+          this._setSetting("gallery", settings);
           this._setSetting("renderType", settings);
           this._setSetting("backgroundType", settings);
           this._setSetting("enableScrollZooming", settings);
@@ -1682,7 +1686,7 @@
 
       _viewGallery: function() {
         let baseURL;
-        switch(this.gallerySource) {
+        switch(this.gallery) {
           case "noz.rip":
             baseURL = `https://noz.rip/sketch/gallery.php`;
             break;

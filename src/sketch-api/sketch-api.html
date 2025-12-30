@@ -5,18 +5,18 @@
   <template>
     <iron-ajax
         id="getStatsRequest"
-        url="https://garyc.me/sketch/getStats.php?timespan=300"
+        url="[[getStatsURL]]"
         handle-as="text"
         on-response="_onGetStats"></iron-ajax>
     <iron-ajax
         id="getMaxIDRequest"
-        url="https://garyc.me/sketch/getMaxID.php"
+        url="[[getMaxIdURL]]"
         handle-as="text"
         on-response="_onSwap"
         on-error="_onError"></iron-ajax>
     <iron-ajax
         id="swapRequest"
-        url="https://garyc.me/sketch/swap.php?v=32"
+        url="[[swapURL]]"
         method="POST"
         timeout="30000"
         handle-as="text"
@@ -24,7 +24,7 @@
         on-error="_onError"></iron-ajax>
     <iron-ajax
         id="getRequest"
-        url="https://garyc.me/sketch/get.php"
+        url="[[getURL]]"
         handle-as="text"
         on-response="_onGet"
         on-error="_onError"></iron-ajax>
@@ -45,6 +45,33 @@
       // Public properties
 
       properties: {
+        getStatsURL: {
+          type: String,
+          readOnly: true,
+          computed: "_getStatsURL(source)"
+        },
+        getMaxIdURL: {
+          type: String,
+          readOnly: true,
+          computed: "_getMaxIdURL(source)"
+        },
+        swapURL: {
+          type: String,
+          readOnly: true,
+          computed: "_swapURL(source)"
+        },
+        getURL: {
+          type: String,
+          readOnly: true,
+          computed: "_getURL(source)"
+        },
+        source: {
+          // options: "noz.rip", "garyc.me"
+          type: String,
+          value: "noz.rip",
+          observer: "_onSourceChange",
+          notify: true,
+        },
         loading: {
           type: Boolean,
           value: false,
@@ -76,6 +103,54 @@
       _waiting: false,
 
       _swapErroredOnce: false,
+
+      // Computed properties
+
+      _getStatsURL: function(source) {
+        const urlmap = {
+          "garyc.me": "https://garyc.me/sketch/getStats.php?timespan=300",
+          "noz.rip": "https://noz.rip/sketch/getStats.php",
+        }
+        return urlmap[source];
+      },
+
+      _getMaxIdURL: function(source) {
+        const urlmap = {
+          "garyc.me": "https://garyc.me/sketch/getMaxID.php",
+          "noz.rip": "https://noz.rip/sketch/getMaxID.php",
+        }
+        return urlmap[source];
+      },
+
+      _swapURL: function(source) {
+        const urlmap = {
+          "garyc.me": "https://garyc.me/sketch/swap.php?v=32",
+          "noz.rip": "https://noz.rip/sketch/swap.php",
+        }
+        return urlmap[source];
+      },
+
+      _getURL: function(source) {
+        const urlmap = {
+          "garyc.me": "https://garyc.me/sketch/get.php",
+          "noz.rip": "https://noz.rip/sketch/get.php",
+        }
+        return urlmap[source];
+      },
+
+      // Property observers
+
+      _onSourceChange: function() {
+        if(!this._readied) {
+          return;
+        }
+
+        // Show "-" stat counts just because it's nice UX for changing galleries.
+        this._setSketches(-1);
+        this._setArtists(-1);
+        this._setPeekers(-1);
+        this._getStats();
+      },
 
       // Public functions
 
