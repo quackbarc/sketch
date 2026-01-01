@@ -163,9 +163,11 @@
         --paper-item-min-height: 40px;
         min-width: 180px;
       }
+
       paper-icon-item {
         --paper-item-icon-width: 40px;
       }
+
       paper-icon-item.button-item {
         cursor: pointer;
       }
@@ -195,8 +197,7 @@
         overflow-y: scroll;
       }
 
-      /* TODO: use h3's instead of h2's for mini-settings */
-      .settings h2 {
+      .settings h3 {
         text-transform: uppercase;
         color: #aaa;
         font-size: 14px;
@@ -749,7 +750,7 @@
               active="{{_isErasing(tool)}}"
               toggles="{{!_isErasing(tool)}}"></paper-icon-button>
           <div class="dropdown-content settings">
-              <h2>Eraser</h2>
+              <h3>Eraser</h3>
               <paper-item class="settings-item">
                   <paper-item-body two-line>
                       <div>Erase strokes</div>
@@ -805,7 +806,7 @@
             active="{{_isFilling(tool)}}"
             toggles="{{!_isFilling(tool)}}"></paper-icon-button>
           <div class="dropdown-content settings">
-              <h2>Filling</h2>
+              <h3>Filling</h3>
               <paper-item class="settings-item">
                   <paper-item-body two-line>
                       <div>Screentone</div>
@@ -843,7 +844,7 @@
               </paper-item>
               </template>
               <template is="dom-if" if="[[fillScreentone]]">
-              <h2>Screentoning</h2>
+              <h3>Screentoning</h3>
               <paper-item class="settings-item dropdown">
                   <div>Pattern</div>
                   <paper-dropdown-menu
@@ -873,7 +874,7 @@
                       max="40"
                       editable></paper-slider>
               </paper-item>
-              <h2>Screentone Offset</h2>
+              <h3>Screentone Offset</h3>
               <div class="settings-double">
                   <paper-item class="settings-item slider">
                       <paper-item-body two-line>
@@ -917,7 +918,7 @@
             active="{{_isToning(tool)}}"
             toggles="{{!_isToning(tool)}}"></paper-icon-button>
           <div class="dropdown-content settings">
-              <h2>Screentoning</h2>
+              <h3>Screentoning</h3>
               <paper-item class="settings-item dropdown">
                   <div>Pattern</div>
                   <paper-dropdown-menu
@@ -960,7 +961,7 @@
                           editable></paper-slider>
                   </paper-item>
               </div>
-              <h2>Screentone Offset</h2>
+              <h3>Screentone Offset</h3>
               <div class="settings-double">
                   <paper-item class="settings-item slider">
                       <paper-item-body two-line>
@@ -999,7 +1000,7 @@
               title="{{localize('settings')}}"
               icon="settings"></paper-icon-button>
           <div class="dropdown-content settings">
-              <h2>Actions</h2>
+              <h3>Actions</h3>
               <section class="button-row">
               <paper-icon-item
                   class="button-item"
@@ -1061,7 +1062,7 @@
               </section>
 
               <hr>
-              <h2>General</h2>
+              <h3>General</h3>
               <paper-item class="settings-item slider">
                   <paper-item-body two-line>
                       <div>Sample rate</div>
@@ -1094,7 +1095,7 @@
 
               <template is="dom-if" if="[[konami]]">
               <hr>
-              <h2>Hidden settings</h2>
+              <h3>Hidden settings</h3>
               <paper-item class="settings-item">
                   <paper-item-body two-line>
                       <div>Etch-a-Sketch mode</div>
