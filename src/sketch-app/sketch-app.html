@@ -557,6 +557,18 @@
             </paper-item>
             <paper-item class="settings-item">
                 <paper-item-body two-line>
+                    <div>Prevent drawing past ink limit</div>
+                    <div secondary>
+                      Note: Even if this is turned off, swapping will still
+                      clip the sketch to 100%.
+                    </div>
+                </paper-item-body>
+                <paper-toggle-button
+                    checked="{{limitedInk}}"
+                    noink></paper-toggle-button>
+            </paper-item>
+            <paper-item class="settings-item">
+                <paper-item-body two-line>
                     <div>Ignore touch inputs</div>
                     <div secondary>
                         Whether finger taps on the canvas should be ignored
