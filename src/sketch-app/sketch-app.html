@@ -243,7 +243,9 @@
 
       .settings .settings-double .settings-item {
         flex: 1;
+
         min-width: 0;
+        gap: 8px;
       }
 
       .settings-double .settings-item.slider > paper-slider {
@@ -252,12 +254,12 @@
         max-width: 210px;
       }
 
-      .settings .settings-double .settings-item:nth-Child(1) {
-        padding-right: 6px;
+      .settings .settings-double .settings-item:first-child {
+        padding-right: 12px;
       }
 
-      .settings .settings-double .settings-item:nth-Child(2) {
-        padding-left: 6px;
+      .settings .settings-double .settings-item:last-child {
+        padding-left: 12px;
       }
 
       :host[compact-buttons] .settings .button-row {
