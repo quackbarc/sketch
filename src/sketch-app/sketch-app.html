@@ -198,7 +198,8 @@
         overflow-y: scroll;
       }
 
-      .settings h3 {
+      .settings h3,
+      .menu h3 {
         text-transform: uppercase;
         color: #aaa;
         font-size: 14px;
@@ -1154,6 +1155,7 @@
               title="{{localize('save')}}"
               icon="save"></paper-icon-button>
           <div class="dropdown-content menu">
+              <h3>Saving</h3>
               <paper-icon-item
                   class="button-item"
                   on-tap="_save">
