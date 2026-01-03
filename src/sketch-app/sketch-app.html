@@ -160,7 +160,8 @@
 
       paper-item,
       paper-icon-item {
-        --paper-item-min-height: 40px;
+        padding: 8px 16px;
+        min-height: 24px;
         min-width: 180px;
       }
 
@@ -202,34 +203,38 @@
         color: #aaa;
         font-size: 14px;
         letter-spacing: 2px;
-        padding: 10px 18px 6px;
+
+        padding: 12px 16px 4px;
         margin: 0px;
+      }
+
+      .settings hr {
+        border: none;
+        border-top: 1px solid #ccc;
       }
 
       .settings .settings-item {
         display: flex;
+        align-items: center;
+        gap: 16px;
+
         min-width: 400px;
         max-width: 450px;
-        padding: 2px 10px;
-        align-items: center;
       }
 
       .settings .settings-item > div,
       .settings .settings-item > paper-item-body {
         display: flex;
-        padding: 8px;
         flex: 1 1 auto;
       }
 
       .settings .settings-item > paper-item-body {
-        --paper-item-body-two-line-min-height: 48px;
         align-items: start;
         min-width: min-content;
       }
 
       .settings .settings-item > paper-toggle-button {
         flex: 0 1 auto;
-        padding-left: 20px;
       }
 
       .settings .settings-item.slider > div,
@@ -242,13 +247,9 @@
         width: 210px;
       }
 
-      .settings .settings-item.dropdown {
-        --paper-item-min-height: 56px;
-      }
-
       .settings .settings-item.dropdown > paper-dropdown-menu {
         flex: 0 0 auto;
-        max-width: 180px;
+        width: 195px;
       }
 
       .settings .settings-double {
