@@ -363,6 +363,11 @@
         white-space: normal;
       }
 
+      paper-dialog .markdown-html hr {
+        border: none;
+        border-top: 1px solid #ccc;
+      }
+
       paper-dialog .markdown-html li {
         margin-block: 0.25em;
       }
@@ -392,6 +397,10 @@
         padding: 2px 5px;
         border: 2px solid #0003;
         border-radius: 5px;
+      }
+
+      #changelogs hr.version-separator {
+        margin: 2em 0;
       }
 
       #changelogs h1.version-name {
@@ -2143,9 +2152,12 @@
             `<h1 class="version-name">${release.name}</h1>`,
             `<em class="version-timestamp">${timestampStr}</em>`,
             body,
-            '---',
+            '<hr class="version-separator"/>',
           );
         };
+
+        // Replace final .version-separator <hr> with a regular <hr>
+        markdownLines.splice(-1, 1, "---");
 
         this.$.changelogsContent.markdown = markdownLines.join("\n\n");
       },
