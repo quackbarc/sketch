@@ -1178,6 +1178,13 @@
                       <iron-icon item-icon icon="mdi:content-save-cog"></iron-icon>
                       <div>Save as SVG</div>
               </paper-icon-item>
+              <paper-icon-item
+                  disabled="[[!ink]]"
+                  class="button-item"
+                  on-tap="_saveTXT">
+                      <iron-icon item-icon icon="mdi:file-document-outline"></iron-icon>
+                      <div>Save data as TXT</div>
+              </paper-icon-item>
           </div>
       </paper-menu-button>
     </paper-toolbar>
@@ -1823,6 +1830,15 @@
 
       _saveSVG: function() {
         this.$.api.saveSVG(this.$.sketch.$.data.lines, this.$.sketch.renderType);
+      },
+
+      _saveTXT: function() {
+        const data = this.$.sketch.$.data.data;
+        if(!data) {
+          return this._alert("can't save an empty sketch");
+        }
+
+        this.$.api.saveTXT(data);
       },
 
       _copyImage: function() {

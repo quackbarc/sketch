@@ -172,6 +172,13 @@
         a.click();
       },
 
+      saveTXT: function(data) {
+        var a = document.createElement('a');
+        a.setAttribute('download', 'sketch.txt');
+        a.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(data);
+        a.click();
+      },
+
       saveSVG: function(lines, renderType) {
         let path = lines.map(function(line) {
           // override for screentones with gallery-style renderTypes
