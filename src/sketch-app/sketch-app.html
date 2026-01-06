@@ -1986,18 +1986,29 @@
       },
 
       _changeZoom: function(event) {
+        const zoom = this.$.container.zoom;
         let zoomFactor = 1;
+        let zoomStep = zoom;
+
         switch(event.detail.key) {
           case '-':
           case '_':
             zoomFactor = 7/10;
+            zoomStep = this.$.container.getZoomStepBefore(zoom);
             break;
           case '+':
           case '=':
             zoomFactor = 10/7;
+            zoomStep = this.$.container.getZoomStepAfter(zoom);
             break;
         }
-        this.$.container.zoom *= zoomFactor;
+
+        if(this.steppedZoom) {
+          this.$.container.zoom = zoomStep;
+        }
+        else {
+          this.$.container.zoom *= zoomFactor;
+        }
       },
 
       _resetZoom: function() {
