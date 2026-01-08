@@ -127,6 +127,38 @@
         };
       }
 
+      #mini-stats {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+
+        align-self: stretch;
+        flex: 0 0 auto;
+
+        margin: 8px 0;
+        overflow: hidden;
+      }
+
+      .mini-stats-block {
+        width: min-content;
+        box-sizing: border-box;
+        min-width: 40px;
+
+        padding: 0px 4px;
+        border-radius: 3px;
+        border: 1px solid #fff;
+
+        font-family: "Jost", "Roboto", "Noto", sans-serif;
+        font-size: 16px;
+        text-align: center;
+      }
+
+      .mini-stats-block.white {
+        background-color: #fff;
+        color: #980706;
+      }
+
       #toolbar.alertOnly paper-icon-button,
       #toolbar.alertOnly paper-menu-button,
       #toolbar.alertOnly .title > *:not(#alert) {
@@ -470,6 +502,10 @@
       :host[toolbar-position="left"] .title span,
       :host[toolbar-position="right"] .title span {
         /** temporary; we'll find a way to display them later on */
+        display: none;
+      }
+
+      :host[toolbar-position="bottom"] #mini-stats {
         display: none;
       }
 
@@ -1215,6 +1251,15 @@
         </div>
       </div>
 
+      <div id="mini-stats">
+        <div class="mini-stats-block white" title="{{localize('tooltipInk')}}">
+          {{localize('shortInk', 'amount', flooredInk)}}
+        </div>
+        <div class="mini-stats-block" title="{{localize('tooltipSketches')}}">
+          {{localize('shortSketches', 'num', sketches)}}
+        </div>
+      </div>
+
       <paper-icon-button
           title="{{localize('peek')}}"
           icon="visibility"
@@ -1725,6 +1770,9 @@
 
         // Notify any elements that could re-position or resize themselves.
         this.notifyResize();
+
+        // ...and the stats too in the meantime.
+        this._hideStats();
       },
 
       _onBackgroundChange: function(type) {
