@@ -6,6 +6,7 @@
 <link rel="import" href="../../bower_components/iron-icons/editor-icons.html">
 <link rel="import" href="../../bower_components/iron-icons/image-icons.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-resizable-behavior/iron-resizable-behavior.html">
 <link rel="import" href="../../bower_components/marked-element/marked-element.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
@@ -437,6 +438,39 @@
         padding: 0px;
         width: 100%;
         height: 100%;
+      }
+
+      /* Toolbar positioning styles  */
+
+      :host[toolbar-position="left"],
+      :host[toolbar-position="right"] {
+        --paper-toolbar-height: 100vh;
+        --paper-toolbar-sm-height: 100vh;
+
+        --paper-toolbar-content: {
+          flex-direction: column;
+
+          box-sizing: border-box;
+          width: 56px;
+          padding: 16px 0px;
+
+          overflow-y: auto;
+          scrollbar-width: none;
+        };
+      }
+
+      :host[toolbar-position="left"] {
+        flex-direction: row-reverse;
+      }
+
+      :host[toolbar-position="right"] {
+        flex-direction: row;
+      }
+
+      :host[toolbar-position="left"] .title span,
+      :host[toolbar-position="right"] .title span {
+        /** temporary; we'll find a way to display them later on */
+        display: none;
       }
 
       /* Media queries */
@@ -1327,6 +1361,7 @@
 
       behaviors: [
         Polymer.AppLocalizeBehavior,
+        Polymer.IronResizableBehavior,
         Sketch.TabBehavior
       ],
 
@@ -1477,12 +1512,13 @@
           type: String,
           value: "bottom",
           reflectToAttribute: true,
+          observer: "_onUIChange"
         },
         compactButtons: {
           type: Boolean,
           value: false,
           reflectToAttribute: true,
-          observer: "_onCompactButtonsChange"
+          observer: "_onUIChange"
         },
         backgroundType: {
           type: String,
@@ -1677,11 +1713,18 @@
         this.$.sketch.lockTool = isPanning && keyPanning;
       },
 
-      _onCompactButtonsChange: function(toggled) {
+      _onUIChange: function(toggled) {
+        if(!this._readied) {
+          return;
+        }
+
         // Polymer 1.0 doesn't change custom style properties (the
         // `--paper-*` CSS declarations) at runtime.
         // We'll have to call `updateStyles()` whenever we make such changes.
         this.updateStyles();
+
+        // Notify any elements that could re-position or resize themselves.
+        this.notifyResize();
       },
 
       _onBackgroundChange: function(type) {
