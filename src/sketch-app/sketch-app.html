@@ -448,6 +448,29 @@
         text-align: center;
       }
 
+      /* Toasts */
+
+      paper-dialog.toast {
+        position: absolute;
+        bottom: 16px;
+        margin: 0px 16px;
+
+        background-color: #111;
+        color: #fff;
+        border-radius: 4px;
+        width: fit-content;
+
+        font-family: "Jost", "Roboto", "Noto", sans-serif;
+        font-size: 1.3em;
+        user-select: none;
+      }
+
+      paper-dialog.toast > * {
+        display: block;
+        margin: 0;
+        padding: 12px 16px;
+      }
+
       /* paper-menu-button sizing fix */
 
       #toolbar paper-menu-button {
@@ -583,6 +606,14 @@
               flipped="{{sketchFlipped}}"
               disabled="{{sketchDisabled}}"></sketch-canvas>
       </zoom-container>
+      <paper-dialog
+          id="alertToast"
+          class="toast"
+          exit-animation="fade-out-animation"
+          no-cancel-on-outside-click
+          no-cancel-on-esc-key>
+          <span id="alertToastMessage"></span>
+      </paper-dialog>
       <paper-fab
           title="{{localize('swap')}}"
           icon="send"
@@ -1599,7 +1630,9 @@
 
       _arrowKeyHistory8: [],
 
-      _sleepPromise: null,
+      _alertSleepPromise: null,
+
+      _toastSleepPromise: null,
 
       _clipboardReadTextDisabled: false,
 
@@ -2196,6 +2229,16 @@
       // UI-related methods
 
       _alert: async function(message, ms=3000) {
+        const sidebar = this.toolbarPosition == "left" || this.toolbarPosition == "right";
+        if(sidebar) {
+          return await this._alertWithToast(message, ms);
+        }
+        else {
+          return await this._alertWithToolbar(message, ms);
+        }
+      },
+
+      _alertWithToolbar: async function(message, ms=3000) {
         var title = document.querySelector('.title');
         var span = document.querySelector('.title span');
         var alertSpan = document.querySelector('#alert');
@@ -2207,14 +2250,26 @@
         }
         this._hideStats();
 
-        let sleepPromise = this._sleepPromise = this._sleep(ms);
+        let sleepPromise = this._alertSleepPromise = this._sleep(ms);
         await sleepPromise;
 
-        if(this._sleepPromise === sleepPromise) {
+        if(this._alertSleepPromise === sleepPromise) {
           alertSpan.innerHTML = '';
           span.hidden = false;
           this.$.toolbar.classList.remove("alertOnly");
           this._hideStats();
+        }
+      },
+
+      _alertWithToast: async function(message, ms=3000) {
+        this.$.alertToastMessage.innerText = message;
+        this.$.alertToast.open();
+
+        let sleepPromise = this._toastSleepPromise = this._sleep(ms);
+        await sleepPromise;
+
+        if(this._toastSleepPromise === sleepPromise) {
+          this.$.alertToast.close();
         }
       },
 
