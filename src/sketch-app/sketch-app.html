@@ -661,6 +661,24 @@
             </paper-item>
             <paper-item class="settings-item dropdown">
                 <paper-item-body two-line>
+                    <div>Toolbar position</div>
+                    <div secondary>Where the toolbar should be docked on</div>
+                </paper-item-body>
+                <paper-dropdown-menu
+                  dynamic-align
+                  no-label-float>
+                  <paper-listbox
+                    class="dropdown-content"
+                    selected="{{toolbarPosition}}"
+                    attr-for-selected="value">
+                    <paper-item value="bottom">Bottom</paper-item>
+                    <paper-item value="left">Left</paper-item>
+                    <paper-item value="right">Right</paper-item>
+                  </paper-listbox>
+                </paper-dropdown-menu>
+            </paper-item>
+            <paper-item class="settings-item dropdown">
+                <paper-item-body two-line>
                     <div>Rendering style</div>
                     <div secondary>How sketches are rendered on the canvas</div>
                 </paper-item-body>
@@ -1455,6 +1473,11 @@
           type: Boolean,
           value: false
         },
+        toolbarPosition: {
+          type: String,
+          value: "bottom",
+          reflectToAttribute: true,
+        },
         compactButtons: {
           type: Boolean,
           value: false,
@@ -1577,6 +1600,7 @@
           autosave: this.autosave,
           keybindToggling: this.keybindToggling,
           hideSwap: this.hideSwap,
+          toolbarPosition: this.toolbarPosition,
           compactButtons: this.compactButtons,
           gallery: this.gallery,
           renderType: this.renderType,
@@ -1611,6 +1635,7 @@
           this._setSetting("ignoreTouch", settings, this.$.sketch);
           this._setSetting("autosave", settings);
           this._setSetting("hideSwap", settings);
+          this._setSetting("toolbarPosition", settings);
           this._setSetting("compactButtons", settings);
           this._setSetting("keybindToggling", settings);
           this._setSetting("gallery", settings);
