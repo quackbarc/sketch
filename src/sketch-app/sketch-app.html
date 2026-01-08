@@ -514,11 +514,6 @@
       /* Media queries */
 
       @media (max-width: 600px) {
-        #toolbar paper-menu-button,
-        #toolbar paper-icon-button {
-          padding: 6px;
-        }
-
         .settings-list h3,
         .settings-list .settings-item {
           padding-left: 4px;
@@ -541,6 +536,11 @@
         :host[toolbar-position="left"],
         :host[toolbar-position="right"] {
           --vertical-toolbar-width: 48px;
+        }
+
+        :host[toolbar-position="bottom"] #toolbar paper-menu-button,
+        :host[toolbar-position="bottom"] #toolbar paper-icon-button {
+          padding: 6px;
         }
       }
     </style>
