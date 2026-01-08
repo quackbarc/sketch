@@ -1434,16 +1434,19 @@
           value: false,
         },
 
-        // tool state
+        // computed properties for other components
 
         pannable: {
           type: Boolean,
           computed: "_isPanning(tool)"
         },
-
         panning: {
           type: Boolean,
           observer: "_onPanningChanged",
+        },
+        maxDataLength: {
+          type: Number,
+          computed: "_maxDataLength(gallery)"
         },
 
         // settings
@@ -1470,10 +1473,6 @@
         keybindToggling: {
           type: Boolean,
           value: true
-        },
-        maxDataLength: {
-          type: Number,
-          computed: "_maxDataLength(gallery)"
         },
 
         // visual
