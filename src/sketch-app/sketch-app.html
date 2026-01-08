@@ -476,6 +476,8 @@
 
       :host[toolbar-position="left"],
       :host[toolbar-position="right"] {
+        --vertical-toolbar-width: 56px;
+
         --paper-toolbar-height: 100dvh;
         --paper-toolbar-sm-height: 100dvh;
 
@@ -483,7 +485,7 @@
           flex-direction: column;
 
           box-sizing: border-box;
-          width: 56px;
+          width: var(--vertical-toolbar-width);
           padding: 16px 0px;
 
           overflow-y: auto;
@@ -534,6 +536,11 @@
         paper-dialog ul ul {
           /* Remove stock indentation of nested <ul>s */
           padding: 0;
+        }
+
+        :host[toolbar-position="left"],
+        :host[toolbar-position="right"] {
+          --vertical-toolbar-width: 48px;
         }
       }
     </style>
