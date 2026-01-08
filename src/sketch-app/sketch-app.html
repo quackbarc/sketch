@@ -1653,14 +1653,9 @@
       },
 
       _onCompactButtonsChange: function(toggled) {
-        // Polymer 1.0 doesn't really apply custom style properties when they
-        // change at run-time; rather they only apply on creation time.
+        // Polymer 1.0 doesn't change custom style properties (the
+        // `--paper-*` CSS declarations) at runtime.
         // We'll have to call `updateStyles()` whenever we make such changes.
-        //
-        // For reference, custom style properties are prefixed with `--`.
-        // The CSS for ":host[compact-buttons]" has one.
-        //
-        // https://polymer-library.polymer-project.org/1.0/docs/devguide/styling#custom-properties-shim-limitations
         this.updateStyles();
       },
 
