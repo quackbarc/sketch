@@ -80,8 +80,8 @@
         },
         useCaptcha: {
           type: Boolean,
-          value: true,
-          notify: true
+          notify: true,
+          computed: "_useCaptcha(source)"
         },
         loading: {
           type: Boolean,
@@ -147,6 +147,14 @@
           "noz.rip": "https://noz.rip/sketch/get.php",
         }
         return urlmap[source];
+      },
+
+      _useCaptcha: function(source) {
+        // Currently, this is always on for noz.rip.
+        // There may be a chance that the captcha eventually gets taken down,
+        // but there's no way to tell that automatically or through the wire.
+        // It'll be manual source-code toggling in case that happens.
+        return source == "noz.rip";
       },
 
       // Property observers
