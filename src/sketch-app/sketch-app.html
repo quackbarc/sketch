@@ -717,7 +717,7 @@
         <div class="buttons">
             <paper-button dialog-dismiss>Back</paper-button>
             <paper-button
-                on-tap="__swap"
+                on-tap="_submitCaptcha"
                 dialog-confirm>Swap</paper-button>
         </div>
     </paper-dialog>
@@ -1497,6 +1497,11 @@
         on-keys-pressed="_arrowKeys"></iron-a11y-keys>
 
     <iron-a11y-keys
+        target="[[captchaTarget]]"
+        keys="enter"
+        on-keys-pressed="_submitCaptcha"></iron-a11y-keys>
+
+    <iron-a11y-keys
         target="[[target]]"
         keys="up:keydown down:keydown left:keydown right:keydown up:keyup down:keyup left:keyup right:keyup"
         on-keys-pressed="_etchEvent"></iron-a11y-keys>
@@ -1630,6 +1635,12 @@
         target: {
           type: Object,
           value: document.body
+        },
+        captchaTarget: {
+          type: Object,
+          value: function() {
+            return this.$.captcha;
+          },
         },
         undoDisabled: {
           type: Boolean,
@@ -1981,6 +1992,11 @@
 
           this.__swap();
         }
+      },
+
+      _submitCaptcha: function() {
+        this.$.captchaDialog.close();
+        this.__swap();
       },
 
       __swap: function() {
