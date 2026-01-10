@@ -1936,6 +1936,7 @@
 
         const {swap, captchaFailed} = e.detail;
         if(captchaFailed) {
+          this.$.captchaDialog.open();
           return this._alert("incorrect captcha!");
         }
         else {
