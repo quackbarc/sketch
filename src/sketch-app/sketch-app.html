@@ -715,7 +715,9 @@
         </paper-dialog-scrollable>
         <div class="buttons">
             <paper-button dialog-dismiss>Back</paper-button>
-            <paper-button dialog-confirm>Swap</paper-button>
+            <paper-button
+                on-tap="__swap"
+                dialog-confirm>Swap</paper-button>
         </div>
     </paper-dialog>
 
@@ -1984,7 +1986,16 @@
           this.$.sketch.$.data.flip();
         }
 
-        this.$.api.swap(this.$.sketch.$.data.swapData);
+        if(this.useCaptcha) {
+          this.$.api.swapWithCaptcha(
+            this.$.sketch.$.data.swapData,
+            this.captchaPhrase,
+          );
+        }
+        else {
+          this.$.api.swap(this.$.sketch.$.data.swapData);
+        }
+
         this.$.container.fit = true;
         this.sketchDisabled = true;
         this.undoDisabled = true;

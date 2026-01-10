@@ -184,6 +184,14 @@
         this._setLoading(true);
       },
 
+      swapWithCaptcha: function(sdata, phrase) {
+        const data = new FormData();
+        data.append("data", sdata);
+        data.append("phrase", phrase);
+
+        this.swap(data);
+      },
+
       save: function(data) {
         var a = document.createElement('a');
         a.setAttribute('download', 'sketch.png');
