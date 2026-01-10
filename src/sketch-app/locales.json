@@ -19,8 +19,11 @@
     "sketches": "{num, plural, =-1 {- sketches} one {# sketch} other {# sketches}}",
     "artists": "{num, plural, =-1 {- artists} one {# artist} other {# artists}}",
     "peekers": "{num, plural, =-1 {- peekers} one {# peeker} other {# peekers}}",
-    "tooltipSketches": "Sketches on garyc.me over the past 5 minutes",
-    "tooltipArtists": "Artists who drew on garyc.me over the past 5 minutes",
+    "shortInk": "{amount, number, percent}",
+    "shortSketches": "{num, plural, =-1 {-} other {#}}",
+    "tooltipInk": "Ink used",
+    "tooltipSketches": "Sketches on the gallery over the past 5 minutes",
+    "tooltipArtists": "Artists on the gallery over the past 5 minutes",
     "tooltipPeekers": "Peekers of the last sketch and watchers of the gallery over the past 5 minutes"
   }
 }
