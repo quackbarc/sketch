@@ -116,14 +116,25 @@
         padding: 0;
       }
       paper-toolbar paper-menu-button {
-        /**
-         * Give scrollbar control to .settings, not the dropdown's
-         * stock content <div>.
-         * This only applies for vertical control; I don't think I can handle
-         * horizontal control very well.
-         */
         --paper-menu-button-content: {
-          overflow-y: hidden !important;
+          max-height: 300px;
+
+          /**
+           * Force a scrollbar to appear all the time.
+           * This is mainly here to help <iron-dropdown> with calculating
+           * the final dropdown width including the scrollbar; without it
+           * (i.e. on `overflow-y: auto`), it's not good at automatically
+           * assuming whether there's gonna be a scrollbar or not.
+           **/
+          overflow-y: scroll !important;
+
+          /**
+           * Take out any positioning-related offsets caused by
+           * [vertical-align="bottom"].
+           **/
+          bottom: 0 !important;
+          margin-top: 0 !important;
+          margin-bottom: 0 !important;
         };
       }
 
@@ -219,7 +230,6 @@
         font-size: 16px;
         color: #000;
         padding: 8px;
-        max-height: 300px;
         width: min-content;
 
         /**
@@ -232,7 +242,6 @@
 
       .settings {
         position: relative;
-        overflow-y: scroll;
       }
 
       .settings h3,
