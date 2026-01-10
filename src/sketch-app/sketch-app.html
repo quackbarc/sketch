@@ -17,10 +17,12 @@
 <link rel="import" href="../../bower_components/paper-item/paper-icon-item.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item-body.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
 <link rel="import" href="../../bower_components/paper-progress/paper-progress.html">
 <link rel="import" href="../../bower_components/paper-slider/paper-slider.html">
+<link rel="import" href="../../bower_components/paper-styles/shadow.html">
 <link rel="import" href="../../bower_components/paper-toggle-button/paper-toggle-button.html">
 <link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
 <link rel="import" href="../handmade-svg/handmade-svg.html">
@@ -432,6 +434,10 @@
         width: 30%;
       }
 
+      paper-input {
+        min-height: 48px;
+      }
+
       #keybindDialog code {
         background-color: #0001;
         padding: 2px 5px;
@@ -451,6 +457,33 @@
 
       #changelogs p:has(.version-timestamp) {
         text-align: center;
+      }
+
+      #captchaDialog {
+        width: 350px;
+      }
+
+      #captchaDialog .captcha-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+      }
+
+      #captchaDialog .captcha-card img {
+        @apply(--shadow-elevation-2dp);
+
+        width: 100%;
+        aspect-ratio: 15/4;
+      }
+
+      #captchaDialog .captcha-card paper-input {
+        flex: 1;
+        width: 100%;
+
+        --paper-input-container-input: {
+          @apply(--paper-font-common-code);
+        }
       }
 
       /* Toasts */
@@ -655,6 +688,32 @@
         </paper-dialog-scrollable>
         <div class="buttons">
             <paper-button dialog-confirm autofocus>Close</paper-button>
+        </div>
+    </paper-dialog>
+
+    <paper-dialog
+        id="captchaDialog"
+        modal>
+        <h2>Swapping</h2>
+        <paper-dialog-scrollable>
+            <div class="captcha-card">
+                <img src="[[captchaURL]]" alt="A noz.rip CAPTCHA.">
+                <paper-input
+                    id="captcha"
+                    value="{{captchaPhrase::input}}"
+                    maxlength="5"
+                    required
+                    autofocus
+                    auto-validate
+                    no-label-float
+                    placeholder="Enter captcha"
+                    error-message="This field must be filled!"></paper-input>
+            </div>
+            <p>Before swapping to noz.rip, you must first fill out a captcha.</p>
+        </paper-dialog-scrollable>
+        <div class="buttons">
+            <paper-button dialog-dismiss>Back</paper-button>
+            <paper-button dialog-confirm>Swap</paper-button>
         </div>
     </paper-dialog>
 
@@ -1444,6 +1503,8 @@
         artists="{{artists}}"
         peekers="{{peekers}}"
         loading="{{loading}}"
+        use-captcha="{{useCaptcha}}"
+        captcha-u-r-l="{{captchaURL}}"
         on-get="_onGet"
         on-swap-failed="_onSwapFailed"
         on-swap-waiting="_onSwapWaiting"></sketch-api>
@@ -1579,6 +1640,10 @@
         konami: {
           type: Boolean,
           value: false,
+        },
+        captchaPhrase: {
+          type: String,
+          value: "",
         },
 
         // computed properties for other components
@@ -1885,15 +1950,23 @@
 
       _swap: function() {
         if(!this.swapDisabled && !this.drawing) {
-          if(this.sketchFlipped) {
-            this.$.sketch.$.data.flip();
+          if(this.useCaptcha) {
+            return this.$.captchaDialog.open();
           }
 
-          this.$.api.swap(this.$.sketch.$.data.swapData);
-          this.$.container.fit = true;
-          this.sketchDisabled = true;
-          this.undoDisabled = true;
+          this.__swap();
         }
+      },
+
+      __swap: function() {
+        if(this.sketchFlipped) {
+          this.$.sketch.$.data.flip();
+        }
+
+        this.$.api.swap(this.$.sketch.$.data.swapData);
+        this.$.container.fit = true;
+        this.sketchDisabled = true;
+        this.undoDisabled = true;
       },
 
       _undo: function() {

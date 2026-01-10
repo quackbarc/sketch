@@ -72,6 +72,17 @@
           observer: "_onSourceChange",
           notify: true,
         },
+        captchaURL: {
+          type: String,
+          value: "https://noz.rip/sketch/captcha.php",
+          notify: true,
+          readOnly: true
+        },
+        useCaptcha: {
+          type: Boolean,
+          value: true,
+          notify: true
+        },
         loading: {
           type: Boolean,
           value: false,
