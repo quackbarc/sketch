@@ -693,7 +693,9 @@
 
     <paper-dialog
         id="captchaDialog"
-        modal>
+        modal
+        on-iron-overlay-closed="_onCaptchaDialogClosed"
+        on-iron-overlay-opened="_onCaptchaDialogOpened">
         <h2>Swapping</h2>
         <paper-dialog-scrollable>
             <div class="captcha-card">
@@ -1569,6 +1571,10 @@
         // or no-modifier keybinds (like `enter`, but without implicitly catching
         // `ctrl+enter` or `alt+enter` too).
         function processExtraKeybinds(event) {
+          if(!this.target) {
+            return;
+          }
+
           if((event.ctrlKey || event.metaKey) && (event.key == "/") && (!event.altKey && !event.shiftKey)) {
             this._toggleKeybindMenu();
             return false;
@@ -1578,6 +1584,10 @@
         }
 
         function processPersistentKeybinds(event) {
+          if(!this.target) {
+            return;
+          }
+
           const activating = event.type == "keydown";
 
           if(this.tool == "eraser") {
@@ -1899,6 +1909,17 @@
         Array.from(classlist)
           .filter(cl => (cl.startsWith("background-") && cl != background))
           .forEach(cl => classlist.remove(cl));
+      },
+
+      // Element observers
+
+      _onCaptchaDialogOpened: function() {
+        // Ignore keybinds while the captcha dialog is open.
+        this.target = null;
+      },
+
+      _onCaptchaDialogClosed: function() {
+        this.target = document.body;
       },
 
       // Event handlers for API and ajax
