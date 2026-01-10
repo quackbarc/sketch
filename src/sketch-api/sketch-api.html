@@ -192,6 +192,11 @@
         this.swap(data);
       },
 
+      refreshCaptcha: function() {
+        const now = Date.now();
+        this._setCaptchaURL(`https://noz.rip/sketch/captcha.php?${now}`);
+      },
+
       save: function(data) {
         var a = document.createElement('a');
         a.setAttribute('download', 'sketch.png');
@@ -278,6 +283,10 @@
       },
 
       _onSwap: function(event) {
+        if(this.useCaptcha) {
+          this.refreshCaptcha();
+        }
+
         if(this.source == "noz.rip") {
           const response = event.detail.response;
           if(response == "fail") {
