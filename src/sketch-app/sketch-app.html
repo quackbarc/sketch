@@ -1220,6 +1220,12 @@
                       </paper-item-body>
                       </template>
               </paper-icon-item>
+              <paper-icon-item
+                  class="button-item"
+                  on-tap="_fullscreen">
+                      <iron-icon item-icon icon="fullscreen"></iron-icon>
+                      <div>Toggle fullscreen</div>
+              </paper-icon-item>
               </section>
 
               <hr>
@@ -2086,6 +2092,14 @@
         this.peekID = null;
         this.sketchDisabled = false;
         this._alert('pasted from clipboard');
+      },
+
+      _fullscreen: function(e) {
+        if(document.fullscreenElement) {
+          return document.exitFullscreen();
+        }
+
+        document.documentElement.requestFullscreen();
       },
 
       _changeSize: function(e) {
