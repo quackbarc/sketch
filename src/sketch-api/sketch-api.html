@@ -251,6 +251,15 @@
       },
 
       _onSwap: function(event) {
+        if(this.source == "noz.rip") {
+          const response = event.detail.response;
+          if(response == "fail") {
+            this.fire('swap-failed', {swap: true, captchaFailed: true});
+            this._setLoading(false);
+            return;
+          }
+        }
+
         var id = parseInt(event.detail.response);
 
         // On empty swaps (or maybe some other faulty form errors), garyc.me
@@ -283,7 +292,10 @@
       },
 
       _onError: function(event) {
-        this.fire('swap-failed', {swap: event.srcElement == this.$.swapRequest});
+        this.fire('swap-failed', {
+          swap: event.srcElement == this.$.swapRequest,
+          captchaFailed: false,
+        });
         this._setLoading(false);
       },
     });

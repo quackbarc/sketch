@@ -1844,7 +1844,15 @@
 
       _onSwapFailed: function(e) {
         this.sketchDisabled = false;
-        this._alert(e.detail.swap ? 'failed to swap' : 'failed to fetch');
+
+        const {swap, captchaFailed} = e.detail;
+        if(captchaFailed) {
+          return this._alert("incorrect captcha!");
+        }
+        else {
+          const peektype = swap ? 'swap' : 'fetch'
+          return this._alert(`failed to ${peektype}`);
+        }
       },
 
       _onGet: function(data) {
