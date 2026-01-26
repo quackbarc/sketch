@@ -455,6 +455,12 @@
         width: 350px;
       }
 
+      #captchaDialog paper-button {
+        --paper-button: {
+          min-width: 0;
+        };
+      }
+
       #captchaDialog .captcha-card {
         display: flex;
         flex-direction: column;
@@ -476,6 +482,10 @@
         --paper-input-container-input: {
           @apply(--paper-font-common-code);
         }
+      }
+
+      #captchaDialog .inverted {
+        filter: invert(1);
       }
 
       /* Toasts */
@@ -701,7 +711,7 @@
         <h2>Swapping</h2>
         <paper-dialog-scrollable>
             <div class="captcha-card">
-                <img src="[[captchaURL]]" alt="A noz.rip CAPTCHA.">
+                <img id="captchaImage" src="[[captchaURL]]" alt="A noz.rip CAPTCHA.">
                 <paper-input
                     id="captcha"
                     value="{{captchaPhrase::input}}"
@@ -716,6 +726,12 @@
             <p>Before swapping to noz.rip, you must first fill out the captcha.</p>
         </paper-dialog-scrollable>
         <div class="buttons">
+            <paper-button
+                class="icon"
+                title="Invert"
+                on-tap="_invertCaptcha">
+                <iron-icon item-icon icon="invert-colors"></iron-icon>
+            </paper-button>
             <paper-button dialog-dismiss>Back</paper-button>
             <paper-button
                 on-tap="_submitCaptcha"
@@ -1935,6 +1951,7 @@
 
       _onCaptchaDialogClosed: function() {
         this.target = document.body;
+        this.$.captchaImage.classList.remove("inverted");
       },
 
       // Event handlers for API and ajax
@@ -2484,6 +2501,10 @@
         var maxWidth = span.offsetWidth + alertSpan.offsetWidth + stats.offsetWidth + 26 // margins + 2
 
         stats.style.visibility = title.offsetWidth <= maxWidth ? 'hidden' : ''
+      },
+
+      _invertCaptcha: function() {
+        this.$.captchaImage.classList.toggle("inverted");
       },
 
       _updateChangelogs: async function() {
