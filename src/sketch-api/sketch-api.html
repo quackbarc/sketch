@@ -115,8 +115,6 @@
 
       _swapErroredOnce: false,
 
-      _emulatingSwapID: false,
-
       // Computed properties
 
       _getStatsURL: function(source) {
@@ -285,18 +283,6 @@
       },
 
       _onSwap: function(event) {
-        if(this._emulatingSwapID) {
-          const maxID = parseInt(event.detail.response);
-          const emulatedID = maxID % 2 == 0 ? (maxID - 1) : (maxID + 1);
-
-          this.$.getStatsRequest.generateRequest();
-          this.$.getRequest.params = { id: emulatedID || "" };
-          this.$.getRequest.generateRequest();
-
-          this._emulatingSwapID = false;
-          return;
-        }
-
         if(this.useCaptcha) {
           this.refreshCaptcha();
         }
@@ -306,12 +292,6 @@
           if(response == "fail") {
             this.fire('swap-failed', {swap: true, captchaFailed: true});
             this._setLoading(false);
-            return;
-          }
-
-          if(response == "") {
-            this._emulatingSwapID = true;
-            this.$.getMaxIDRequest.generateRequest();
             return;
           }
         }
