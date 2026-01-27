@@ -2032,6 +2032,11 @@
           this.$.api.swap(this.$.sketch.$.data.swapData);
         }
 
+        if(this.sketchFlipped) {
+          // Unflip the data now that we've sent it flipped.
+          this.$.sketch.$.data.flip();
+        }
+
         this.captchaPhrase = "";
         this.$.container.fit = true;
         this.sketchDisabled = true;
