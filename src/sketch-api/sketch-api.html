@@ -296,7 +296,14 @@
           }
         }
 
-        var id = parseInt(event.detail.response);
+        const id = parseInt(event.detail.response);
+
+        // We may get non-numeric responses from noz.rip, like a blank string,
+        // or an error page in HTML. Treat these as errors for now.
+        if(Number.isNaN(id)) {
+          this._onError(event);
+          return;
+        }
 
         // On empty swaps (or maybe some other faulty form errors), garyc.me
         // sends a -1 as a "bad request" response.
