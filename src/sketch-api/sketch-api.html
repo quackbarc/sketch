@@ -299,8 +299,13 @@
         const id = parseInt(event.detail.response);
 
         // We may get non-numeric responses from noz.rip, like a blank string,
-        // or an error page in HTML. Treat these as errors for now.
+        // or an error page in HTML. This could be caused by anything, so
+        // these are logged for later debugging. Treat these as errors for now.
         if(Number.isNaN(id)) {
+          console.error(
+            `Invalid swap response from ${this.source}:`,
+            event.detail.response
+          );
           this._onError(event);
           return;
         }
