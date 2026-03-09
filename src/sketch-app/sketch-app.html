@@ -2378,13 +2378,16 @@
 
         const activating = event.type == "keydown";
 
-        if(this.tool == "eraser") {
-          this.$.sketch.activeStrokeErasing = event.shiftKey;
-        }
-
         if(event.key == " ") {
           this.$.sketch._activeKeyTool = activating ? "pan" : "";
           event.preventDefault();
+        }
+
+        if(this.tool == "eraser") {
+          this.$.sketch.activeStrokeErasing = event.shiftKey;
+        }
+        if(this.tool == "pan") {
+          this.$.container.dragZooming = event.ctrlKey;
         }
       },
 

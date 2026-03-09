@@ -22,6 +22,10 @@
       :host[pannable][panning] {
         cursor: grabbing;
       }
+
+      :host[pannable][drag-zooming] {
+        cursor: zoom-in;
+      }
     </style>
     <content></content>
   </template>
@@ -90,6 +94,12 @@
         position: {
           type: Array,
           value: [0, 0],
+        },
+
+        dragZooming: {
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true,
         },
 
         MINIMUM_ZOOM: {
