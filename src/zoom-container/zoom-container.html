@@ -440,6 +440,10 @@
         this._setPanning(true);
         this._initialPosition = this.position.slice();
         this._initialPointerPosition = [pointer.clientX, pointer.clientY];
+
+        if(this.dragZooming) {
+          this._initialZoom = this.zoom;
+        }
       },
 
       /** @param {PointerEvent} pointer */
@@ -453,7 +457,13 @@
         this.fit = false;
         const x = pointer.clientX;
         const y = pointer.clientY;
-        this._panFromInitial(x, y);
+
+        if(this.dragZooming) {
+          this._dragZoomFromInitial(x, y);
+        }
+        else {
+          this._panFromInitial(x, y);
+        }
       },
 
       /** @param {PointerEvent} pointer */
@@ -465,6 +475,10 @@
         this._setPanning(false);
         this._initialPosition = null;
         this._initialPointerPosition = null;
+
+        if(this.dragZooming) {
+          this._initialZoom = null;
+        }
       },
 
       /** @param {PointerEvent[]} pointers */
@@ -682,6 +696,24 @@
         this._restrictPosition(zoom);
 
         this.zoom = zoom;
+      },
+
+      /**
+       * @param {number} x
+       * @param {number} y
+       */
+      _dragZoomFromInitial: function(x, y) {
+        if(this._initialPointerPosition == null
+          || this._initialZoom == null) {
+          return;
+        }
+
+        const minDist = 150;
+
+        const [ix, iy] = this._initialPointerPosition;
+        const ratio = (iy - y) / minDist;
+        const newZoom = 2**ratio * this._initialZoom;
+        this._zoomInto(ix, iy, newZoom);
       },
 
       // Throttle calls to the transform by RAF, as an effort to reduce DOM jank.
