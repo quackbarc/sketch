@@ -87,6 +87,12 @@
           observer: "_onZoom",
         },
 
+        percentZoom: {
+          type: Number,
+          notify: true,
+          computed: "_percentZoom(zoom)",
+        },
+
         /**
          * Tells how offset our midpoint is from the viewport midpoint, from
          * the transform's perspective.
@@ -163,7 +169,7 @@
 
       _initialTapTimestamp: null,
 
-      // Getter properties
+      // Getter/setter properties
 
       get steps() {
         return [
@@ -178,6 +184,16 @@
 
       get contentElement() {
         return this.getContentChildren()[0];
+      },
+
+      set percentZoom(zoom) {
+        this.zoom = zoom / 100;
+      },
+
+      // Computed getter properties
+
+      _percentZoom: function(zoom) {
+        return Math.round(zoom * 100);
       },
 
       // Public methods
