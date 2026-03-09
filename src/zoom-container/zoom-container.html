@@ -319,6 +319,12 @@
       // Mouse event listeners
 
       /** @param {PointerEvent} pointer */
+      _getCachedPointer: function(pointer) {
+        const [cachedPointer] = this._pointers.filter((p) => p.pointerId == pointer.pointerId);
+        return cachedPointer;
+      },
+
+      /** @param {PointerEvent} pointer */
       _removePointer: function(pointer) {
         const [cachedPointer] = this._pointers.filter((p) => p.pointerId == pointer.pointerId);
         if(!cachedPointer) {
@@ -375,6 +381,17 @@
       /** @param {PointerEvent} event */
       _onPointerMove: function(event) {
         if(!this.pannable) {
+          return;
+        }
+
+        // Ignore any `pointermove` events that trigger immediately after
+        // `pointerdown` events, even though cursor position hasn't
+        // actually changed.
+        // THis is a Chrome bug; see: https://crbug.com/41435421
+        const cachedEvent = this._getCachedPointer(event);
+        if(cachedEvent
+          && cachedEvent.clientX == event.clientX
+          && cachedEvent.clientY == event.clientY) {
           return;
         }
 
