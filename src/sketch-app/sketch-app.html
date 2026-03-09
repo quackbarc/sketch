@@ -2285,11 +2285,10 @@
         this._alert('pasted from clipboard');
       },
 
-      _fullscreen: function(e) {
+      _fullscreen: function() {
         if(document.fullscreenElement) {
           return document.exitFullscreen();
         }
-
         document.documentElement.requestFullscreen();
       },
 
