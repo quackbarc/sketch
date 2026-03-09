@@ -1640,6 +1640,15 @@
           return true;
         }
 
+        function preventKeysOnInputs(event) {
+          if(event.target.tagName == "INPUT") {
+            this.target = null;
+          }
+          else {
+            this.target = document.body;
+          }
+        };
+
         this._restoreData();
         window.addEventListener('beforeunload', this._saveData.bind(this));
         window.addEventListener('pagehide', this._saveData.bind(this));
@@ -1658,6 +1667,8 @@
           this._processPersistentKeybinds.bind(this),
           {capture: true},
         );
+
+        document.addEventListener("focusin", preventKeysOnInputs.bind(this));
 
         // https://stackoverflow.com/a/70992717
         // Prevents iOS Safari from trying to select any text it finds whenever
