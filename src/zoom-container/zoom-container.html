@@ -326,7 +326,7 @@
 
       /** @param {PointerEvent} pointer */
       _removePointer: function(pointer) {
-        const [cachedPointer] = this._pointers.filter((p) => p.pointerId == pointer.pointerId);
+        const cachedPointer = this._getCachedPointer(pointer);
         if(!cachedPointer) {
           return;
         }
@@ -337,7 +337,7 @@
 
       /** @param {PointerEvent} pointer */
       _replacePointer: function(pointer) {
-        const [cachedPointer] = this._pointers.filter((p) => p.pointerId == pointer.pointerId);
+        const cachedPointer = this._getCachedPointer(pointer);
         if(!cachedPointer) {
           return;
         }
