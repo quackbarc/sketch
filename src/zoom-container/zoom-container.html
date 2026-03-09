@@ -100,6 +100,7 @@
           type: Boolean,
           value: false,
           reflectToAttribute: true,
+          observer: "_onDragZoomChanged",
         },
 
         MINIMUM_ZOOM: {
@@ -297,6 +298,25 @@
         this._notifyZoom = true;
 
         this._updateViewport();
+      },
+
+      _onDragZoomChanged: function(newToggled, oldToggled) {
+        if(!this.panning || this._pointers.length != 1) {
+          return;
+        }
+
+        const pointer = this._pointers[0];
+
+        if(newToggled) {
+          this._initialPosition = this.position.slice();
+          this._initialPointerPosition = [pointer.clientX, pointer.clientY];
+          this._initialZoom = this.zoom;
+        }
+        else {
+          this._initialPosition = this.position.slice();
+          this._initialPointerPosition = [pointer.clientX, pointer.clientY];
+          this._initialZoom = null;
+        }
       },
 
       _resetInitials: function() {
