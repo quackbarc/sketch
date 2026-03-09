@@ -157,7 +157,7 @@
         },
         cursor: {
           type: String,
-          computed: '_cursor(disabled, tool, eraserRadius, toneRadius, _bounds)',
+          computed: '_cursor(disabled, tool, eraseStrokes, eraserRadius, toneRadius, _bounds)',
           observer: '_onCursorChanged',
         },
 
@@ -817,7 +817,7 @@
         return active || setting;
       },
 
-      _cursor: function(disabled, tool, eraserRadius, toneRadius, bounds) {
+      _cursor: function(disabled, tool, eraseStrokes, eraserRadius, toneRadius, bounds) {
         if(!this._readied || disabled) {
           return "crosshair";
         }
@@ -828,7 +828,11 @@
           case "pan":
             return "inherit";  // Inherit <zoom-container>'s cursor
           case "eraser":
-            return this._getRadiusCursorURI(Math.round(eraserRadius * canvasRatio));
+            const thickness = eraseStrokes ? 4 : 2;
+            return this._getRadiusCursorURI(
+              Math.round(eraserRadius * canvasRatio),
+              thickness,
+            );
           case "screentone":
             return this._getRadiusCursorURI(Math.round(toneRadius * canvasRatio));
           case "move":
@@ -838,7 +842,7 @@
         }
       },
 
-      _getRadiusCursorURI: function(radius) {
+      _getRadiusCursorURI: function(radius, thickness=2) {
         const svgRadius = (radius + 2);  // +2 is the stroke width
         const svgSize = (radius + 2) * 2;
         const svg = [
@@ -852,7 +856,7 @@
                 `cy="${svgRadius}"`,
                 `r="${radius}"`,
                 `stroke="gray"`,
-                `stroke-width="2"`,
+                `stroke-width="${thickness}"`,
                 `fill-opacity="0"/>`,
           `</svg>`,
         ].join(" ");
