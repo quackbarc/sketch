@@ -1592,39 +1592,6 @@
           return true;
         }
 
-        // For keybinds that <iron-a11y-keys> can't support, e.g. `ctrl+[SYMBOL]` keys,
-        // or no-modifier keybinds (like `enter`, but without implicitly catching
-        // `ctrl+enter` or `alt+enter` too).
-        function processExtraKeybinds(event) {
-          if(!this.target) {
-            return;
-          }
-
-          if((event.ctrlKey || event.metaKey) && (event.key == "/") && (!event.altKey && !event.shiftKey)) {
-            this._toggleKeybindMenu();
-            return false;
-          }
-
-          return true;
-        }
-
-        function processPersistentKeybinds(event) {
-          if(!this.target) {
-            return;
-          }
-
-          const activating = event.type == "keydown";
-
-          if(this.tool == "eraser") {
-            this.$.sketch.activeStrokeErasing = event.shiftKey;
-          }
-
-          if(event.key == " ") {
-            this.$.sketch._activeKeyTool = activating ? "pan" : "";
-            event.preventDefault();
-          }
-        }
-
         this._restoreData();
         window.addEventListener('beforeunload', this._saveData.bind(this));
         window.addEventListener('pagehide', this._saveData.bind(this));
@@ -1632,9 +1599,17 @@
         setInterval(this._saveData.bind(this), 10000);
 
         window.addEventListener("keydown", preventSaving.bind(this));
-        window.addEventListener("keydown", processExtraKeybinds.bind(this));
-        window.addEventListener("keydown", processPersistentKeybinds.bind(this), {capture: true});
-        window.addEventListener("keyup", processPersistentKeybinds.bind(this), {capture: true});
+        window.addEventListener("keydown", this._processExtraKeybinds.bind(this));
+        window.addEventListener(
+          "keydown",
+          this._processPersistentKeybinds.bind(this),
+          {capture: true},
+        );
+        window.addEventListener(
+          "keyup",
+          this._processPersistentKeybinds.bind(this),
+          {capture: true},
+        );
 
         // https://stackoverflow.com/a/70992717
         // Prevents iOS Safari from trying to select any text it finds whenever
@@ -2364,6 +2339,54 @@
       },
 
       // Event handlers for keyboard and other inputs
+
+      /**
+       * Handlers for keybinds unsupported by <iron-a11y-keys>, like
+       * modifier+symbol keybinds (e.g. `Ctrl+Enter` or `Ctrl+/`),
+       * or no modifier keybinds (e.g. `Enter`, but without implicitly
+       * catching `Ctrl+Enter` or `Alt+Enter`).
+       *
+       * These are hooked on the app via a regular
+       * `.addEventListener`.
+       *
+       * @param {KeyboardEvent} event
+       **/
+      _processExtraKeybinds: function(event) {
+        if(!this.target) {
+          return;
+        }
+
+        if((event.ctrlKey || event.metaKey) && !event.altKey && !event.shiftKey && (event.key == "/")) {
+          this._toggleKeybindMenu();
+          return false;
+        }
+
+        return true;
+      },
+
+      /**
+       * Handlers for keybinds that toggle on key presses/releases.
+       * These are hooked on the app via a regular
+       * `.addEventListener`.
+       *
+       * @param {KeyboardEvent} event
+       **/
+      _processPersistentKeybinds: function(event) {
+        if(!this.target) {
+          return;
+        }
+
+        const activating = event.type == "keydown";
+
+        if(this.tool == "eraser") {
+          this.$.sketch.activeStrokeErasing = event.shiftKey;
+        }
+
+        if(event.key == " ") {
+          this.$.sketch._activeKeyTool = activating ? "pan" : "";
+          event.preventDefault();
+        }
+      },
 
       _arrowKeys: function() {
         if(!this.sketchDisabled && this._isMoving(this.tool)) {
