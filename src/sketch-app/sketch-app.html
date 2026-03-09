@@ -1023,6 +1023,12 @@
                           on-tap="_zoomIn"></paper-icon-button>
                   </div>
               </paper-item>
+              <paper-icon-item
+                  class="button-item"
+                  on-tap="_fit">
+                      <iron-icon item-icon icon="mdi:fit-to-screen-outline"></iron-icon>
+                      <div>Fit canvas to screen</div>
+              </paper-icon-item>
           </div>
       </paper-menu-button>
       <paper-menu-button
@@ -2294,6 +2300,10 @@
         this.peekID = null;
         this.sketchDisabled = false;
         this._alert('pasted from clipboard');
+      },
+
+      _fit: function() {
+        this.$.container.fit = true;
       },
 
       _fullscreen: function() {
