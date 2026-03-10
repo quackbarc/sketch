@@ -2080,11 +2080,6 @@
         }
       },
 
-      _submitCaptcha: function() {
-        this.$.captchaDialog.close();
-        this.__swap();
-      },
-
       __swap: function() {
         if(this.sketchFlipped) {
           this.$.sketch.$.data.flip();
@@ -2109,6 +2104,11 @@
         this.$.container.fit = true;
         this.sketchDisabled = true;
         this.undoDisabled = true;
+      },
+
+      _submitCaptcha: function() {
+        this.$.captchaDialog.close();
+        this.__swap();
       },
 
       _undo: function() {
