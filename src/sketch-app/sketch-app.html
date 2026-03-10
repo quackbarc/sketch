@@ -250,6 +250,10 @@
         border-top: 1px solid #ccc;
       }
 
+      .settings paper-icon-button[disabled] {
+        color: var(--disabled-text-color);
+      }
+
       .settings .settings-item {
         display: flex;
         align-items: center;
@@ -633,6 +637,7 @@
           dimensions="800/600"
           pannable="{{pannable}}"
           panning="{{panning}}"
+          zoom="{{zoom}}"
           percent-zoom="{{percentZoom}}"
           stepped-zoom="{{steppedZoom}}"
           enable-scroll-zooming="{{enableScrollZooming}}">
@@ -1006,6 +1011,7 @@
                       <paper-icon-button
                           icon="remove"
                           title="Zoom out"
+                          disabled="{{_zoomOutDisabled(zoom)}}"
                           on-tap="_zoomOut"></paper-icon-button>
                       <paper-input
                           type="number"
@@ -1020,6 +1026,7 @@
                       <paper-icon-button
                           icon="add"
                           title="Zoom in"
+                          disabled="{{_zoomInDisabled(zoom)}}"
                           on-tap="_zoomIn"></paper-icon-button>
                   </div>
               </paper-item>
@@ -1815,6 +1822,14 @@
 
       _editDisabled: function(loading, enabled) {
         return loading || !enabled;
+      },
+
+      _zoomOutDisabled: function(zoom) {
+        return zoom <= this.$.container.MINIMUM_ZOOM;
+      },
+
+      _zoomInDisabled: function(zoom) {
+        return zoom >= this.$.container.MAXIMUM_ZOOM;
       },
 
       _rememberTab: function(sketchDisabled, ink) {
