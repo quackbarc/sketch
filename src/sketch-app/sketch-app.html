@@ -570,6 +570,10 @@
         };
       }
 
+      :host[toolbar-position="top"] {
+        flex-direction: column-reverse;
+      }
+
       :host[toolbar-position="left"] {
         flex-direction: row-reverse;
       }
@@ -593,6 +597,7 @@
         display: none;
       }
 
+      :host[toolbar-position="top"] #mini-stats,
       :host[toolbar-position="bottom"] #mini-stats {
         display: none;
       }
@@ -624,6 +629,9 @@
           --vertical-toolbar-width: 48px;
         }
 
+        /* Slightly larger toolbar icons on top/bottom docks */
+        :host[toolbar-position="top"] #toolbar paper-menu-button,
+        :host[toolbar-position="top"] #toolbar paper-icon-button,
         :host[toolbar-position="bottom"] #toolbar paper-menu-button,
         :host[toolbar-position="bottom"] #toolbar paper-icon-button {
           padding: 6px;
@@ -881,6 +889,7 @@
                     class="dropdown-content"
                     selected="{{toolbarPosition}}"
                     attr-for-selected="value">
+                    <paper-item value="top">Top</paper-item>
                     <paper-item value="left">Left</paper-item>
                     <paper-item value="right">Right</paper-item>
                     <paper-item value="bottom">Bottom</paper-item>
