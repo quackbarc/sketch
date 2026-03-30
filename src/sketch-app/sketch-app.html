@@ -847,15 +847,15 @@
                     <div secondary>The gallery to swap sketches onto.</div>
                 </paper-item-body>
                 <paper-dropdown-menu
-                  dynamic-align
-                  no-label-float>
-                  <paper-listbox
-                    class="dropdown-content"
-                    selected="{{gallery}}"
-                    attr-for-selected="value">
-                    <paper-item value="garyc.me">garyc.me</paper-item>
-                    <paper-item value="noz.rip">noz.rip</paper-item>
-                  </paper-listbox>
+                    dynamic-align
+                    no-label-float>
+                    <paper-listbox
+                        class="dropdown-content"
+                        selected="{{gallery}}"
+                        attr-for-selected="value">
+                        <paper-item value="garyc.me">garyc.me</paper-item>
+                        <paper-item value="noz.rip">noz.rip</paper-item>
+                    </paper-listbox>
                 </paper-dropdown-menu>
             </paper-item>
 
@@ -867,14 +867,14 @@
                     <div secondary>Page background of the app</div>
                 </paper-item-body>
                 <paper-dropdown-menu
-                  no-label-float>
-                  <paper-listbox
-                    class="dropdown-content"
-                    selected="{{backgroundType}}"
-                    attr-for-selected="value">
-                    <paper-item value="light">Light</paper-item>
-                    <paper-item value="dark">Dark</paper-item>
-                  </paper-listbox>
+                    no-label-float>
+                    <paper-listbox
+                        class="dropdown-content"
+                        selected="{{backgroundType}}"
+                        attr-for-selected="value">
+                        <paper-item value="light">Light</paper-item>
+                        <paper-item value="dark">Dark</paper-item>
+                    </paper-listbox>
                 </paper-dropdown-menu>
             </paper-item>
             <paper-item class="settings-item dropdown">
@@ -883,17 +883,17 @@
                     <div secondary>Where the toolbar should be docked on</div>
                 </paper-item-body>
                 <paper-dropdown-menu
-                  dynamic-align
-                  no-label-float>
-                  <paper-listbox
-                    class="dropdown-content"
-                    selected="{{toolbarPosition}}"
-                    attr-for-selected="value">
-                    <paper-item value="top">Top</paper-item>
-                    <paper-item value="left">Left</paper-item>
-                    <paper-item value="right">Right</paper-item>
-                    <paper-item value="bottom">Bottom</paper-item>
-                  </paper-listbox>
+                    dynamic-align
+                    no-label-float>
+                    <paper-listbox
+                        class="dropdown-content"
+                        selected="{{toolbarPosition}}"
+                        attr-for-selected="value">
+                        <paper-item value="top">Top</paper-item>
+                        <paper-item value="left">Left</paper-item>
+                        <paper-item value="right">Right</paper-item>
+                        <paper-item value="bottom">Bottom</paper-item>
+                    </paper-listbox>
                 </paper-dropdown-menu>
             </paper-item>
             <paper-item class="settings-item dropdown">
@@ -902,38 +902,38 @@
                     <div secondary>How sketches are rendered on the canvas</div>
                 </paper-item-body>
                 <paper-dropdown-menu
-                  dynamic-align
-                  no-label-float>
-                  <paper-listbox
-                    class="dropdown-content"
-                    selected="{{renderType}}">
-                    <paper-item label="Default">
-                        <paper-item-body two-line>
-                            <div>Default</div>
-                            <div secondary>
-                                Round line tips, round corner edges.
-                            </div>
-                        </paper-item-body>
-                    </paper-item>
-                    <paper-item label="Gallery-style">
-                        <paper-item-body two-line>
-                            <div>Gallery-style</div>
-                            <div secondary>
-                                Hard line tips, round corner edges.
-                                Similar to garyc.me's.
-                            </div>
-                        </paper-item-body>
-                    </paper-item>
-                    <paper-item label="Gallery-style (spiky)">
-                        <paper-item-body two-line>
-                            <div>Gallery-style (spiky)</div>
-                            <div secondary>
-                                Hard line tips, spiky corner edges.
-                                Similar to garyc.me's before 2022.
-                            </div>
-                        </paper-item-body>
-                    </paper-item>
-                  </paper-listbox>
+                    dynamic-align
+                    no-label-float>
+                    <paper-listbox
+                        class="dropdown-content"
+                        selected="{{renderType}}">
+                        <paper-item label="Default">
+                            <paper-item-body two-line>
+                                <div>Default</div>
+                                <div secondary>
+                                    Round line tips, round corner edges.
+                                </div>
+                            </paper-item-body>
+                        </paper-item>
+                        <paper-item label="Gallery-style">
+                            <paper-item-body two-line>
+                                <div>Gallery-style</div>
+                                <div secondary>
+                                    Hard line tips, round corner edges.
+                                    Similar to garyc.me's.
+                                </div>
+                            </paper-item-body>
+                        </paper-item>
+                        <paper-item label="Gallery-style (spiky)">
+                            <paper-item-body two-line>
+                                <div>Gallery-style (spiky)</div>
+                                <div secondary>
+                                    Hard line tips, spiky corner edges.
+                                    Similar to garyc.me's before 2022.
+                                </div>
+                            </paper-item-body>
+                        </paper-item>
+                    </paper-listbox>
                 </paper-dropdown-menu>
             </paper-item>
             <paper-item class="settings-item slider">
@@ -1160,19 +1160,23 @@
               <paper-item class="settings-item dropdown">
                   <div>Pattern</div>
                   <paper-dropdown-menu
-                    no-label-float>
-                    <paper-listbox
-                      class="dropdown-content"
-                      selected="{{tonePattern}}">
-                      <paper-icon-item>
-                          <iron-icon item-icon icon="handmade:tone-normal"></iron-icon>
-                          <div>Normal</div>
-                      </paper-icon-item>
-                      <paper-icon-item>
-                          <iron-icon item-icon icon="handmade:tone-diagonal"></iron-icon>
-                          <div>Diagonal</div>
-                      </paper-icon-item>
-                    </paper-listbox>
+                      no-label-float>
+                      <paper-listbox
+                          class="dropdown-content"
+                          selected="{{tonePattern}}">
+                          <paper-icon-item>
+                              <iron-icon
+                                  item-icon
+                                  icon="handmade:tone-normal"></iron-icon>
+                              <div>Normal</div>
+                          </paper-icon-item>
+                          <paper-icon-item>
+                              <iron-icon
+                                  item-icon
+                                  icon="handmade:tone-diagonal"></iron-icon>
+                              <div>Diagonal</div>
+                          </paper-icon-item>
+                      </paper-listbox>
                   </paper-dropdown-menu>
               </paper-item>
               <paper-item class="settings-item slider">
@@ -1234,19 +1238,23 @@
               <paper-item class="settings-item dropdown">
                   <div>Pattern</div>
                   <paper-dropdown-menu
-                    no-label-float>
-                    <paper-listbox
-                      class="dropdown-content"
-                      selected="{{tonePattern}}">
-                      <paper-icon-item>
-                          <iron-icon item-icon icon="handmade:tone-normal"></iron-icon>
-                          <div>Normal</div>
-                      </paper-icon-item>
-                      <paper-icon-item>
-                          <iron-icon item-icon icon="handmade:tone-diagonal"></iron-icon>
-                          <div>Diagonal</div>
-                      </paper-icon-item>
-                    </paper-listbox>
+                      no-label-float>
+                      <paper-listbox
+                          class="dropdown-content"
+                          selected="{{tonePattern}}">
+                          <paper-icon-item>
+                              <iron-icon
+                                  item-icon
+                                  icon="handmade:tone-normal"></iron-icon>
+                              <div>Normal</div>
+                          </paper-icon-item>
+                          <paper-icon-item>
+                              <iron-icon
+                                  item-icon
+                                  icon="handmade:tone-diagonal"></iron-icon>
+                              <div>Diagonal</div>
+                          </paper-icon-item>
+                      </paper-listbox>
                   </paper-dropdown-menu>
               </paper-item>
               <div class="settings-double">
