@@ -907,8 +907,11 @@
                     no-label-float>
                     <paper-listbox
                         class="dropdown-content"
-                        selected="{{renderType}}">
-                        <paper-item label="Default">
+                        selected="{{renderType}}"
+                        attr-for-selected="value">
+                        <paper-item
+                            label="Default"
+                            value="round">
                             <paper-item-body two-line>
                                 <div>Default</div>
                                 <div secondary>
@@ -916,7 +919,9 @@
                                 </div>
                             </paper-item-body>
                         </paper-item>
-                        <paper-item label="Gallery-style">
+                        <paper-item
+                            label="Gallery-style"
+                            value="gallery">
                             <paper-item-body two-line>
                                 <div>Gallery-style</div>
                                 <div secondary>
@@ -925,7 +930,9 @@
                                 </div>
                             </paper-item-body>
                         </paper-item>
-                        <paper-item label="Gallery-style (spiky)">
+                        <paper-item
+                            label="Gallery-style (spiky)"
+                            value="gallery-miter">
                             <paper-item-body two-line>
                                 <div>Gallery-style (spiky)</div>
                                 <div secondary>
@@ -1939,6 +1946,20 @@
             }
             case 0: {
               settings.backgroundType = "light";
+              break;
+            }
+          }
+          switch(settings.renderType) {
+            case 2: {
+              settings.renderType = "gallery-miter";
+              break;
+            }
+            case 1: {
+              settings.renderType = "gallery";
+              break;
+            }
+            case 0: {
+              settings.renderType = "round";
               break;
             }
           }

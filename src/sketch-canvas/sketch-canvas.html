@@ -181,14 +181,10 @@
           value: 10
         },
         renderType: {
-          /* enum
-            0, default rendering
-            1, gallery rendering without miter
-            2, gallery rendering with miter
-          */
-          type: Number,
+          // options: "round", "gallery", "gallery-miter"
+          type: String,
           notify: true,
-          value: 1,
+          value: "gallery",
           observer: "_updateRendering"
         },
 
@@ -437,12 +433,14 @@
         this._canvas.fillStyle = "black";
         this._canvas.lineJoin = "round";
         this._canvas.lineCap = "round";
-        if(this.renderType >= 1) {
+
+        if(this.renderType == "gallery") {
           this._canvas.lineCap = "butt";
-          if(this.renderType == 2) {
-            this._canvas.lineJoin = "miter";
-            this._canvas.miterLimit = 10;
-          }
+        }
+        if(this.renderType == "gallery-miter") {
+          this._canvas.lineCap = "butt";
+          this._canvas.lineJoin = "miter";
+          this._canvas.miterLimit = 10;
         }
 
         this._setPlaying(false);
@@ -704,9 +702,13 @@
       },
 
       _drawLine(points) {
-        if(this.renderType >= 1
-          && points.length == 4
-          && points[0] == points[2] && points[1] == points[3]) {
+        const isDot = (points.length == 4
+          && points[0] == points[2]
+          && points[1] == points[3]
+        );
+
+        if(isDot) {
+          if(this.renderType == "gallery" || this.renderType == "gallery-miter") {
             let toprightOffset = Math.max(
               points[0] - Math.max(points[0] - 1, 0),
               points[1] - Math.max(points[1] - 1, 0)
@@ -715,12 +717,12 @@
               points[0] - toprightOffset, points[1] - toprightOffset,
               points[0] + 1, points[1] + 1
             ];
-        }
-
-        if(points.length == 4 && (points[0] == points[2] && points[1] == points[3])) {
-          this._canvas.beginPath();
-          this._canvas.arc(points[0], points[1], 1.5, 0, Math.PI * 2);
-          this._canvas.fill();
+          }
+          else {
+            this._canvas.beginPath();
+            this._canvas.arc(points[0], points[1], 1.5, 0, Math.PI * 2);
+            this._canvas.fill();
+          }
         }
 
         this._canvas.beginPath();

@@ -213,10 +213,13 @@
 
       saveSVG: function(lines, renderType) {
         let path = lines.map(function(line) {
+          const isDot = (line.length == 4
+            && line[0] == line[2]
+            && line[1] == line[3]
+          );
+
           // override for screentones with gallery-style renderTypes
-          if(line.length == 4
-            && (line[0] == line[2] && line[1] == line[3])
-            && (renderType == 1 || renderType == 2)) {
+          if((renderType == "gallery" || renderType == "gallery-miter") && isDot) {
             return `M ${line[0]} ${line[1]} L ${line[0] + 2} ${line[1] + 2}`;
           }
 
@@ -233,8 +236,16 @@
           return p.join(" ");
         });
 
-        let linecap = renderType >= 1 ? "butt" : "round";
-        let linejoin = renderType >= 2 ? "miter" : "round";
+        let linecap = "round";
+        let linejoin = "round";
+
+        if(renderType == "gallery") {
+          linecap = "butt";
+        }
+        if(renderType == "gallery-miter") {
+          linecap = "butt";
+          linejoin = "miter";
+        }
 
         var xml = (
             '<svg viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">\n'
