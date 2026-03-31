@@ -1939,30 +1939,8 @@
 
         var settings = JSON.parse(localStorage.getItem('settings'));
         if(settings) {
-          switch(settings.backgroundType) {
-            case 1: {
-              settings.backgroundType = "dark";
-              break;
-            }
-            case 0: {
-              settings.backgroundType = "light";
-              break;
-            }
-          }
-          switch(settings.renderType) {
-            case 2: {
-              settings.renderType = "gallery-miter";
-              break;
-            }
-            case 1: {
-              settings.renderType = "gallery";
-              break;
-            }
-            case 0: {
-              settings.renderType = "round";
-              break;
-            }
-          }
+          this._resolveOldEnumSetting(settings, "backgroundType", ["light", "dark"]);
+          this._resolveOldEnumSetting(settings, "renderType", ["round", "gallery", "gallery-miter"]);
 
           this._setSetting("timeResolution", settings);
           this._setSetting("timeResolutionLimited", settings);
@@ -1990,16 +1968,7 @@
 
         var toolSettings = JSON.parse(localStorage.getItem('toolSettings'));
         if(toolSettings) {
-          switch(toolSettings.tonePattern) {
-            case 1: {
-              toolSettings.tonePattern = "diagonal";
-              break;
-            }
-            case 0: {
-              toolSettings.tonePattern = "normal";
-              break;
-            }
-          }
+          this._resolveOldEnumSetting(toolSettings, "tonePattern", ["normal", "diagonal"]);
 
           this._setSetting("tool", toolSettings, this.$.sketch, "desiredTool");
           this._setSetting("eraserRadius", toolSettings);
@@ -2778,6 +2747,28 @@
           target[targetName || name] = settings[name];
         }
       },
+
+      /**
+       * Resolves settings that used to be number-based (or enum-based)
+       * into their current string-based forms.
+       *
+       * This is mainly just for legacy support, specifically for dropdown
+       * settings that used to have it.
+       *
+       * @param {Object} settings
+       * @param {string} name
+       * @param {string[]} options
+       *    The current string options, indexed by their number-based ones.
+       **/
+      _resolveOldEnumSetting: function(settings, name, options) {
+        for(const indraw in options) {
+          const option = options[indraw];
+          const ind = parseInt(indraw);
+          if(settings[name] == ind) {
+            settings[name] = option;
+          }
+        }
+      }
     });
   </script>
 </dom-module>
