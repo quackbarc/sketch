@@ -249,6 +249,8 @@
         else {
           this._setLength(this.length - (currentLine.length * 2) - (this.lines.length == 0 ? 0 : 1));
         }
+
+        this.currentLines = [];
       },
 
       eraseStart: function() {

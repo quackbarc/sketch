@@ -810,7 +810,7 @@
       },
 
       _wiggleLoop(timestamp) {
-        if(this.drawing || this.playing) {
+        if(this.playing) {
           return window.requestAnimationFrame(this._wiggleLoop.bind(this));
         }
 
@@ -821,6 +821,12 @@
         }
 
         this._render();
+        this._canvas2.drawImage(this._canvas.canvas, 0, 0, 800, 600);
+
+        for(const line of this.$.data.currentLines) {
+          this._drawLine(line);
+        }
+
         this._lastWiggleTimestamp = timestamp;
         window.requestAnimationFrame(this._wiggleLoop.bind(this));
       },
