@@ -45,7 +45,8 @@
         max-length="{{maxDataLength}}"
         can-undo="{{dataCanUndo}}"
         can-redo="{{dataCanRedo}}"
-        limited-ink="{{limitedInk}}"></sketch-data>
+        limited-ink="{{limitedInk}}"
+        wiggle-intensity="{{wiggleIntensity}}"></sketch-data>
   </template>
   <script>
   (function() {
@@ -259,6 +260,10 @@
           notify: true
         },
         maxDataLength: {
+          type: Number,
+          notify: true
+        },
+        wiggleIntensity: {
           type: Number,
           notify: true
         },
@@ -750,18 +755,21 @@
       },
 
       _wiggleLine(points) {
+        const intensity = this.wiggleIntensity;
+        const middle = Math.floor(intensity / 2);
+
         const isDot = (points.length == 4
           && points[0] == points[2]
           && points[1] == points[3]
         );
         if(isDot) {
-          const offset = Math.random() * 2 - 1;
+          const offset = Math.random() * intensity - middle;
           const [x, y] = points.slice(0, 2);
           return [x + offset, y + offset, x + offset, y + offset];
         }
 
         return points.map((point) => {
-          const offset = Math.random() * 2 - 1;
+          const offset = Math.random() * intensity - middle;
           return point + offset;
         });
       },

@@ -56,6 +56,11 @@
           notify: true,
           value: true
         },
+        wiggleIntensity: {
+          type: Boolean,
+          notify: true,
+          value: 2
+        },
       },
 
       get data() {
@@ -150,11 +155,13 @@
         for(var i = 0; i < newLines.length; i++) {
           let line = newLines[i];
 
-          // apply a slight static wiggle on swap
+          // apply a static wiggle on swap
+          const intensity = this.wiggleIntensity;
+          const middle = Math.floor(intensity / 2);
           if(this._isDot(line)) {
             const [x, y] = line.slice(0, 2);
-            const xOffset = Math.random()*2 - 1;
-            const yOffset = Math.random()*2 - 1;
+            const xOffset = Math.random()*intensity - middle;
+            const yOffset = Math.random()*intensity - middle;
             line = [
               Math.max(x + xOffset, 0),
               Math.max(y + yOffset, 0),
@@ -165,7 +172,7 @@
           else {
             for(let i = 0; i < line.length; i++) {
               const point = line[i];
-              const offset = Math.random()*2 - 1;
+              const offset = Math.random()*intensity - middle;
               line[i] = Math.max(point + offset, 0);
             }
           }

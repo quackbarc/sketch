@@ -673,6 +673,7 @@
               erase-strokes-setting="{{eraseStrokes}}"
               ignore-touch="{{sketchIgnoreTouch}}"
               time-resolution="{{timeResolution}}"
+              wiggle-intensity="{{wiggleIntensity}}"
               animation-speed="{{animationSpeed}}"
               limited-ink="{{limitedInk}}"
               render-type="{{renderType}}"
@@ -1421,6 +1422,20 @@
                       value="{{timeResolution}}"
                       min="0"
                       max="50"
+                      editable></paper-slider>
+              </paper-item>
+              <paper-item class="settings-item slider">
+                  <paper-item-body two-line>
+                      <div>Wiggle intensity</div>
+                      <div secondary>
+                          Offset strength of the boiling line effect,
+                          by px
+                      </div>
+                  </paper-item-body>
+                  <paper-slider
+                      value="{{wiggleIntensity}}"
+                      min="1"
+                      max="10"
                       editable></paper-slider>
               </paper-item>
               <paper-icon-item
