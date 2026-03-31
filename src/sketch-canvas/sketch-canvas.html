@@ -709,12 +709,14 @@
 
         if(isDot) {
           if(this.renderType == "gallery" || this.renderType == "gallery-miter") {
-            let toprightOffset = Math.max(
+            // This offset should shorten the screentone line if the top-left point
+            // ever goes OOB on the top and/or on the left side
+            const topleftOffset = Math.max(
               points[0] - Math.max(points[0] - 1, 0),
               points[1] - Math.max(points[1] - 1, 0)
             );
             points = [
-              points[0] - toprightOffset, points[1] - toprightOffset,
+              points[0] - topleftOffset, points[1] - topleftOffset,
               points[0] + 1, points[1] + 1
             ];
           }
