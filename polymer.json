@@ -11,6 +11,7 @@
   "extraDependencies": [
     "assets/*",
     "src/sketch-app/*.md",
+    "bower_components/gif.js/dist/*",
     "favicon.ico",
     "manifest.json"
   ]

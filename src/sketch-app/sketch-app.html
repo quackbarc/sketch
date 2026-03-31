@@ -1510,7 +1510,13 @@
               title="{{localize('save')}}"
               icon="save"></paper-icon-button>
           <div class="dropdown-content menu">
-              <h3>Saving</h3>
+              <h3>Exporting/Saving</h3>
+              <paper-icon-item
+                  class="button-item"
+                  on-tap="_saveWiggleGIF">
+                      <iron-icon item-icon icon="mdi:video-box"></iron-icon>
+                      <div>Export boiling animation (GIF)</div>
+              </paper-icon-item>
               <paper-icon-item
                   class="button-item"
                   on-tap="_save">
@@ -2276,6 +2282,34 @@
         }
 
         this.$.api.saveTXT(data);
+      },
+
+      _saveWiggleGIF: async function() {
+        this._alert("rendering...");
+
+        const canvas = this.$.sketch.$.sketchCanvas;
+        const gif = new GIF({workerScript: "bower_components/gif.js/dist/gif.worker.js"});
+
+        for(let i = 0; i < 5; i++) {
+          // Render the sketch and wait for it to show up on the canvas
+          this.$.sketch._render();
+          await new Promise((res) => window.requestAnimationFrame(res));
+
+          // Add it as a 12cs (8.33fps) frame to the GIF
+          gif.addFrame(canvas, {delay: 120, copy: true});
+        }
+
+        this._alert("exporting...");
+
+        gif.on('finished', (blob) => {
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.setAttribute('download', 'boiling-sketch.gif');
+          a.href = url;
+          a.click();
+        });
+
+        gif.render();
       },
 
       _copyImage: function() {
