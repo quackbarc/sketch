@@ -779,7 +779,7 @@
           var pointsToDraw = timeDelta / 1000 * _animationSpeed;
           var pointsDrawn = 0;
 
-          const FPS = 8;
+          const FPS = 5;
           const wiggleDelta = timestamp - this._lastWiggleTimestamp;
           if(wiggleDelta >= 1000/FPS) {
             this._render();
