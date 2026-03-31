@@ -54,4 +54,9 @@ To serve the build with the same Polymer CLI:
 $ polymer serve build/es6-bundled
 ```
 
+### Additional resources
+
+- Documentation for Polymer 1.0: https://polymer-library.polymer-project.org/1.0/docs/devguide/feature-overview
+- Custom MDI icons taken from https://pictogrammers.com/library/mdi/ (under Apache 2.0).
+
 ---
