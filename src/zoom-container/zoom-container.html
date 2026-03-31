@@ -26,6 +26,10 @@
       :host[pannable][drag-zooming] {
         cursor: zoom-in;
       }
+
+      :host[pannable][drag-zooming][drag-zoom-direction="out"] {
+        cursor: zoom-out;
+      }
     </style>
     <content></content>
   </template>
@@ -108,6 +112,14 @@
           value: false,
           reflectToAttribute: true,
           observer: "_onDragZoomChanged",
+        },
+
+        dragZoomDirection: {
+          // options: "none", "in", "out"
+          type: String,
+          value: "none",
+          readOnly: true,
+          reflectToAttribute: true,
         },
 
         MINIMUM_ZOOM: {
@@ -497,6 +509,7 @@
 
         if(this.dragZooming) {
           this._initialZoom = this.zoom;
+          this._setDragZoomDirection("none");
         }
       },
 
@@ -532,6 +545,7 @@
 
         if(this.dragZooming) {
           this._initialZoom = null;
+          this._setDragZoomDirection("none");
         }
       },
 
@@ -763,10 +777,12 @@
         }
 
         const minDist = 150;
-
         const [ix, iy] = this._initialPointerPosition;
         const ratio = (iy - y) / minDist;
         const newZoom = 2**ratio * this._initialZoom;
+        const zoomDirection = newZoom > this._initialZoom ? "in" : "out";
+
+        this._setDragZoomDirection(zoomDirection);
         this._zoomInto(ix, iy, newZoom);
       },
 
