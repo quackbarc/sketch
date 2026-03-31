@@ -83,9 +83,11 @@
         this._activeKeyTool = null;
 
         this._bounds = this.getBoundingClientRect();
-
         this._updateRendering();
         this._clear();
+
+        this._lastWiggleTimestamp = window.performance.now();
+        window.requestAnimationFrame(this._wiggleLoop.bind(this));
       },
 
       behaviors: [
@@ -292,6 +294,8 @@
       _playProgressPoints: 0,
 
       _lastTimestamp: null,
+
+      _lastWiggleTimestamp: null,
 
       _bounds: null,
 
@@ -709,6 +713,8 @@
       // Rendering-related
 
       _drawLine(points) {
+        points = this._wiggleLine(points);
+
         const isDot = (points.length == 4
           && points[0] == points[2]
           && points[1] == points[3]
@@ -740,6 +746,23 @@
             this._canvas.lineTo(points[i], points[i + 1]);
         }
         this._canvas.stroke();
+      },
+
+      _wiggleLine(points) {
+        const isDot = (points.length == 4
+          && points[0] == points[2]
+          && points[1] == points[3]
+        );
+        if(isDot) {
+          const offset = Math.random() * 2 - 1;
+          const [x, y] = points.slice(0, 2);
+          return [x + offset, y + offset, x + offset, y + offset];
+        }
+
+        return points.map((point) => {
+          const offset = Math.random() * 2 - 1;
+          return point + offset;
+        });
       },
 
       _clear() {
@@ -786,6 +809,22 @@
         }
       },
 
+      _wiggleLoop(timestamp) {
+        if(this.drawing || this.playing) {
+          return window.requestAnimationFrame(this._wiggleLoop.bind(this));
+        }
+
+        const FPS = 8;
+        const delta = timestamp - this._lastWiggleTimestamp;
+        if(delta < 1000/FPS) {
+          return window.requestAnimationFrame(this._wiggleLoop.bind(this));
+        }
+
+        this._render();
+        this._lastWiggleTimestamp = timestamp;
+        window.requestAnimationFrame(this._wiggleLoop.bind(this));
+      },
+
       async _render() {
         this._keepRendering = true;
         if(!this._rendering) {
@@ -811,6 +850,8 @@
         for(var i in this.$.data.lines) {
           this._drawLine(this.$.data.lines[i]);
         }
+
+        this._lastWiggleTimestamp = window.performance.now();
       },
 
       // Computed properties
