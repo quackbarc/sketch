@@ -363,6 +363,7 @@
       },
 
       // Private methods
+      // Property observers
 
       _onIronResize: function(event) {
         this._bounds = this.getBoundingClientRect();
@@ -446,6 +447,8 @@
         this._setPlaying(false);
         this._render();
       },
+
+      // Pointer event handlers
 
       _processEvent(event) {
         if(this.playing) {
@@ -594,6 +597,8 @@
         return Math.floor(n / this.timeResolution);
       },
 
+      // Tool handlers
+
       _drawStart(x, y) {
         this._canvas2.drawImage(this._canvas.canvas, 0, 0, 800, 600);
         this.$.data.drawStart();
@@ -701,6 +706,8 @@
         this.$.data.toneEnd();
       },
 
+      // Rendering-related
+
       _drawLine(points) {
         const isDot = (points.length == 4
           && points[0] == points[2]
@@ -805,6 +812,8 @@
           this._drawLine(this.$.data.lines[i]);
         }
       },
+
+      // Computed properties
 
       _canEdit(canEdit, disabled) {
         return canEdit && !disabled;
