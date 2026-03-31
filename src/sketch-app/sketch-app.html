@@ -1165,14 +1165,15 @@
                       no-label-float>
                       <paper-listbox
                           class="dropdown-content"
-                          selected="{{tonePattern}}">
-                          <paper-icon-item>
+                          selected="{{tonePattern}}"
+                          attr-for-selected="value">
+                          <paper-icon-item value="normal">
                               <iron-icon
                                   item-icon
                                   icon="handmade:tone-normal"></iron-icon>
                               <div>Normal</div>
                           </paper-icon-item>
-                          <paper-icon-item>
+                          <paper-icon-item value="diagonal">
                               <iron-icon
                                   item-icon
                                   icon="handmade:tone-diagonal"></iron-icon>
@@ -1244,14 +1245,15 @@
                       no-label-float>
                       <paper-listbox
                           class="dropdown-content"
-                          selected="{{tonePattern}}">
-                          <paper-icon-item>
+                          selected="{{tonePattern}}"
+                          attr-for-selected="value">
+                          <paper-icon-item value="normal">
                               <iron-icon
                                   item-icon
                                   icon="handmade:tone-normal"></iron-icon>
                               <div>Normal</div>
                           </paper-icon-item>
-                          <paper-icon-item>
+                          <paper-icon-item value="diagonal">
                               <iron-icon
                                   item-icon
                                   icon="handmade:tone-diagonal"></iron-icon>
@@ -1967,6 +1969,17 @@
 
         var toolSettings = JSON.parse(localStorage.getItem('toolSettings'));
         if(toolSettings) {
+          switch(toolSettings.tonePattern) {
+            case 1: {
+              toolSettings.tonePattern = "diagonal";
+              break;
+            }
+            case 0: {
+              toolSettings.tonePattern = "normal";
+              break;
+            }
+          }
+
           this._setSetting("tool", toolSettings, this.$.sketch, "desiredTool");
           this._setSetting("eraserRadius", toolSettings);
           this._setSetting("eraseStrokes", toolSettings);

@@ -3,11 +3,6 @@
 
 <dom-module id="sketch-data">
   <script>
-    const TonePattern = {
-      NORMAL: 0,
-      DIAGONAL: 1,
-    };
-
     Polymer({
       is: 'sketch-data',
 
@@ -935,11 +930,11 @@
 
       _matchesTonePattern: function(pattern, x, y, offsetX, offsetY, spacing) {
         switch(pattern) {
-          case TonePattern.NORMAL: {
+          case "normal": {
             return true;
           }
 
-          case TonePattern.DIAGONAL: {
+          case "diagonal": {
             let xOddEven = Math.abs(x - offsetX) % (spacing*2);
             let yOddEven = Math.abs(y - offsetY) % (spacing*2);
             return xOddEven == yOddEven;  // basically XNOR
