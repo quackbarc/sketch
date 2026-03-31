@@ -323,6 +323,7 @@
         this._playProgressLines = 0;
         this._playProgressPoints = 0;
         this._lastTimestamp = null;
+        this._lastWiggleTimestamp = window.performance.now();
         window.requestAnimationFrame(this._animate.bind(this));
       },
 
@@ -774,10 +775,17 @@
       _animate(timestamp) {
         if(this._lastTimestamp) {
           var _animationSpeed = Math.pow(10, (this.animationSpeed / 10) + 1);
-
           var timeDelta = timestamp - this._lastTimestamp;
           var pointsToDraw = timeDelta / 1000 * _animationSpeed;
           var pointsDrawn = 0;
+
+          const FPS = 8;
+          const wiggleDelta = timestamp - this._lastWiggleTimestamp;
+          if(wiggleDelta >= 1000/FPS) {
+            this._render();
+            this._lastWiggleTimestamp = timestamp;
+            this._canvas2.drawImage(this._canvas.canvas, 0, 0, 800, 600);
+          }
 
           while(pointsDrawn < pointsToDraw && this.playing) {
             this._canvas.drawImage(this._canvas2.canvas, 0, 0, 800, 600);
@@ -811,6 +819,8 @@
 
       _wiggleLoop(timestamp) {
         if(this.playing) {
+          // Leave the wiggle animations to _animate() when we're playing
+          // replay animations.
           return window.requestAnimationFrame(this._wiggleLoop.bind(this));
         }
 
@@ -854,6 +864,9 @@
         this._clear();
 
         for(var i in this.$.data.lines) {
+          if(this.playing && this._playProgressLines <= parseInt(i)) {
+            continue;
+          }
           this._drawLine(this.$.data.lines[i]);
         }
 
