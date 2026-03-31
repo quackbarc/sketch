@@ -149,6 +149,27 @@
 
         for(var i = 0; i < newLines.length; i++) {
           let line = newLines[i];
+
+          // apply a slight static wiggle on swap
+          if(this._isDot(line)) {
+            const [x, y] = line.slice(0, 2);
+            const xOffset = Math.random()*2 - 1;
+            const yOffset = Math.random()*2 - 1;
+            line = [
+              Math.max(x + xOffset, 0),
+              Math.max(y + yOffset, 0),
+              Math.max(x + xOffset, 0),
+              Math.max(y + yOffset, 0),
+            ];
+          }
+          else {
+            for(let i = 0; i < line.length; i++) {
+              const point = line[i];
+              const offset = Math.random()*2 - 1;
+              line[i] = Math.max(point + offset, 0);
+            }
+          }
+
           // offset dots for visibility on the gallery since the
           // canvas there uses a flat lineCap
           if(this._isDot(line)) {
@@ -158,8 +179,10 @@
               x - Math.max(x - 1, 0),
               y - Math.max(y - 1, 0),
             );
-            newLines[i] = [x - topleftOffset, y - topleftOffset, x + 1, y + 1];
+            line = [x - topleftOffset, y - topleftOffset, x + 1, y + 1];
           }
+
+          newLines[i] = line;
         };
 
         this._setLines(newLines);
