@@ -2317,9 +2317,14 @@
         this._alert("exporting...");
 
         gif.on('finished', (blob) => {
+          let filename = 'boiling-sketch.gif';
+          if(this.wiggleIntensity != 2) {
+            filename = `boiling-sketch-i${this.wiggleIntensity}.gif`
+          }
+
           const url = URL.createObjectURL(blob);
           const a = document.createElement('a');
-          a.setAttribute('download', 'boiling-sketch.gif');
+          a.setAttribute('download', filename);
           a.href = url;
           a.click();
         });
