@@ -41,8 +41,10 @@ Adjustable settings with `[` and `]`:
 | `↓`              | Flips the canvas horizontally. |
 
 - Scrolling with any tool will zoom the canvas in and out.
-- Clicking and dragging or pinching around with the pan tool does just what you'd expect.
-- Double-clicking or middle-clicking with the pan tool resets the zoom.
+- With the pan tool:
+    - Clicking and dragging pans the canvas around; pinching in and out zooms it.
+    - Clicking and dragging up/down while holding `Ctrl` also zooms it in and out.
+    - Double-clicking or middle-clicking resets the zoom.
 
 ---
 
