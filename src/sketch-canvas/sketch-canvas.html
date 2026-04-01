@@ -193,6 +193,11 @@
 
         // tool settings
 
+        brushRadius: {
+          type: Number,
+          notify: true,
+          value: 6,
+        },
         fillAngle: {
           type: Number,
           notify: true,
@@ -513,7 +518,7 @@
           this._pointerType = this._pointerType == null ? event.pointerType : this._pointerType;
           this._activeTool = pointerErasing ? 'eraser' : null;
           if(this._wasPressed) {
-            const obeyTimeResolution = this.tool == "pen";
+            const obeyTimeResolution = this.tool == "pen" || this.tool == "brush";
             if(obeyTimeResolution
               && this.timeResolution != 0
               && this._timeResolved(event.timeStamp) - this._timeResolved(this._lastEventTimeStamp) == 0) {
@@ -570,6 +575,12 @@
               middle: this._draw.bind(this),
               end: this._drawEnd.bind(this)
             }
+          case 'brush':
+            return {
+              start: this._brushStart.bind(this),
+              middle: this._brush.bind(this),
+              end: this._brushEnd.bind(this)
+            }
           case 'move':
             return {
               start: this._moveStart.bind(this),
@@ -608,6 +619,22 @@
       },
 
       // Tool handlers
+
+      _brushStart(x, y) {
+        this._canvas2.drawImage(this._canvas.canvas, 0, 0, 800, 600);
+        this.$.data.brushStart();
+        this._brush(x, y, x, y);
+      },
+
+      _brush(x, y, px, py) {
+        this._canvas.drawImage(this._canvas2.canvas, 0, 0, 800, 600);
+        this.$.data.brush(x, y, px, py, this.brushRadius);
+        this.$.data.currentLines.forEach((line) => this._drawLine(line));
+      },
+
+      _brushEnd(x, y) {
+        this.$.data.brushEnd();
+      },
 
       _drawStart(x, y) {
         this._canvas2.drawImage(this._canvas.canvas, 0, 0, 800, 600);

@@ -661,6 +661,7 @@
               can-redo="{{canRedo}}"
               etch-mode="{{etchMode}}"
               line-step="{{lineStep}}"
+              brush-radius="{{brushRadius}}"
               fill-angle="{{fillAngle}}"
               fill-spacing="{{fillSpacing}}"
               tone-pattern="{{tonePattern}}"
@@ -1121,6 +1122,36 @@
           active="{{_isDrawing(tool)}}"
           toggles="{{!_isDrawing(tool)}}"
           on-tap="_draw"></paper-icon-button>
+      <paper-menu-button
+          id="menuBrush"
+          disabled="{{_toolDisabled(sketchDisabled, loading)}}"
+          dynamic-align
+          allow-outside-scroll
+          vertical-align="bottom"
+          vertical-offset="60"
+          on-opened-changed="_brush">
+          <paper-icon-button
+              class="dropdown-trigger"
+              title="{{localize('brush')}}"
+              icon="image:brush"
+              active="{{_isBrushing(tool)}}"
+              toggles="{{!_isBrushing(tool)}}"></paper-icon-button>
+          <div class="dropdown-content settings">
+              <h3>Brush</h3>
+              <paper-item class="settings-item slider">
+                  <paper-item-body two-line>
+                      <div>Radius</div>
+                      <div secondary>Brush size, in px</div>
+                  </paper-item-body>
+                  <paper-slider
+                      value="{{brushRadius}}"
+                      min="4"
+                      max="16"
+                      step="2"
+                      editable></paper-slider>
+              </paper-item>
+          </div>
+      </paper-menu-button>
       <paper-menu-button
           id="menuFill"
           disabled="{{_toolDisabled(sketchDisabled, loading)}}"
@@ -1595,7 +1626,7 @@
     <iron-a11y-keys
         target="[[target]]"
         keys="b p"
-        on-keys-pressed="_draw"></iron-a11y-keys>
+        on-keys-pressed="_drawToggle"></iron-a11y-keys>
     <iron-a11y-keys
         target="[[target]]"
         keys="f"
@@ -2201,8 +2232,21 @@
         this._menuAction(e, this.$.menuEraser, 'eraser');
       },
 
+      _drawToggle: function() {
+        if(this.tool == 'pen') {
+          this.$.sketch.desiredTool = 'brush';
+        }
+        else {
+          this.$.sketch.desiredTool = 'pen';
+        }
+      },
+
       _draw: function() {
         this.$.sketch.desiredTool = 'pen';
+      },
+
+      _brush: function(e) {
+        this._menuAction(e, this.$.menuBrush, 'brush');
       },
 
       _move: function() {
@@ -2443,6 +2487,11 @@
         const keyEvent = e.detail.keyboardEvent;
         const query = `${tool}, ${keyEvent.shiftKey}`;
         switch(query) {
+          case 'brush, false':
+            name = "brush size";
+            newValue = this.$.sketch.brushRadius += v*2;
+            changedValue = this.$.sketch.brushRadius;
+            break;
           case 'eraser, false':
             name = "eraser size";
             newValue = this.$.sketch.eraserRadius += v;
@@ -2526,6 +2575,10 @@
 
       _isDrawing: function(tool) {
         return tool === 'pen';
+      },
+
+      _isBrushing: function(tool) {
+        return tool === 'brush';
       },
 
       _isMoving: function(tool) {

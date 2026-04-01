@@ -210,7 +210,59 @@
 
       _miniMoveAction: null,
 
+      _latency: 2,
+
+      _chained: true,
+
       // Public functions, tool-related
+
+      brushStart: function() {
+        this.drawStart();
+      },
+
+      brush: function(x, y, px, py, radius) {
+        if(this.limitedInk && (this.length + 4 > this.maxLength)) {
+          return;
+        }
+
+        const size = (radius/2) - 1;
+        const max = Math.max(Math.abs(y - py), Math.abs(x - px));
+        let length = 0;
+
+        if(Math.abs(max) != 0) {
+          const xchange = (x - px) / max;
+          const ychange = (y - py) / max;
+
+          for(let i = 0; i <= max; i += this._latency) {
+            const line = [
+              px + ychange * size + xchange * i,
+              py - xchange * size + ychange * i,
+              px - ychange * size + xchange * i,
+              py + xchange * size + ychange * i,
+            ].map((p) => Math.round(p));
+
+            if(this._chained) {
+              // This chunk is pretty efficient at making thick lines (size >= 2).
+              this.currentLines.at(-1).push(...line);
+              length += 8;
+            }
+            else {
+              // This chunk is good at making thin lines (size = 1), but is much, much more ink heavy.
+              this.currentLines.push(line);
+              length += 9;
+            }
+
+            // I figure that a _latency of 2 sounds good enough to be ink efficient
+            // while still looking like a thick line at the same time.
+          }
+        }
+
+        this._setLength(this.length + length);
+      },
+
+      brushEnd: function() {
+        this.drawEnd();
+      },
 
       drawStart: function() {
         this.currentLines = [[]];
