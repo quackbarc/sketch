@@ -156,12 +156,16 @@
           let line = newLines[i];
 
           // apply a static wiggle on swap
+          // do note that this wiggle is slightly different from canvas':
+          // - dots have different offsets for x/y, instead of the same offset
+          //   for both
+          // - sub-pixel dots are clamped by round().
           const intensity = this.wiggleIntensity;
           const middle = Math.floor(intensity / 2);
           if(this._isDot(line)) {
             const [x, y] = line.slice(0, 2);
-            const xOffset = Math.random()*intensity - middle;
-            const yOffset = Math.random()*intensity - middle;
+            const xOffset = Math.round(Math.random() * intensity) - middle;
+            const yOffset = Math.round(Math.random() * intensity) - middle;
             line = [
               Math.max(x + xOffset, 0),
               Math.max(y + yOffset, 0),
@@ -172,7 +176,7 @@
           else {
             for(let i = 0; i < line.length; i++) {
               const point = line[i];
-              const offset = Math.random()*intensity - middle;
+              const offset = Math.round(Math.random() * intensity) - middle;
               line[i] = Math.max(point + offset, 0);
             }
           }
