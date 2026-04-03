@@ -8,10 +8,27 @@
     <meta name="description" content="an alternative drawing client for garyc.me/sketch.">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jost&display=swap" rel="stylesheet">
+
+    <!-- Apply preferred background early on, before Polymer boots up (i.e. webcomponentsjs) -->
+    <style>
+      .background-dark {
+        background-color: #222;
+      }
+    </style>
+    <script>
+      const settings = localStorage.getItem("settings") || "{}";
+      const backgroundType = JSON.parse(settings).backgroundType || "light";
+      const backgroundClass = `background-${backgroundType}`;
+      document.documentElement.classList.add(backgroundClass);
+    </script>
+
     <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
     <link rel="import" href="bower_components/iron-flex-layout/iron-flex-layout.html">
     <link rel="import" href="src/sketch-app/sketch-app.html">
-    <link rel="icon" href="favicon.ico">
     <style is="custom-style">
       :root {
         @apply(--layout-fit);
@@ -32,38 +49,7 @@
         --paper-progress-active-color: var(--paper-indigo-a200);
         --paper-slider-input: {width: 80px};
       }
-
-      .background-dark {
-        background-color: #222;
-      }
     </style>
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Jost&display=swap" rel="stylesheet">
-    <script>
-      // FIXME: This script doesn't actually load early enough in built pages, it looks like.
-      // Must be because everything's bundled into one HTML file.
-
-      document.addEventListener("DOMContentLoaded", function() {
-        // Apply preferred background early on
-        let settings = localStorage.getItem("settings") || "{}";
-        let backgroundType = JSON.parse(settings).backgroundType || "light";
-        switch(backgroundType) {
-          case 1: {
-            backgroundType = "dark";
-            break;
-          }
-          case 0: {
-            backgroundType = "light";
-            break;
-          }
-        }
-
-        const backgroundClass = `background-${backgroundType}`;
-        document.body.classList.add(backgroundClass);
-      });
-    </script>
   </head>
   <body>
     <sketch-app></sketch-app>

@@ -2022,12 +2022,17 @@
 
       _onBackgroundChange: function(type) {
         const background = "background-" + type;
+        const classlist = document.documentElement.classList;
 
-        let classlist = document.body.classList;
+        for(const cl of classlist) {
+          if(cl == background) {
+            continue;
+          }
+          if(cl.startsWith("background-")) {
+            classlist.remove(cl);
+          }
+        }
         classlist.add(background);
-        Array.from(classlist)
-          .filter(cl => (cl.startsWith("background-") && cl != background))
-          .forEach(cl => classlist.remove(cl));
       },
 
       // Element observers
