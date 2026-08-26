@@ -2073,14 +2073,15 @@
       _onSwapFailed: function(e) {
         this.sketchDisabled = false;
 
-        const {swap, captchaFailed} = e.detail;
+        const {swap, captchaFailed, message} = e.detail;
         if(captchaFailed) {
           this.$.captchaDialog.open();
           return this._alert("incorrect captcha!");
         }
         else {
           const peektype = swap ? 'swap' : 'fetch'
-          return this._alert(`failed to ${peektype}`);
+          const alertMsg = message || `failed to ${peektype}`;
+          return this._alert(alertMsg);
         }
       },
 

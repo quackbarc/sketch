@@ -15,7 +15,7 @@
         timeout="30000"
         handle-as="text"
         on-response="_onSwap"
-        on-error="_onError"></iron-ajax>
+        on-error="_onSwapError"></iron-ajax>
     <iron-ajax
         id="getRequest"
         url="[[getURL]]"
@@ -281,15 +281,6 @@
           this.refreshCaptcha();
         }
 
-        if(this.source == "noz.rip") {
-          const response = event.detail.response;
-          if(response == "fail") {
-            this.fire('swap-failed', {swap: true, captchaFailed: true});
-            this._setLoading(false);
-            return;
-          }
-        }
-
         const id = parseInt(event.detail.response);
 
         // We may get non-numeric responses from noz.rip, like a blank string,
@@ -338,7 +329,48 @@
         this.fire('swap-failed', {
           swap: event.srcElement == this.$.swapRequest,
           captchaFailed: false,
+          message: null,
         });
+        this._setLoading(false);
+      },
+
+      _onSwapError: function(event) {
+        const eventDetail = {
+          swap: true,
+          captchaFailed: false,
+          message: null,
+        };
+
+        if(this.source == "noz.rip") {
+          const status = this.$.swapRequest.lastError.status;
+          switch(status) {
+            case 400: {
+              eventDetail.message = "this sketch was already sent!";
+              break;
+            }
+            case 401: {
+              eventDetail.captchaFailed = true;
+              eventDetail.message = "incorrect captcha!";
+              break;
+            }
+            case 403: {
+              // Should we do something in this event?
+              eventDetail.message = "can't swap; malformed characters in data";
+              break;
+            }
+            case 429: {
+              // What's the cooldown here?
+              eventDetail.message = "you're swapping too fast!";
+              break;
+            }
+          }
+
+          if(this.useCaptcha) {
+            this.refreshCaptcha();
+          }
+        }
+
+        this.fire('swap-failed', eventDetail);
         this._setLoading(false);
       },
     });
