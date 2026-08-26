@@ -6,14 +6,8 @@
     <iron-ajax
         id="getStatsRequest"
         url="[[getStatsURL]]"
-        handle-as="text"
+        handle-as="json"
         on-response="_onGetStats"></iron-ajax>
-    <iron-ajax
-        id="getMaxIDRequest"
-        url="[[getMaxIdURL]]"
-        handle-as="text"
-        on-response="_onSwap"
-        on-error="_onError"></iron-ajax>
     <iron-ajax
         id="swapRequest"
         url="[[swapURL]]"
@@ -25,7 +19,7 @@
     <iron-ajax
         id="getRequest"
         url="[[getURL]]"
-        handle-as="text"
+        handle-as="json"
         on-response="_onGet"
         on-error="_onError"></iron-ajax>
   </template>
@@ -50,11 +44,6 @@
           readOnly: true,
           computed: "_getStatsURL(source)"
         },
-        getMaxIdURL: {
-          type: String,
-          readOnly: true,
-          computed: "_getMaxIdURL(source)"
-        },
         swapURL: {
           type: String,
           readOnly: true,
@@ -74,7 +63,7 @@
         },
         captchaURL: {
           type: String,
-          value: "https://noz.rip/sketch/captcha.php",
+          value: "https://noz.rip/sketch/captcha",
           notify: true,
           readOnly: true
         },
@@ -119,16 +108,8 @@
 
       _getStatsURL: function(source) {
         const urlmap = {
-          "garyc.me": "https://garyc.me/sketch/getStats.php?timespan=300",
-          "noz.rip": "https://noz.rip/sketch/getStats.php",
-        }
-        return urlmap[source];
-      },
-
-      _getMaxIdURL: function(source) {
-        const urlmap = {
-          "garyc.me": "https://garyc.me/sketch/getMaxID.php",
-          "noz.rip": "https://noz.rip/sketch/getMaxID.php",
+          "garyc.me": "https://garyc.me/sketch/getStats.php?details",
+          "noz.rip": "https://noz.rip/sketch/stats",
         }
         return urlmap[source];
       },
@@ -136,7 +117,7 @@
       _swapURL: function(source) {
         const urlmap = {
           "garyc.me": "https://garyc.me/sketch/swap.php?v=32",
-          "noz.rip": "https://noz.rip/sketch/swap.php",
+          "noz.rip": "https://noz.rip/sketch/swap",
         }
         return urlmap[source];
       },
@@ -144,7 +125,7 @@
       _getURL: function(source) {
         const urlmap = {
           "garyc.me": "https://garyc.me/sketch/get.php",
-          "noz.rip": "https://noz.rip/sketch/get.php",
+          "noz.rip": "https://noz.rip/sketch/data",
         }
         return urlmap[source];
       },
@@ -174,27 +155,30 @@
       // Public functions
 
       peek: function() {
-        this.$.getMaxIDRequest.generateRequest();
+        this.$.getRequest.params = {};
+        this.$.getRequest.generateRequest();
         this._setLoading(true);
       },
 
       swap: function(data) {
+        let contentType = null;
+        if(this.source == "noz.rip") {
+          contentType = "application/x-www-form-urlencoded";
+        }
+
         this.$.swapRequest.body = data;
+        this.$.swapRequest.contentType = contentType;
         this.$.swapRequest.generateRequest();
         this._setLoading(true);
       },
 
       swapWithCaptcha: function(sdata, phrase) {
-        const data = new FormData();
-        data.append("data", sdata);
-        data.append("phrase", phrase);
-
-        this.swap(data);
+        this.swap({data: sdata, phrase});
       },
 
       refreshCaptcha: function() {
         const now = Date.now();
-        this._setCaptchaURL(`https://noz.rip/sketch/captcha.php?${now}`);
+        this._setCaptchaURL(`https://noz.rip/sketch/captcha?${now}`);
       },
 
       save: function(data) {
@@ -276,8 +260,7 @@
       },
 
       _onGet: function(event) {
-        var data = event.detail.response;
-        var id = this.$.getRequest.params.id;
+        const {data, id} = event.detail.response;
 
         if(data == "wait") {
           if(!this._waiting) {
@@ -344,10 +327,11 @@
       },
 
       _onGetStats: function(event) {
-        var stats = event.detail.response.split(",");
-        this._setSketches(parseInt(stats[0]));
-        this._setArtists(parseInt(stats[1]));
-        this._setPeekers(parseInt(stats[2]));
+        const {sketches, artists, peekers} = event.detail.response;
+
+        this._setSketches(sketches);
+        this._setArtists(artists);
+        this._setPeekers(peekers);
       },
 
       _onError: function(event) {
