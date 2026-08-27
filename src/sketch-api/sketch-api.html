@@ -21,7 +21,7 @@
         url="[[getURL]]"
         handle-as="json"
         on-response="_onGet"
-        on-error="_onError"></iron-ajax>
+        on-error="_onGetError"></iron-ajax>
   </template>
   <script>
   (function() {
@@ -52,7 +52,7 @@
         getURL: {
           type: String,
           readOnly: true,
-          computed: "_getURL(source)"
+          computed: "_getURL(source, getID)"
         },
         source: {
           // options: "noz.rip", "garyc.me"
@@ -95,6 +95,10 @@
           value: -1,
           notify: true,
           readOnly: true
+        },
+        getID: {
+          type: Number,
+          value: null,
         }
       },
 
@@ -122,12 +126,17 @@
         return urlmap[source];
       },
 
-      _getURL: function(source) {
-        const urlmap = {
-          "garyc.me": "https://garyc.me/sketch/get.php",
-          "noz.rip": "https://noz.rip/sketch/data",
+      _getURL: function(source, getID) {
+        if(source == "garyc.me") {
+          return "https://garyc.me/sketch/get.php";
         }
-        return urlmap[source];
+
+        if(source == "noz.rip") {
+          if(getID != null) {
+            return `https://noz.rip/sketch/data/${getID}`;
+          }
+          return "https://noz.rip/sketch/data";
+        }
       },
 
       _useCaptcha: function(source) {
@@ -155,6 +164,7 @@
       // Public functions
 
       peek: function() {
+        this.getID = null;
         this.$.getRequest.params = {};
         this.$.getRequest.generateRequest();
         this._setLoading(true);
@@ -274,6 +284,8 @@
           this.fire('get', {data: data, id: id});
           this._setLoading(false);
         }
+
+        this.getID = null;
       },
 
       _onSwap: function(event) {
@@ -310,8 +322,15 @@
         }
         else {
           this.$.getStatsRequest.generateRequest();
-          this.$.getRequest.params = { id: id || "" };
-          this.$.getRequest.generateRequest();
+
+          if(this.source == "garyc.me") {
+            this.$.getRequest.params = { id: id || "" };
+            this.$.getRequest.generateRequest();
+          }
+          if(this.source == "noz.rip") {
+            this.getID = id;
+            this.$.getRequest.generateRequest();
+          }
         }
 
         this._swapErroredOnce = id == -1;
@@ -372,6 +391,22 @@
 
         this.fire('swap-failed', eventDetail);
         this._setLoading(false);
+      },
+
+      _onGetError: function(event) {
+        if(this.source == "noz.rip") {
+          const status = this.$.getRequest.lastError.status;
+          if(status == 404) {
+            if(!this._waiting) {
+              this.fire('swap-waiting');
+            }
+            this._waiting = true;
+            setTimeout(this.$.getRequest.generateRequest.bind(this.$.getRequest), GET_INTERVAL);
+            return;
+          }
+        }
+
+        this._onError(event);
       },
     });
   })();
